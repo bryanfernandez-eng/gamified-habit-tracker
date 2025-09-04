@@ -1,2 +1,1 @@
-# gamified-habit-tracker
-capstone 2 project
+# Gamified Habit Tracker
