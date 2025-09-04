@@ -1,4 +1,16 @@
+# Node
 node_modules/
-.env*
+dist/
+
+# Python
+.venv/
 __pycache__/
 db.sqlite3
+
+# OS/Editor
+.DS_Store
+*.log
+
+# Env
+.env
+.env.*
