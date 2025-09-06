@@ -98,11 +98,14 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
 
+# Allow credentials in CORS
+CORS_ALLOW_CREDENTIALS = True
+
 # --- DRF config ---
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
@@ -115,9 +118,20 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-ACCOUNT_LOGIN_METHODS = {"email", "username"}  # allow login by email OR username
-ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]  # * = required
-ACCOUNT_EMAIL_VERIFICATION = "optional"
+# Allauth settings for registration
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"  # Disable email verification for now
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 
-# If you ever want to disable tokens entirely, uncomment:
-# DJ_REST_AUTH = {"TOKEN_MODEL": None}
+# --- dj-rest-auth configuration with custom serializers ---
+REST_AUTH = {
+    'LOGIN_SERIALIZER': 'api.serializers.CustomLoginSerializer',
+    'TOKEN_SERIALIZER': 'api.serializers.CustomTokenSerializer',  # This includes user data in response
+    'USER_DETAILS_SERIALIZER': 'api.serializers.CustomUserDetailsSerializer',
+    'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
+}
