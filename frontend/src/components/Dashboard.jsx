@@ -32,7 +32,7 @@ export default function Dashboard() {
                 Display Name:
               </dt>
               <dd className="text-sm text-gray-900">
-                {user?.display_name || user?.first_name || "Not set"}
+                {user?.display_name || "Not set"}
               </dd>
             </div>
             <div>

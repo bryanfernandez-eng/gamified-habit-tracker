@@ -22,9 +22,9 @@ def create_demo_users(sender, **kwargs):
             username='johndoe',
             defaults={
                 'email': 'john@example.com',
-                'first_name': 'John Doe',
+                'display_name': 'John Doe',
                 'is_superuser': True,
-                'is_staff': True
+                'is_staff': True  # Keep this for Django admin access
             }
         )
         if created:
@@ -42,7 +42,7 @@ def create_demo_users(sender, **kwargs):
             username='reese',
             defaults={
                 'email': 'reese@example.com',
-                'first_name': 'Reese',
+                'display_name': 'Reese',
                 'is_superuser': False,
                 'is_staff': False
             }

@@ -13,11 +13,9 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
     """
     Custom user serializer with display name support
     """
-    display_name = serializers.CharField(source='first_name', read_only=True)
-    
     class Meta(UserDetailsSerializer.Meta):
         fields = UserDetailsSerializer.Meta.fields + ('display_name', 'is_superuser', 'date_joined')
-        read_only_fields = ('email', 'date_joined', 'display_name', 'is_superuser')
+        read_only_fields = ('email', 'date_joined', 'is_superuser')
 
 class CustomTokenSerializer(TokenSerializer):
     """
@@ -133,19 +131,101 @@ class CustomRegisterSerializer(RegisterSerializer):
             'username': self.validated_data.get('username', ''),
             'password1': self.validated_data.get('password1', ''),
             'email': self.validated_data.get('email', ''),
-            'first_name': self.validated_data.get('display_name', ''),  # Store display_name as first_name
+            'display_name': self.validated_data.get('display_name', ''),
         }
 
     def save(self, request):
         adapter = get_adapter()
         user = adapter.new_user(request)
         self.cleaned_data = self.get_cleaned_data()
-        user = adapter.save_user(request, user, self)
         
-        # Ensure the display name is saved as first_name
-        user.first_name = self.cleaned_data.get('first_name', '')
+        # Set all the fields
+        user.username = self.cleaned_data.get('username', '')
+        user.email = self.cleaned_data.get('email', '')
+        user.display_name = self.cleaned_data.get('display_name', '')
+        user.set_password(self.cleaned_data.get('password1', ''))
         user.save()
         
         # Setup user email
         setup_user_email(request, user, [])
         return user
+
+# New serializers for admin user management
+class AdminUserListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing users in admin panel
+    """
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'display_name', 'is_active', 'is_superuser', 'date_joined', 'last_login')
+        read_only_fields = ('id', 'date_joined', 'last_login')
+
+class AdminUserCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating users in admin panel
+    """
+    password = serializers.CharField(write_only=True, min_length=6)
+    
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'display_name', 'password', 'is_active', 'is_superuser')
+    
+    def validate_username(self, username):
+        if len(username) < 3:
+            raise serializers.ValidationError("Username must be at least 3 characters long.")
+        return username
+    
+    def validate_email(self, email):
+        if User.objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return email
+    
+    def validate_display_name(self, display_name):
+        if len(display_name.strip()) < 2:
+            raise serializers.ValidationError("Display name must be at least 2 characters long.")
+        return display_name.strip()
+    
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User.objects.create_user(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+class AdminUserUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating users in admin panel
+    """
+    password = serializers.CharField(write_only=True, required=False, min_length=6)
+    
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'display_name', 'password', 'is_active', 'is_superuser')
+    
+    def validate_username(self, username):
+        if len(username) < 3:
+            raise serializers.ValidationError("Username must be at least 3 characters long.")
+        return username
+    
+    def validate_email(self, email):
+        # Check if email exists for other users
+        if User.objects.filter(email__iexact=email).exclude(id=self.instance.id).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return email
+    
+    def validate_display_name(self, display_name):
+        if len(display_name.strip()) < 2:
+            raise serializers.ValidationError("Display name must be at least 2 characters long.")
+        return display_name.strip()
+    
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        if password:
+            instance.set_password(password)
+        
+        instance.save()
+        return instance

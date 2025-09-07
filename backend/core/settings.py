@@ -34,6 +34,9 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
+# Custom User Model
+AUTH_USER_MODEL = 'api.CustomUser'
+
 # --- Middleware ---
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # keep CORS at the top
