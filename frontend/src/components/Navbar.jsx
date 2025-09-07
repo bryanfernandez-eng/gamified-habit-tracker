@@ -29,7 +29,7 @@ export default function Navbar() {
           
           <div className="flex items-center space-x-4">
             <span className="text-gray-700">
-              {user?.display_name || user?.first_name || user?.username}
+              {user?.username && `@${user?.username}`|| user?.display_name}
             </span>
             <button 
               onClick={handleLogout}
