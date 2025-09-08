@@ -3,6 +3,7 @@ node_modules/
 dist/
 
 # Python
+venv
 .venv/
 __pycache__/
 db.sqlite3

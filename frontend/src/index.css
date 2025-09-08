@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+/* Pixel art styling */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Optional: Add a retro font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.font-pixel {
+  font-family: 'Press Start 2P', cursive;
+}
