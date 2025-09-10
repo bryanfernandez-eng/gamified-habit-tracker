@@ -10,7 +10,8 @@ import NotFound from './components/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import ConnectionStatus from './components/ConnectionStatus'
-
+import Leaderboard from './pages/Leaderboard'
+import Settings from './pages/Settings'
 function AuthScreen() {
   const [isLogin, setIsLogin] = useState(true)
   
@@ -67,6 +68,14 @@ function AppContent() {
               <AdminPage />
             </ProtectedRoute>
           } 
+        />
+        <Route 
+          path="/leaderboard" 
+          element={<Leaderboard />} 
+        />
+        <Route 
+          path="/settings" 
+          element={<Settings />} 
         />
         <Route 
           path="*" 
