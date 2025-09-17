@@ -142,33 +142,6 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
   return (
     <div className="min-h-screen w-full bg-[#0F1924] text-slate-100">
       {/* Top bar */}
-      <header className="sticky top-0 z-10 border-b border-yellow-500/20 bg-[#0F1924]/90 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
-          <button className="px-3 py-1.5 border border-yellow-500/40 text-yellow-300 rounded-lg font-semibold hover:bg-yellow-500/10 transition">
-            🗡️ QUEST TRACKER
-          </button>
-          <nav className="ml-auto hidden sm:flex gap-2">
-            {[
-              "Dashboard",
-              "Leaderboard",
-              "Settings",
-              "Admin",
-            ].map((item, i) => (
-              <span
-                key={i}
-                className={classNames(
-                  "px-3 py-1.5 rounded-md border text-sm",
-                  item === "Leaderboard"
-                    ? "bg-slate-800/60 border-slate-600 text-slate-100"
-                    : "bg-slate-800/30 border-slate-700 text-slate-300"
-                )}
-              >
-                {item}
-              </span>
-            ))}
-          </nav>
-        </div>
-      </header>
 
       {/* Content */}
       <main className="mx-auto max-w-6xl px-4 pb-16">
