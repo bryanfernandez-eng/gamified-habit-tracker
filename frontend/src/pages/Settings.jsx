@@ -33,7 +33,16 @@ const Settings = () =>
     };
     return(
       <div className='min-h-screen bg-[#0F1924]'>
-
+        <div className='max-w-xl mx-auto space -y-10'>
+            <h1 className='text-3xl font-bold text-yellow-400 mb-6'>
+              Settings
+            </h1>
+            {/*change name*/}
+            <div className='cursor-pointer border border-slate-700 text-white rounded-lg  p-4  bg-gray-800 transition-colors
+            hover:border-yellow-300 hover:text-yellow-30'>
+              <h2 className='text-lg font-semibold'> Display Name</h2>
+            </div>
+        </div>
       </div>
     );
   }
