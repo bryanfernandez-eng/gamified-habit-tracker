@@ -1,17 +1,12 @@
 import React from 'react'
-import {
-  CheckSquare,
-  BarChart,
-  Trophy,
-  Shirt,
-} from 'lucide-react'
+import { CheckSquare, BarChart, Trophy, Shirt, CalendarDays } from 'lucide-react'
 
 export function TabNavigation({ activeTab, setActiveTab }) {
   const tabs = [
     {
-      id: 'habits',
-      label: 'Quests',
-      icon: <CheckSquare size={18} />,
+      id: 'dailyQuests',
+      label: 'Daily Quests',
+      icon: <CalendarDays size={18} />,
     },
     {
       id: 'stats',
@@ -27,20 +22,20 @@ export function TabNavigation({ activeTab, setActiveTab }) {
       id: 'customize',
       label: 'Equipment',
       icon: <Shirt size={18} />,
-    },
+    },    
   ]
-  
+
   return (
-    <div className="flex overflow-x-auto bg-gray-800 border-4 border-gray-700">
+    <div className="flex space-x-4 border-b border-gray-700">
       {tabs.map((tab) => (
         <button
           key={tab.id}
-          className={`flex items-center px-6 py-3 font-medium text-sm whitespace-nowrap uppercase ${
-            activeTab === tab.id 
-              ? 'bg-yellow-700 text-yellow-300 border-t-4 border-yellow-500' 
-              : 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-gray-300'
-          }`}
           onClick={() => setActiveTab(tab.id)}
+          className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+            activeTab === tab.id
+              ? 'bg-gray-700 text-yellow-400'
+              : 'text-gray-300 hover:text-white'
+          }`}
         >
           <span className="mr-2">{tab.icon}</span>
           {tab.label}
