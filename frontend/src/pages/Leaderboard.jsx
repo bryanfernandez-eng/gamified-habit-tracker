@@ -161,7 +161,7 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
     level: player.level,
     currentFloor: player.level * 3 + Math.floor(player.current_xp / 10), // Calculate floor based on level and XP
     hp: player.current_hp,
-    xp: Math.min(100, (player.current_xp / player.next_level_xp) * 100), // Convert to percentage
+    xp: Math.min(100, Math.round((player.current_xp / player.next_level_xp) * 100 * 100) / 100), // Convert to percentage and round to 2 decimals
   })) : players;
 
   const sorted = [...displayPlayers].sort((a, b) => {

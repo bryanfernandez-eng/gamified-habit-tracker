@@ -64,7 +64,10 @@ export function HabitCreation({ onHabitCreated, onClose }) {
   const CategoryIcon = selectedCategory?.icon
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+    >
       <div className="bg-gray-900 border-4 border-yellow-600 max-w-md w-full mx-4 p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-yellow-400 uppercase">Create Quest</h2>

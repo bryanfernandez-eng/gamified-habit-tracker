@@ -80,7 +80,9 @@ export default function Register({ onToggleMode }) {
     // If registration successful, create initial habits based on survey
     if (result.success) {
       try {
-        await gameApi.createInitialHabits(surveyData)
+        console.log('Creating initial habits with survey data:', surveyData)
+        const habitsResult = await gameApi.createInitialHabits(surveyData)
+        console.log('Initial habits created:', habitsResult)
         // Registration and habit creation successful - navigate to home
       } catch (err) {
         console.error('Failed to create initial habits:', err)

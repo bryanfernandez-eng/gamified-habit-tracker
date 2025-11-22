@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { Sword, Shield, LogOut, Home, BarChart3, Settings, Menu, X } from "lucide-react"
+import { gameApi } from "../services/gameApi"
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -8,12 +9,25 @@ export default function Navbar() {
     level: 1,
   })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showUserModal, setShowUserModal] = useState(false)
 
   useEffect(() => {
-    // You can fetch real user stats here
-    setUserStats({
-      level: 5,
-    })
+    // Fetch real user stats from API
+    const fetchUserStats = async () => {
+      try {
+        const stats = await gameApi.getUserStats()
+        setUserStats({
+          level: stats.level || 1,
+        })
+      } catch (err) {
+        console.error('Failed to fetch user stats:', err)
+        setUserStats({ level: 1 })
+      }
+    }
+
+    if (user) {
+      fetchUserStats()
+    }
   }, [user])
 
   const handleLogout = async () => {
@@ -86,7 +100,7 @@ export default function Navbar() {
           {/* Right Section - User Profile & Mobile Menu Button */}
           <div className="flex items-center space-x-1 sm:space-x-3">
             {/* User Profile Card - Responsive */}
-            <div className="bg-gray-800 border-2 border-gray-700 px-2 sm:px-4 py-1 sm:py-2 shadow-md rounded-sm h-8 sm:h-10 flex items-center">
+            <button onClick={() => setShowUserModal(true)} className="bg-gray-800 border-2 border-gray-700 hover:border-yellow-600 hover:bg-gray-700 px-2 sm:px-4 py-1 sm:py-2 shadow-md rounded-sm h-8 sm:h-10 flex items-center transition-all cursor-pointer">
               <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-yellow-600 to-yellow-500 border-2 border-yellow-400 flex items-center justify-center mr-2 sm:mr-3 rounded-sm shadow-inner">
                 <span className="text-xs font-bold text-white">{userStats.level}</span>
               </div>
@@ -98,7 +112,7 @@ export default function Navbar() {
                   Lv.{userStats.level}
                 </span>
               </div>
-            </div>
+            </button>
 
             {/* Desktop Logout Button */}
             <button
@@ -183,6 +197,87 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* User Profile Modal */}
+      {showUserModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowUserModal(false)}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <div
+            className="bg-gray-800 border-4 border-double border-gray-700 p-6 rounded-lg max-w-md w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-gray-700">
+              <h2 className="text-xl font-bold text-yellow-400 uppercase tracking-wider">User Profile</h2>
+              <button
+                onClick={() => setShowUserModal(false)}
+                className="text-gray-400 hover:text-gray-200 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="space-y-4">
+              {/* Username */}
+              <div>
+                <label className="text-xs uppercase text-gray-400 font-bold tracking-wide">Username</label>
+                <p className="text-gray-200 text-sm font-semibold mt-1">{user?.username}</p>
+              </div>
+
+              {/* Display Name */}
+              <div>
+                <label className="text-xs uppercase text-gray-400 font-bold tracking-wide">Display Name</label>
+                <p className="text-gray-200 text-sm font-semibold mt-1">{user?.display_name || 'Not set'}</p>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="text-xs uppercase text-gray-400 font-bold tracking-wide">Email</label>
+                <p className="text-gray-200 text-sm font-semibold mt-1">{user?.email}</p>
+              </div>
+
+              {/* Level */}
+              <div>
+                <label className="text-xs uppercase text-gray-400 font-bold tracking-wide">Level</label>
+                <p className="text-yellow-400 text-sm font-bold mt-1">Lv.{userStats.level}</p>
+              </div>
+
+              {/* Member Since */}
+              <div>
+                <label className="text-xs uppercase text-gray-400 font-bold tracking-wide">Member Since</label>
+                <p className="text-gray-200 text-sm font-semibold mt-1">
+                  {user?.date_joined ? new Date(user.date_joined).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : 'N/A'}
+                </p>
+              </div>
+
+              {/* Superuser Badge */}
+              {user?.is_superuser && (
+                <div className="mt-4 p-3 bg-red-900/30 border-2 border-red-700/50 rounded">
+                  <p className="text-red-300 text-xs font-bold uppercase tracking-wide">⚡ Administrator</p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="mt-6 pt-4 border-t-2 border-gray-700">
+              <button
+                onClick={() => setShowUserModal(false)}
+                className="w-full py-2 px-4 bg-gray-700 border-2 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-yellow-600 hover:text-yellow-400 transition-all font-bold uppercase text-xs rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
