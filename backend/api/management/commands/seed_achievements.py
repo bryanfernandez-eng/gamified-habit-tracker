@@ -254,13 +254,13 @@ class Command(BaseCommand):
             if created:
                 created_count += 1
                 self.stdout.write(
-                    self.style.SUCCESS(f'✓ Created achievement: {achievement.name}')
+                    self.style.SUCCESS(f'[+] Created achievement: {achievement.name}')
                 )
             else:
                 self.stdout.write(
-                    self.style.WARNING(f'⊘ Achievement already exists: {achievement.name}')
+                    self.style.WARNING(f'[!] Achievement already exists: {achievement.name}')
                 )
 
         self.stdout.write(
-            self.style.SUCCESS(f'\n✓ Total achievements created: {created_count}')
+            self.style.SUCCESS(f'\n[+] Total achievements created: {created_count}')
         )

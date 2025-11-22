@@ -24,6 +24,9 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
     social: 1,
     health: 1,
   })
+  const [previousLevel, setPreviousLevel] = useState(1)
+  const [showLevelUpPopup, setShowLevelUpPopup] = useState(false)
+  const [levelUpData, setLevelUpData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -51,10 +54,33 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
     if (externalStats) {
       console.log('CharacterAvatar: Received externalStats, updating:', externalStats)
       console.log('CharacterAvatar: Previous stats:', stats)
+
+      // Check if user leveled up
+      if (externalStats.level && externalStats.level > previousLevel) {
+        setLevelUpData({
+          newLevel: externalStats.level,
+          oldLevel: previousLevel,
+          currentXp: externalStats.current_xp,
+          nextLevelXp: externalStats.next_level_xp,
+        })
+        setShowLevelUpPopup(true)
+        setPreviousLevel(externalStats.level)
+
+        // Auto-hide popup after 4 seconds
+        const timer = setTimeout(() => {
+          setShowLevelUpPopup(false)
+        }, 4000)
+
+        // Update stats and cleanup timer
+        setStats(externalStats)
+        setError(null)
+        return () => clearTimeout(timer)
+      }
+
       setStats(externalStats)
       setError(null)
     }
-  }, [externalStats])
+  }, [externalStats, previousLevel])
 
   // Verify stats with server when refreshTrigger changes
   useEffect(() => {
@@ -166,6 +192,37 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
           </div>
         )}
       </div>
+
+      {/* Level Up Popup */}
+      {showLevelUpPopup && levelUpData && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+          <div className="pointer-events-auto animate-bounce">
+            <div className="bg-gradient-to-b from-yellow-400 to-yellow-600 border-4 border-yellow-200 p-8 shadow-2xl" style={{ boxShadow: '0 0 30px rgba(250, 204, 21, 0.8)' }}>
+              <div className="text-center">
+                <div className="text-6xl mb-4 animate-pulse">⭐</div>
+                <h1 className="text-4xl font-black text-yellow-900 uppercase tracking-widest mb-2">
+                  LEVEL UP!
+                </h1>
+                <p className="text-2xl font-bold text-yellow-800 mb-4">
+                  Level {levelUpData.oldLevel} → {levelUpData.newLevel}
+                </p>
+                <div className="bg-yellow-500 text-yellow-900 px-4 py-2 border-2 border-yellow-700 mb-4 font-bold">
+                  🎉 Congratulations, Hero! 🎉
+                </div>
+                <p className="text-yellow-800 text-sm mb-6">
+                  Your power grows ever stronger!
+                </p>
+                <button
+                  onClick={() => setShowLevelUpPopup(false)}
+                  className="px-6 py-2 bg-yellow-700 border-2 border-yellow-600 text-yellow-100 font-bold uppercase hover:bg-yellow-600 transition-all"
+                >
+                  AWESOME! 🎊
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -194,6 +194,8 @@ export function HabitTracker({ onHabitCompleted }) {
       const habitName = habit?.name || 'Quest'
 
       const result = await gameApi.completeHabit(habitId)
+      console.log('HabitTracker: Full API response:', result)
+      console.log('HabitTracker: user_stats from response:', result.user_stats)
 
       // Play coin sound
       const audioContext = new (window.AudioContext || window.webkitAudioContext)()
