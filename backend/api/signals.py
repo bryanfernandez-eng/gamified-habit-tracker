@@ -14,8 +14,8 @@ def create_demo_users(sender, **kwargs):
     if sender.name != 'api':  # Only run for our api app
         return
         
-    print("🚀 Setting up demo users...")
-    
+    print("[*] Setting up demo users...")
+
     # Create superuser John Doe
     try:
         john, created = User.objects.get_or_create(
@@ -30,11 +30,11 @@ def create_demo_users(sender, **kwargs):
         if created:
             john.set_password('demo123')
             john.save()
-            print("✅ Created admin user: johndoe (demo123)")
+            print("[+] Created admin user: johndoe (demo123)")
         else:
-            print("ℹ️  Admin user johndoe already exists")
+            print("[i] Admin user johndoe already exists")
     except IntegrityError as e:
-        print(f"⚠️  Could not create johndoe: {e}")
+        print(f"[!] Could not create johndoe: {e}")
 
     # Create regular user Reese
     try:
@@ -50,12 +50,12 @@ def create_demo_users(sender, **kwargs):
         if created:
             reese.set_password('demo123')
             reese.save()
-            print("✅ Created regular user: reese (demo123)")
+            print("[+] Created regular user: reese (demo123)")
         else:
-            print("ℹ️  Regular user reese already exists")
+            print("[i] Regular user reese already exists")
     except IntegrityError as e:
-        print(f"⚠️  Could not create reese: {e}")
-    
-    print("🎯 Demo users ready! Use login quick-fill buttons to test")
+        print(f"[!] Could not create reese: {e}")
+
+    print("[*] Demo users ready! Use login quick-fill buttons to test")
     print("   Admin: johndoe / demo123")
     print("   User:  reese / demo123")

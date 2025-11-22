@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { X, Dumbbell, BookOpen, Brush, Users, Heart, Plus } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
 
@@ -71,12 +71,28 @@ export function ImportQuests({ onQuestsImported, onClose }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [questLimit, setQuestLimit] = useState(null)
 
   const categories = ['all', 'strength', 'intelligence', 'creativity', 'social', 'health']
+
+  // Load quest limit when modal opens
+  useEffect(() => {
+    const loadLimit = async () => {
+      try {
+        const limitData = await gameApi.checkQuestLimit()
+        setQuestLimit(limitData)
+      } catch (err) {
+        console.error('Failed to load quest limit:', err)
+      }
+    }
+    loadLimit()
+  }, [])
 
   const filteredQuests = selectedCategory === 'all'
     ? PREDEFINED_QUESTS
     : PREDEFINED_QUESTS.filter(q => q.category === selectedCategory)
+
+  const canImportMore = questLimit ? questLimit.quests_remaining > 0 : true
 
   const toggleQuest = (questName) => {
     setSelectedQuests(prev =>
@@ -97,6 +113,16 @@ export function ImportQuests({ onQuestsImported, onClose }) {
   const handleImport = async () => {
     if (selectedQuests.length === 0) {
       setError('Please select at least one quest to import')
+      return
+    }
+
+    // Check quest limit
+    if (questLimit && selectedQuests.length > questLimit.quests_remaining) {
+      setError(
+        `You can only import ${questLimit.quests_remaining} more quest(s). ` +
+        `You have ${questLimit.current_quests}/${questLimit.max_quests} quests. ` +
+        `Reach level ${questLimit.next_level_milestone} to create more.`
+      )
       return
     }
 
@@ -148,7 +174,19 @@ export function ImportQuests({ onQuestsImported, onClose }) {
       `}</style>
       <div className="bg-gray-900 border-4 border-purple-600 max-w-2xl w-full mx-4 p-6 my-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-purple-400 uppercase">Import Quests</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-purple-400 uppercase">Import Quests</h2>
+            {questLimit && (
+              <p className="text-xs text-gray-400 mt-1">
+                {questLimit.quests_remaining} slot{questLimit.quests_remaining !== 1 ? 's' : ''} available
+                {questLimit.max_quests < 999 && (
+                  <span className="ml-2">
+                    • Reach Level {questLimit.next_level_milestone} for more
+                  </span>
+                )}
+              </p>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-200"
@@ -237,9 +275,20 @@ export function ImportQuests({ onQuestsImported, onClose }) {
           </button>
           <button
             onClick={handleImport}
-            disabled={loading || selectedQuests.length === 0}
+            disabled={
+              loading ||
+              selectedQuests.length === 0 ||
+              (questLimit && selectedQuests.length > questLimit.quests_remaining)
+            }
+            title={
+              questLimit && selectedQuests.length > questLimit.quests_remaining
+                ? `You can only import ${questLimit.quests_remaining} quest(s)`
+                : ''
+            }
             className={`flex-1 px-4 py-3 font-bold uppercase border-2 transition-all flex items-center justify-center gap-2 ${
-              loading || selectedQuests.length === 0
+              loading ||
+              selectedQuests.length === 0 ||
+              (questLimit && selectedQuests.length > questLimit.quests_remaining)
                 ? 'bg-gray-600 border-gray-500 text-gray-400 cursor-not-allowed'
                 : 'bg-purple-700 border-purple-600 text-purple-200 hover:bg-purple-600'
             }`}

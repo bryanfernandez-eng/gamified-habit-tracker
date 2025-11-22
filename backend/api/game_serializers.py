@@ -1,8 +1,8 @@
 # backend/api/game_serializers.py
 from rest_framework import serializers
 from .models import (
-    CustomUser, Habit, HabitCompletion, Achievement, 
-    UserAchievement, Equipment, UserEquipment
+    CustomUser, Habit, HabitCompletion, Achievement,
+    UserAchievement, Equipment, UserEquipment, DailyCheckIn
 )
 
 class UserStatsSerializer(serializers.ModelSerializer):
@@ -96,6 +96,15 @@ class EquipmentSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         user_equipment = UserEquipment.objects.filter(user=user, equipment=obj).first()
         return user_equipment.is_equipped if user_equipment else False
+
+
+class DailyCheckInSerializer(serializers.ModelSerializer):
+    """Serializer for daily check-ins"""
+    checked_in_date = serializers.DateField(source='checked_in_at', read_only=True)
+
+    class Meta:
+        model = DailyCheckIn
+        fields = ['id', 'checked_in_at', 'checked_in_date', 'xp_earned']
 
 
 class CompleteHabitSerializer(serializers.Serializer):

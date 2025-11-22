@@ -176,9 +176,28 @@ class UserEquipment(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     is_equipped = models.BooleanField(default=False)
     unlocked_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ['user', 'equipment']
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.equipment.name}"
+
+
+class DailyCheckIn(models.Model):
+    """Track daily check-ins for users (100 XP per check-in)"""
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='daily_checkins')
+    checked_in_at = models.DateTimeField(auto_now_add=True)
+    xp_earned = models.IntegerField(default=100)
+
+    class Meta:
+        ordering = ['-checked_in_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.checked_in_at.date()}"
+
+    def save(self, *args, **kwargs):
+        """Award XP when check-in is created"""
+        if not self.pk:  # Only on creation, not on update
+            self.user.add_xp(self.xp_earned)
+        super().save(*args, **kwargs)

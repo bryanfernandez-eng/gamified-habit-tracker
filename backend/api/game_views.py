@@ -6,13 +6,38 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from django.db.models import Count, Sum, F, Q
 from .models import (
-    Habit, HabitCompletion, Achievement, 
-    UserAchievement, Equipment, UserEquipment
+    Habit, HabitCompletion, Achievement,
+    UserAchievement, Equipment, UserEquipment, DailyCheckIn
 )
 from .game_serializers import (
     UserStatsSerializer, HabitSerializer, HabitCompletionSerializer,
-    AchievementSerializer, EquipmentSerializer, CompleteHabitSerializer
+    AchievementSerializer, EquipmentSerializer, CompleteHabitSerializer,
+    DailyCheckInSerializer
 )
+
+
+def get_max_quests_for_level(level):
+    """
+    Calculate the maximum number of quests a user can create based on their level.
+
+    Progression:
+    - Level 1-5: 4 quests
+    - Level 6-10: 6 quests
+    - Level 11-15: 8 quests
+    - Level 16-20: 10 quests
+    - Level 20+: Unlimited quests (return a large number)
+    """
+    if level >= 20:
+        return 999  # Effectively unlimited
+    elif level >= 16:
+        return 10
+    elif level >= 11:
+        return 8
+    elif level >= 6:
+        return 6
+    else:
+        return 4
+
 
 class UserStatsViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
@@ -85,7 +110,34 @@ class HabitViewSet(viewsets.ModelViewSet):
         return Habit.objects.filter(user=self.request.user, is_active=True)
     
     def perform_create(self, serializer):
+        # Check quest limit based on user level
+        current_quests = Habit.objects.filter(
+            user=self.request.user,
+            is_active=True
+        ).count()
+        max_quests = get_max_quests_for_level(self.request.user.level)
+
+        if current_quests >= max_quests:
+            raise PermissionError(
+                f"You can only have {max_quests} quests at level {self.request.user.level}. "
+                f"Delete or complete a quest to create a new one. "
+                f"Reach level {self._get_next_level_milestone()} for more quests."
+            )
+
         serializer.save(user=self.request.user)
+
+    def _get_next_level_milestone(self):
+        """Get the next level where quest limit increases"""
+        current_level = self.request.user.level
+        if current_level < 6:
+            return 6
+        elif current_level < 11:
+            return 11
+        elif current_level < 16:
+            return 16
+        elif current_level < 20:
+            return 20
+        return current_level + 1
 
     def perform_update(self, serializer):
         """Ensure user can only update their own habits"""
@@ -216,6 +268,33 @@ class HabitViewSet(viewsets.ModelViewSet):
                     user.add_xp(achievement.reward_xp)
     
     @action(detail=False, methods=['get'])
+    def check_limit(self, request):
+        """Check current quest limit and usage for the user"""
+        current_quests = Habit.objects.filter(
+            user=request.user,
+            is_active=True
+        ).count()
+        max_quests = get_max_quests_for_level(request.user.level)
+
+        # Get next level milestone
+        next_level = 6 if request.user.level < 6 else (
+            11 if request.user.level < 11 else (
+                16 if request.user.level < 16 else (
+                    20 if request.user.level < 20 else request.user.level + 1
+                )
+            )
+        )
+
+        return Response({
+            'current_quests': current_quests,
+            'max_quests': max_quests,
+            'can_create': current_quests < max_quests,
+            'current_level': request.user.level,
+            'next_level_milestone': next_level,
+            'quests_remaining': max(0, max_quests - current_quests)
+        })
+
+    @action(detail=False, methods=['get'])
     def today(self, request):
         """Get today's habits with completion status"""
         habits = self.get_queryset()
@@ -297,7 +376,65 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
             user=request.user,
             is_equipped=True
         ).select_related('equipment')
-        
+
         equipment_items = [ue.equipment for ue in equipped]
         serializer = self.get_serializer(equipment_items, many=True)
         return Response(serializer.data)
+
+
+class DailyCheckInViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'])
+    def check_in(self, request):
+        """Create a daily check-in for the user (100 XP per check-in)"""
+        today = timezone.now().date()
+
+        # Check if user already checked in today
+        existing_checkin = DailyCheckIn.objects.filter(
+            user=request.user,
+            checked_in_at__date=today
+        ).first()
+
+        if existing_checkin:
+            return Response(
+                {'error': 'You have already checked in today. Come back tomorrow!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Create new check-in
+        checkin = DailyCheckIn.objects.create(user=request.user)
+
+        return Response({
+            'message': 'Daily check-in successful! You earned 100 XP!',
+            'xp_earned': checkin.xp_earned,
+            'user_stats': UserStatsSerializer(request.user).data
+        }, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'])
+    def history(self, request):
+        """Get daily check-in history for the past year (for contribution calendar)"""
+        from datetime import timedelta
+
+        # Get last 365 days of check-ins
+        start_date = timezone.now().date() - timedelta(days=365)
+        checkins = DailyCheckIn.objects.filter(
+            user=request.user,
+            checked_in_at__date__gte=start_date
+        ).order_by('checked_in_at')
+
+        # Format as list of dates for easier frontend processing
+        checkin_dates = [checkin.checked_in_at.date().isoformat() for checkin in checkins]
+
+        # Get today's check-in status
+        today = timezone.now().date()
+        checked_in_today = DailyCheckIn.objects.filter(
+            user=request.user,
+            checked_in_at__date=today
+        ).exists()
+
+        return Response({
+            'checkin_dates': checkin_dates,
+            'checked_in_today': checked_in_today,
+            'total_checkins': len(checkin_dates)
+        })

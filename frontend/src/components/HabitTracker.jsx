@@ -34,6 +34,7 @@ export function HabitTracker({ onHabitCompleted }) {
   const [editingHabit, setEditingHabit] = useState(null)
   const [celebrationModal, setCelebrationModal] = useState({ show: false, xp: 0, habitName: '' })
   const [completingHabitId, setCompletingHabitId] = useState(null)
+  const [questLimit, setQuestLimit] = useState(null)
 
   const [showXpPopup, setShowXpPopup] = useState({
     show: false,
@@ -46,6 +47,10 @@ export function HabitTracker({ onHabitCompleted }) {
       if (isInitialLoad) setLoading(true)
       const habitsData = await gameApi.getTodayHabits()
       setHabits(habitsData)
+
+      // Load quest limit info
+      const limitData = await gameApi.checkQuestLimit()
+      setQuestLimit(limitData)
     } catch (error) {
       console.error('Failed to load habits:', error)
     } finally {
@@ -298,21 +303,52 @@ export function HabitTracker({ onHabitCompleted }) {
     <>
       <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
         <div className="flex justify-between items-center mb-4 border-b-2 border-gray-700 pb-2">
-          <h2 className="text-2xl font-bold text-yellow-400 uppercase">
-            Daily Quests
-          </h2>
+          <div>
+            <h2 className="text-2xl font-bold text-yellow-400 uppercase">
+              Daily Quests
+            </h2>
+            {questLimit && (
+              <p className="text-xs text-gray-400 mt-1">
+                {questLimit.current_quests}/{questLimit.max_quests} Quests
+                {questLimit.max_quests < 999 && (
+                  <span className="ml-2">
+                    • Reach Level {questLimit.next_level_milestone} for more
+                  </span>
+                )}
+              </p>
+            )}
+          </div>
           <div className="flex gap-2">
             <button
               onClick={() => setShowImport(true)}
-              className="flex items-center px-4 py-2 bg-purple-700 border-2 border-purple-600 text-purple-200 hover:bg-purple-600 font-medium"
-              title="Import predefined quests"
+              disabled={questLimit && !questLimit.can_create}
+              className={`flex items-center px-4 py-2 border-2 font-medium transition-all ${
+                questLimit && !questLimit.can_create
+                  ? 'bg-gray-600 border-gray-500 text-gray-400 cursor-not-allowed opacity-60'
+                  : 'bg-purple-700 border-purple-600 text-purple-200 hover:bg-purple-600'
+              }`}
+              title={
+                questLimit && !questLimit.can_create
+                  ? `Quest limit reached (${questLimit.current_quests}/${questLimit.max_quests})`
+                  : 'Import predefined quests'
+              }
             >
               <Download size={16} className="mr-1" />
               Import Quests
             </button>
             <button
               onClick={() => setShowCreation(true)}
-              className="flex items-center px-4 py-2 bg-yellow-700 border-2 border-yellow-600 text-yellow-200 hover:bg-yellow-600 font-medium"
+              disabled={questLimit && !questLimit.can_create}
+              className={`flex items-center px-4 py-2 border-2 font-medium transition-all ${
+                questLimit && !questLimit.can_create
+                  ? 'bg-gray-600 border-gray-500 text-gray-400 cursor-not-allowed opacity-60'
+                  : 'bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600'
+              }`}
+              title={
+                questLimit && !questLimit.can_create
+                  ? `Quest limit reached (${questLimit.current_quests}/${questLimit.max_quests}). Reach level ${questLimit.next_level_milestone} for more.`
+                  : 'Create a new quest'
+              }
             >
               <Plus size={16} className="mr-1" />
               New Quest

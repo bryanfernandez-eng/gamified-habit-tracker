@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 
 import { gameApi } from '../../services/gameApi'
+import { DailyCheckInTracker } from './DailyCheckInTracker'
 import ZoroImg from '/src/assets/zoro.png'
 
 export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
@@ -91,6 +92,11 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
 
   const xpPercentage = Math.min(100, (stats.current_xp / stats.next_level_xp) * 100)
   const hpPercentage = (stats.current_hp / stats.max_hp) * 100
+
+  const handleCheckInSuccess = (updatedStats) => {
+    // Update stats with the returned data from check-in
+    setStats(updatedStats)
+  }
 
   if (loading) {
     return (
@@ -191,6 +197,11 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
             {error}
           </div>
         )}
+      </div>
+
+      {/* Daily Check-In Tracker */}
+      <div className="w-full max-w-sm">
+        <DailyCheckInTracker onCheckInSuccess={handleCheckInSuccess} />
       </div>
 
       {/* Level Up Popup */}

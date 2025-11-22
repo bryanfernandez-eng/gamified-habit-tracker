@@ -29,6 +29,11 @@ export const gameApi = {
     return response.data
   },
 
+  checkQuestLimit: async () => {
+    const response = await api.get('/api/game/habits/check_limit/')
+    return response.data
+  },
+
   createHabit: async (habitData) => {
     const response = await api.post('/api/game/habits/', habitData)
     return response.data
@@ -82,6 +87,17 @@ export const gameApi = {
   // Onboarding
   createInitialHabits: async (surveyData) => {
     const response = await api.post('/api/create-initial-habits/', surveyData)
+    return response.data
+  },
+
+  // Daily Check-In
+  checkIn: async () => {
+    const response = await api.post('/api/game/daily-checkin/check_in/')
+    return response.data
+  },
+
+  getCheckInHistory: async () => {
+    const response = await api.get('/api/game/daily-checkin/history/')
     return response.data
   }
 }
