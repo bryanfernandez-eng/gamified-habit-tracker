@@ -77,5 +77,11 @@ export const gameApi = {
   equipItem: async (equipmentId) => {
     const response = await api.post(`/api/game/equipment/${equipmentId}/equip/`)
     return response.data
+  },
+
+  // Onboarding
+  createInitialHabits: async (surveyData) => {
+    const response = await api.post('/api/create-initial-habits/', surveyData)
+    return response.data
   }
 }

@@ -33,7 +33,7 @@ const authReducer = (state, action) => {
 const initialState = {
   user: null,
   token: localStorage.getItem('token'),
-  isAuthenticated: false,
+  isAuthenticated: !!localStorage.getItem('token'), // Set to true if token exists
   loading: true,
   error: null
 }
@@ -62,6 +62,7 @@ export function AuthProvider({ children }) {
           const response = await api.get('/auth/user/')
           dispatch({ type: 'SET_USER', user: response.data })
         } catch (error) {
+          console.error('Error fetching user data:', error)
           localStorage.removeItem('token')
           delete api.defaults.headers.common['Authorization']
           dispatch({ type: 'LOGOUT' })
@@ -113,7 +114,7 @@ export function AuthProvider({ children }) {
     try {
       const response = await api.post('/auth/login/', credentials)
       const { key: token, user } = response.data
-      
+
       // If user data is included in response, use it directly
       if (user) {
         dispatch({ type: 'LOGIN_SUCCESS', user, token })
@@ -123,9 +124,10 @@ export function AuthProvider({ children }) {
         const userResponse = await api.get('/auth/user/')
         dispatch({ type: 'LOGIN_SUCCESS', user: userResponse.data, token })
       }
-      
+
       return { success: true }
     } catch (error) {
+      console.error('Login error:', error)
       const { generalError, fieldErrors } = parseErrorResponse(error)
       dispatch({ type: 'LOGIN_FAILURE', error: generalError })
       return { success: false, error: generalError, fieldErrors }

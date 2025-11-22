@@ -46,10 +46,31 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <div className="mb-8">
+            <div className="inline-block">
+              <div className="relative w-16 h-16">
+                {/* Outer rotating border */}
+                <div className="absolute inset-0 border-4 border-transparent border-t-yellow-400 border-r-yellow-400 rounded-full animate-spin"></div>
+                {/* Inner pulsing circle */}
+                <div className="absolute inset-2 border-2 border-yellow-600 rounded-full animate-pulse"></div>
+                {/* Center lightning bolt */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11.857 4.793L8.5 11h3L8.143 15.207L11 8H8l3.857-3.207z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-yellow-400 uppercase tracking-widest mb-3">Initializing Quest Tracker</h2>
+          <p className="text-gray-400 text-sm uppercase tracking-wide">Preparing your adventure...</p>
+          <div className="mt-6 flex gap-2 justify-center">
+            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+          </div>
         </div>
       </div>
     )
@@ -81,7 +102,11 @@ function AppContent() {
         />
         <Route
           path="/leaderboard"
-          element={<Leaderboard />}
+          element={
+            <ProtectedRoute fallback={<Home />}>
+              <Leaderboard />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/settings"
