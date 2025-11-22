@@ -49,6 +49,8 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
   // Update with external stats immediately (optimistic update)
   useEffect(() => {
     if (externalStats) {
+      console.log('CharacterAvatar: Received externalStats, updating:', externalStats)
+      console.log('CharacterAvatar: Previous stats:', stats)
       setStats(externalStats)
       setError(null)
     }

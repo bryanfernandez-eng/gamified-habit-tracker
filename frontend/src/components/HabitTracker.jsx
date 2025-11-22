@@ -10,10 +10,12 @@ import {
   Edit2,
   Sparkles,
   X,
+  Download,
 } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
 import { HabitCreation } from './HabitCreation'
 import { HabitEditor } from './HabitEditor'
+import { ImportQuests } from './ImportQuests'
 
 // Constants
 const SOUND_FREQUENCY_START = 800
@@ -28,6 +30,7 @@ export function HabitTracker({ onHabitCompleted }) {
   const [habits, setHabits] = useState([])
   const [loading, setLoading] = useState(true)
   const [showCreation, setShowCreation] = useState(false)
+  const [showImport, setShowImport] = useState(false)
   const [editingHabit, setEditingHabit] = useState(null)
   const [celebrationModal, setCelebrationModal] = useState({ show: false, xp: 0, habitName: '' })
   const [completingHabitId, setCompletingHabitId] = useState(null)
@@ -125,7 +128,7 @@ export function HabitTracker({ onHabitCompleted }) {
           return {
             canComplete: false,
             timeRemaining,
-            status: `Already completed today. Available in ${timeRemaining}`
+            status: 'Already completed today.'
           }
         }
       }
@@ -158,23 +161,10 @@ export function HabitTracker({ onHabitCompleted }) {
         }
 
         if (cooldownMs > 0) {
-          // Convert milliseconds to human readable format
-          const hours = Math.floor(cooldownMs / (1000 * 60 * 60))
-          const minutes = Math.floor((cooldownMs % (1000 * 60 * 60)) / (1000 * 60))
-          const seconds = Math.floor((cooldownMs % (1000 * 60)) / 1000)
-
-          let timeStr = ''
-          if (hours > 0) timeStr += `${hours}h `
-          if (minutes > 0 || hours > 0) timeStr += `${minutes}m `
-          if (seconds > 0 || (hours === 0 && minutes === 0)) timeStr += `${seconds}s`
-
-          const timeRemaining = timeStr.trim()
-          if (timeRemaining) {
-            return {
-              canComplete: false,
-              timeRemaining,
-              status: `Already completed today. Available in ${timeRemaining}`
-            }
+          return {
+            canComplete: false,
+            timeRemaining: null,
+            status: 'Already completed today.'
           }
         }
       }
@@ -230,15 +220,27 @@ export function HabitTracker({ onHabitCompleted }) {
       })
 
       // Show XP popup
-      const rect = event.currentTarget.getBoundingClientRect()
-      setShowXpPopup({
-        show: true,
-        xp: result.xp_earned,
-        position: {
-          x: rect.left + window.scrollX,
-          y: rect.top + window.scrollY,
-        },
-      })
+      if (event.currentTarget) {
+        const rect = event.currentTarget.getBoundingClientRect()
+        setShowXpPopup({
+          show: true,
+          xp: result.xp_earned,
+          position: {
+            x: rect.left + window.scrollX,
+            y: rect.top + window.scrollY,
+          },
+        })
+      } else {
+        // Fallback if event.currentTarget is not available
+        setShowXpPopup({
+          show: true,
+          xp: result.xp_earned,
+          position: {
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+          },
+        })
+      }
 
       // Optimistically update habit state immediately
       const updatedHabits = habits.map(h => {
@@ -259,7 +261,13 @@ export function HabitTracker({ onHabitCompleted }) {
 
       // Trigger character avatar refresh with stats from server response
       if (onHabitCompleted && result.user_stats) {
+        console.log('HabitTracker: Calling onHabitCompleted with stats:', result.user_stats)
         onHabitCompleted(result.user_stats)
+      } else {
+        console.log('HabitTracker: Missing onHabitCompleted or user_stats', {
+          hasCallback: !!onHabitCompleted,
+          hasStats: !!result.user_stats
+        })
       }
 
       // Hide XP popup after animation
@@ -273,7 +281,6 @@ export function HabitTracker({ onHabitCompleted }) {
       }, CELEBRATION_MODAL_DURATION)
     } catch (error) {
       console.error('Failed to complete habit:', error)
-      alert(`Error: ${error.response?.data?.error || error.message || 'Failed to complete habit'}`)
       // Reload habits if there was an error
       loadHabits()
     } finally {
@@ -292,13 +299,23 @@ export function HabitTracker({ onHabitCompleted }) {
           <h2 className="text-2xl font-bold text-yellow-400 uppercase">
             Daily Quests
           </h2>
-          <button
-            onClick={() => setShowCreation(true)}
-            className="flex items-center px-4 py-2 bg-yellow-700 border-2 border-yellow-600 text-yellow-200 hover:bg-yellow-600 font-medium"
-          >
-            <Plus size={16} className="mr-1" />
-            New Quest
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowImport(true)}
+              className="flex items-center px-4 py-2 bg-purple-700 border-2 border-purple-600 text-purple-200 hover:bg-purple-600 font-medium"
+              title="Import predefined quests"
+            >
+              <Download size={16} className="mr-1" />
+              Import Quests
+            </button>
+            <button
+              onClick={() => setShowCreation(true)}
+              className="flex items-center px-4 py-2 bg-yellow-700 border-2 border-yellow-600 text-yellow-200 hover:bg-yellow-600 font-medium"
+            >
+              <Plus size={16} className="mr-1" />
+              New Quest
+            </button>
+          </div>
         </div>
         <div className="space-y-4">
         {habits.map((habit) => {
@@ -447,6 +464,16 @@ export function HabitTracker({ onHabitCompleted }) {
             loadHabits()
           }}
           onClose={() => setShowCreation(false)}
+        />
+      )}
+
+      {showImport && (
+        <ImportQuests
+          onQuestsImported={() => {
+            setShowImport(false)
+            loadHabits()
+          }}
+          onClose={() => setShowImport(false)}
         />
       )}
 
