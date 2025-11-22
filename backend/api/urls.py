@@ -1,9 +1,9 @@
 # backend/api/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import health, user_profile, AdminUserViewSet
+from .views import health, user_profile, change_password, update_display_name, AdminUserViewSet
 from .game_views import (
-    UserStatsViewSet, HabitViewSet, 
+    UserStatsViewSet, HabitViewSet,
     AchievementViewSet, EquipmentViewSet
 )
 
@@ -18,5 +18,7 @@ router.register(r'game/equipment', EquipmentViewSet, basename='game-equipment')
 urlpatterns = [
     path("health/", health),
     path("profile/", user_profile),
+    path("change-password/", change_password),
+    path("update-display-name/", update_display_name),
     path("", include(router.urls)),
 ]

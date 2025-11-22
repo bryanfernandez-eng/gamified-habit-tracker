@@ -9,11 +9,17 @@ import { CharacterCustomizer } from '../CharacterCustomizer'
 
 export function GameDashboard() {
   const [activeTab, setActiveTab] = useState('habits')
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+  const handleHabitCompleted = () => {
+    // Trigger CharacterAvatar refresh
+    setRefreshTrigger(prev => prev + 1)
+  }
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'habits':
-        return <HabitTracker />
+        return <HabitTracker onHabitCompleted={handleHabitCompleted} />
       case 'stats':
         return <StatsDisplay />
       case 'achievements':
@@ -21,7 +27,7 @@ export function GameDashboard() {
       case 'customize':
         return <CharacterCustomizer />
       default:
-        return <HabitTracker />
+        return <HabitTracker onHabitCompleted={handleHabitCompleted} />
     }
   }
 
@@ -30,9 +36,9 @@ export function GameDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Sidebar - Character */}
         <div className="lg:col-span-1">
-          <CharacterAvatar />
+          <CharacterAvatar refreshTrigger={refreshTrigger} />
         </div>
-        
+
         {/* Main Content Area */}
         <div className="lg:col-span-3">
           <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />

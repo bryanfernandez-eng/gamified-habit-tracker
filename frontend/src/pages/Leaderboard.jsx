@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { gameApi } from "../services/gameApi";
 
 const demoPlayers = [
   { id: 1, name: "Michael Jordan", level: 5, currentFloor: 18, hp: 80, xp: 75 },
@@ -130,7 +131,40 @@ const Row = ({ index, player }) => (
 );
 
 const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
-  const sorted = [...players].sort((a, b) => {
+  const [leaderboardData, setLeaderboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadLeaderboard();
+  }, []);
+
+  const loadLeaderboard = async () => {
+    try {
+      setLoading(true);
+      const data = await gameApi.getLeaderboard();
+      setLeaderboardData(data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to load leaderboard:", err);
+      setError("Failed to load leaderboard");
+      setLeaderboardData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use backend data if available, otherwise use demo/props data
+  const displayPlayers = leaderboardData ? leaderboardData.map((player) => ({
+    id: player.id,
+    name: player.display_name || player.username,
+    level: player.level,
+    currentFloor: player.level * 3 + Math.floor(player.current_xp / 10), // Calculate floor based on level and XP
+    hp: player.current_hp,
+    xp: Math.min(100, (player.current_xp / player.next_level_xp) * 100), // Convert to percentage
+  })) : players;
+
+  const sorted = [...displayPlayers].sort((a, b) => {
     if (b.currentFloor !== a.currentFloor) return b.currentFloor - a.currentFloor;
     if (b.xp !== a.xp) return b.xp - a.xp;
     return a.name.localeCompare(b.name);
@@ -138,6 +172,17 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
 
   const top3 = sorted.slice(0, 3);
   const rest = sorted.slice(3);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-[#0F1924] text-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-yellow-400 mb-4">Loading Leaderboard...</div>
+          <div className="text-slate-400">Fetching rankings from server</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-[#0F1924] text-slate-100">
@@ -152,6 +197,7 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
           <div className="flex items-center gap-2 text-xs">
             <Badge>Sorted: Floor ↓</Badge>
             <Badge color="slate">Tie‑break: XP</Badge>
+            {error && <Badge color="slate">⚠️ {error}</Badge>}
           </div>
         </div>
 

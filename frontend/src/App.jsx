@@ -12,6 +12,8 @@ import Navbar from './components/Navbar'
 import ConnectionStatus from './components/ConnectionStatus'
 import Leaderboard from './pages/Leaderboard'
 import Settings from './pages/Settings'
+import Home from './pages/Home'
+
 function AuthScreen() {
   const [isLogin, setIsLogin] = useState(true)
   
@@ -57,29 +59,41 @@ function AppContent() {
     <>
       {isAuthenticated && <Navbar />}
       <Routes>
-        <Route 
-          path="/" 
-          element={isAuthenticated ? <Dashboard /> : <AuthScreen />} 
+        <Route
+          path="/"
+          element={isAuthenticated ? <Dashboard /> : <Home />}
         />
-        <Route 
-          path="/admin" 
+        <Route
+          path="/login"
+          element={<AuthScreen />}
+        />
+        <Route
+          path="/register"
+          element={<AuthScreen />}
+        />
+        <Route
+          path="/admin"
           element={
-            <ProtectedRoute requireAdmin={true} fallback={isAuthenticated ? <NotFound /> : <AuthScreen />}>
+            <ProtectedRoute requireAdmin={true} fallback={isAuthenticated ? <NotFound /> : <Home />}>
               <AdminPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/leaderboard" 
-          element={<Leaderboard />} 
+        <Route
+          path="/leaderboard"
+          element={<Leaderboard />}
         />
-        <Route 
-          path="/settings" 
-          element={<Settings />} 
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute fallback={<Home />}>
+              <Settings />
+            </ProtectedRoute>
+          }
         />
-        <Route 
-          path="*" 
-          element={<NotFound />} 
+        <Route
+          path="*"
+          element={<NotFound />}
         />
       </Routes>
     </>

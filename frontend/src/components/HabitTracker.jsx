@@ -6,13 +6,19 @@ import {
   BookOpen,
   Brush,
   Users,
+  Plus,
+  Edit2,
 } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
+import { HabitCreation } from './HabitCreation'
+import { HabitEditor } from './HabitEditor'
 
-export function HabitTracker() {
+export function HabitTracker({ onHabitCompleted }) {
   const [habits, setHabits] = useState([])
   const [loading, setLoading] = useState(true)
   const [userStats, setUserStats] = useState(null)
+  const [showCreation, setShowCreation] = useState(false)
+  const [editingHabit, setEditingHabit] = useState(null)
 
   useEffect(() => {
     loadHabits()
@@ -91,10 +97,15 @@ export function HabitTracker() {
       
       // Update user stats
       setUserStats(result.user_stats)
-      
+
       // Reload habits to update completion status
       await loadHabits()
-      
+
+      // Trigger character avatar refresh
+      if (onHabitCompleted) {
+        onHabitCompleted()
+      }
+
       // Hide XP popup after animation
       setTimeout(() => {
         setShowXpPopup(prev => ({ ...prev, show: false }))
@@ -109,11 +120,21 @@ export function HabitTracker() {
   }
   
   return (
-    <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
-      <h2 className="text-2xl font-bold text-yellow-400 uppercase mb-4 border-b-2 border-gray-700 pb-2">
-        Daily Quests
-      </h2>
-      <div className="space-y-4">
+    <>
+      <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
+        <div className="flex justify-between items-center mb-4 border-b-2 border-gray-700 pb-2">
+          <h2 className="text-2xl font-bold text-yellow-400 uppercase">
+            Daily Quests
+          </h2>
+          <button
+            onClick={() => setShowCreation(true)}
+            className="flex items-center px-4 py-2 bg-yellow-700 border-2 border-yellow-600 text-yellow-200 hover:bg-yellow-600 font-medium"
+          >
+            <Plus size={16} className="mr-1" />
+            New Quest
+          </button>
+        </div>
+        <div className="space-y-4">
         {habits.map((habit) => (
           <div
             key={habit.id}
@@ -136,13 +157,20 @@ export function HabitTracker() {
                   </span>
                 </div>
               </div>
-              <div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setEditingHabit(habit)}
+                  className="px-3 py-2 bg-blue-700 border-2 border-blue-600 text-blue-200 hover:bg-blue-600"
+                  title="Edit quest"
+                >
+                  <Edit2 size={16} />
+                </button>
                 <button
                   onClick={(e) => toggleHabit(habit.id, e)}
                   disabled={habit.completed}
                   className={`px-4 py-2 flex items-center ${
-                    habit.completed 
-                      ? 'bg-gray-600 text-gray-400 cursor-default border-2 border-gray-500' 
+                    habit.completed
+                      ? 'bg-gray-600 text-gray-400 cursor-default border-2 border-gray-500'
                       : 'bg-yellow-700 text-yellow-200 hover:bg-yellow-600 border-2 border-yellow-600'
                   }`}
                 >
@@ -164,20 +192,42 @@ export function HabitTracker() {
             </div>
           </div>
         ))}
-      </div>
-      {showXpPopup.show && (
-        <div
-          className="fixed z-50 pointer-events-none animate-bounce"
-          style={{
-            left: `${showXpPopup.position.x}px`,
-            top: `${showXpPopup.position.y - 20}px`,
-          }}
-        >
-          <div className="bg-yellow-600 text-yellow-200 font-bold px-2 py-1 text-sm border-2 border-yellow-700">
-            +{showXpPopup.xp} XP
-          </div>
         </div>
+        {showXpPopup.show && (
+          <div
+            className="fixed z-50 pointer-events-none animate-bounce"
+            style={{
+              left: `${showXpPopup.position.x}px`,
+              top: `${showXpPopup.position.y - 20}px`,
+            }}
+          >
+            <div className="bg-yellow-600 text-yellow-200 font-bold px-2 py-1 text-sm border-2 border-yellow-700">
+              +{showXpPopup.xp} XP
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showCreation && (
+        <HabitCreation
+          onHabitCreated={() => {
+            setShowCreation(false)
+            loadHabits()
+          }}
+          onClose={() => setShowCreation(false)}
+        />
       )}
-    </div>
+
+      {editingHabit && (
+        <HabitEditor
+          habit={editingHabit}
+          onHabitUpdated={() => {
+            setEditingHabit(null)
+            loadHabits()
+          }}
+          onClose={() => setEditingHabit(null)}
+        />
+      )}
+    </>
   )
 }

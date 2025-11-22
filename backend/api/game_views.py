@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
-from django.db.models import Count, Sum, F
+from django.db.models import Count, Sum, F, Q
 from .models import (
     Habit, HabitCompletion, Achievement, 
     UserAchievement, Equipment, UserEquipment
@@ -16,35 +16,65 @@ from .game_serializers import (
 
 class UserStatsViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
-    
+
     def list(self, request):
         """Get current user's game stats"""
         serializer = UserStatsSerializer(request.user)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'])
     def detailed(self, request):
         """Get detailed stats with recent completions"""
         user = request.user
         stats = UserStatsSerializer(user).data
-        
+
         # Get recent habit completions
         recent_completions = HabitCompletion.objects.filter(
             user=user
         ).select_related('habit')[:10]
-        
+
         # Get completion stats by category
         category_stats = Habit.objects.filter(user=user).values('category').annotate(
             total_habits=Count('id'),
             total_completions=Count('completions'),
             total_xp=Sum('completions__xp_earned')
         )
-        
+
         return Response({
             'stats': stats,
             'recent_completions': HabitCompletionSerializer(recent_completions, many=True).data,
             'category_stats': category_stats
         })
+
+    @action(detail=False, methods=['get'])
+    def leaderboard(self, request):
+        """Get global leaderboard sorted by level and XP"""
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        # Get all users sorted by level (descending) then XP (descending)
+        users = User.objects.all().order_by('-level', '-current_xp')
+
+        leaderboard_data = []
+        for rank, user in enumerate(users, 1):
+            leaderboard_data.append({
+                'rank': rank,
+                'id': user.id,
+                'username': user.username,
+                'display_name': user.display_name or user.username,
+                'level': user.level,
+                'current_xp': user.current_xp,
+                'next_level_xp': user.next_level_xp,
+                'max_hp': user.max_hp,
+                'current_hp': user.current_hp,
+                'strength': user.strength,
+                'intelligence': user.intelligence,
+                'creativity': user.creativity,
+                'social': user.social,
+                'health': user.health,
+            })
+
+        return Response(leaderboard_data)
 
 
 class HabitViewSet(viewsets.ModelViewSet):
@@ -56,7 +86,29 @@ class HabitViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-    
+
+    def perform_update(self, serializer):
+        """Ensure user can only update their own habits"""
+        habit = self.get_object()
+        if habit.user != self.request.user:
+            raise PermissionError("You can only edit your own habits")
+        serializer.save()
+
+    def destroy(self, request, *args, **kwargs):
+        """Soft delete - set is_active to False"""
+        habit = self.get_object()
+        if habit.user != request.user:
+            return Response(
+                {'error': 'You can only delete your own habits'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        habit.is_active = False
+        habit.save()
+        return Response(
+            {'message': 'Habit deleted successfully'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
     @action(detail=False, methods=['post'])
     def complete(self, request):
         """Mark a habit as complete"""
@@ -107,23 +159,61 @@ class HabitViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def _check_achievements(self, user, habit):
-        """Check and update achievement progress"""
-        # Check streak achievements
-        streak_achievements = Achievement.objects.filter(
-            requirement_type='streak',
-            requirement_category__in=['', habit.category]
-        )
-        
-        for achievement in streak_achievements:
+        """Check and update achievement progress for all achievement types"""
+        # Get all achievements to check against
+        achievements = Achievement.objects.all()
+
+        for achievement in achievements:
             user_achievement, created = UserAchievement.objects.get_or_create(
                 user=user,
-                achievement=achievement
+                achievement=achievement,
+                defaults={'progress': 0}
             )
-            
-            if habit.streak >= achievement.requirement_value and user_achievement.progress < achievement.requirement_value:
-                user_achievement.progress = achievement.requirement_value
+
+            # Skip if already unlocked
+            if user_achievement.progress >= achievement.requirement_value:
+                continue
+
+            new_progress = user_achievement.progress
+            unlocked = False
+
+            # Check based on achievement type
+            if achievement.requirement_type == 'streak':
+                # Check if this habit's streak meets the requirement
+                if not achievement.requirement_category or achievement.requirement_category == habit.category:
+                    if habit.streak >= achievement.requirement_value:
+                        new_progress = achievement.requirement_value
+                        unlocked = True
+
+            elif achievement.requirement_type == 'attribute_level':
+                # Check if user has reached the required attribute level
+                if hasattr(user, achievement.requirement_category):
+                    attr_level = getattr(user, achievement.requirement_category)
+                    if attr_level >= achievement.requirement_value:
+                        new_progress = achievement.requirement_value
+                        unlocked = True
+
+            elif achievement.requirement_type == 'level':
+                # Check if user has reached the required character level
+                if user.level >= achievement.requirement_value:
+                    new_progress = achievement.requirement_value
+                    unlocked = True
+
+            elif achievement.requirement_type == 'total_completions':
+                # Check if user has completed the required number of habits
+                total_completions = HabitCompletion.objects.filter(user=user).count()
+                if total_completions >= achievement.requirement_value:
+                    new_progress = achievement.requirement_value
+                    unlocked = True
+
+            # Update progress if it changed
+            if new_progress != user_achievement.progress:
+                user_achievement.progress = new_progress
                 user_achievement.save()
-                user.add_xp(achievement.reward_xp)
+
+                # Award XP if just unlocked
+                if unlocked:
+                    user.add_xp(achievement.reward_xp)
     
     @action(detail=False, methods=['get'])
     def today(self, request):

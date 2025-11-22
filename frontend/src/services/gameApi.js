@@ -13,6 +13,11 @@ export const gameApi = {
     return response.data
   },
 
+  getLeaderboard: async () => {
+    const response = await api.get('/api/game/stats/leaderboard/')
+    return response.data
+  },
+
   // Habits
   getHabits: async () => {
     const response = await api.get('/api/game/habits/')
@@ -26,6 +31,16 @@ export const gameApi = {
 
   createHabit: async (habitData) => {
     const response = await api.post('/api/game/habits/', habitData)
+    return response.data
+  },
+
+  updateHabit: async (habitId, habitData) => {
+    const response = await api.put(`/api/game/habits/${habitId}/`, habitData)
+    return response.data
+  },
+
+  deleteHabit: async (habitId) => {
+    const response = await api.delete(`/api/game/habits/${habitId}/`)
     return response.data
   },
 

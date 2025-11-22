@@ -163,6 +163,8 @@ export function AuthProvider({ children }) {
       console.error('Logout error:', error)
     } finally {
       dispatch({ type: 'LOGOUT' })
+      // Redirect to home after logout
+      window.location.href = '/'
     }
   }
 

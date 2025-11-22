@@ -72,7 +72,7 @@ export function StatsDisplay() {
       >
         <div className={`p-3 border-b-2 ${borderColor}`}>
           <div className="flex items-center">
-            <div className={`p-2 ${color} border-2 border-gray-700 mr-3`}>
+            <div className={`p-2 ${color} border-2  mr-3`}>
               {icon}
             </div>
             <div>
