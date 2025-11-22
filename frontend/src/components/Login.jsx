@@ -20,7 +20,7 @@ export default function Login({ onToggleMode }) {
 
     const result = await login(formData)
     if (result.success) {
-      navigate('/')
+      navigate('/dashboard', { replace: true })
     } else if (result.fieldErrors) {
       setFieldErrors(result.fieldErrors)
     }

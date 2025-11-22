@@ -7,19 +7,13 @@ import { StatsDisplay } from '../StatsDisplay'
 import { AchievementPanel } from '../AchievementPanel'
 import { CharacterCustomizer } from '../CharacterCustomizer'
 
-export function GameDashboard() {
+export function GameDashboard({ userStats, onStatsUpdate, updateTrigger }) {
   const [activeTab, setActiveTab] = useState('habits')
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
-
-  const handleHabitCompleted = () => {
-    // Trigger CharacterAvatar refresh
-    setRefreshTrigger(prev => prev + 1)
-  }
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'habits':
-        return <HabitTracker onHabitCompleted={handleHabitCompleted} />
+        return <HabitTracker onHabitCompleted={onStatsUpdate} />
       case 'stats':
         return <StatsDisplay />
       case 'achievements':
@@ -27,7 +21,7 @@ export function GameDashboard() {
       case 'customize':
         return <CharacterCustomizer />
       default:
-        return <HabitTracker onHabitCompleted={handleHabitCompleted} />
+        return <HabitTracker onHabitCompleted={onStatsUpdate} />
     }
   }
 
@@ -36,7 +30,7 @@ export function GameDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Sidebar - Character */}
         <div className="lg:col-span-1">
-          <CharacterAvatar refreshTrigger={refreshTrigger} />
+          <CharacterAvatar refreshTrigger={updateTrigger} userStats={userStats} />
         </div>
 
         {/* Main Content Area */}

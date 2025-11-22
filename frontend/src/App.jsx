@@ -43,6 +43,15 @@ function AuthScreen() {
 
 function AppContent() {
   const { isAuthenticated, loading } = useAuth()
+  const [userStats, setUserStats] = useState(null)
+  const [updateTrigger, setUpdateTrigger] = useState(0)
+
+  const handleStatsUpdate = (stats) => {
+    if (stats) {
+      setUserStats(stats)
+      setUpdateTrigger(prev => prev + 1)
+    }
+  }
 
   if (loading) {
     return (
@@ -82,7 +91,15 @@ function AppContent() {
       <Routes>
         <Route
           path="/"
-          element={isAuthenticated ? <Dashboard /> : <Home />}
+          element={<Home />}
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute fallback={<Home />}>
+              <Dashboard userStats={userStats} onStatsUpdate={handleStatsUpdate} updateTrigger={updateTrigger} />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/login"

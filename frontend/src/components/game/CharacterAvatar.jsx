@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
-  Shield,
-  Heart,
-  Zap,
   Brain,
-  Users,
+  Heart,
   Palette,
+  Shield,
+  Users,
+  Zap,
 } from 'lucide-react'
+
 import { gameApi } from '../../services/gameApi'
 import ZoroImg from '/src/assets/zoro.png'
 
-export function CharacterAvatar({ refreshTrigger }) {
+export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
   const [stats, setStats] = useState({
     level: 1,
     current_hp: 100,
@@ -26,13 +27,9 @@ export function CharacterAvatar({ refreshTrigger }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    loadStats()
-  }, [refreshTrigger])
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async (isInitialLoad = false) => {
     try {
-      setLoading(true)
+      if (isInitialLoad) setLoading(true)
       setError(null)
       const data = await gameApi.getUserStats()
       setStats(data)
@@ -40,9 +37,29 @@ export function CharacterAvatar({ refreshTrigger }) {
       console.error('Failed to load stats:', err)
       setError('Failed to load character stats')
     } finally {
-      setLoading(false)
+      if (isInitialLoad) setLoading(false)
     }
-  }
+  }, [])
+
+  // Initialize stats on component mount only
+  useEffect(() => {
+    loadStats(true) // Initial load, show loading state
+  }, [])
+
+  // Update with external stats immediately (optimistic update)
+  useEffect(() => {
+    if (externalStats) {
+      setStats(externalStats)
+      setError(null)
+    }
+  }, [externalStats])
+
+  // Verify stats with server when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      loadStats(false) // Don't show loading, just update silently
+    }
+  }, [refreshTrigger])
 
   const xpPercentage = Math.min(100, (stats.current_xp / stats.next_level_xp) * 100)
   const hpPercentage = (stats.current_hp / stats.max_hp) * 100

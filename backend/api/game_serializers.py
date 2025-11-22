@@ -18,14 +18,15 @@ class UserStatsSerializer(serializers.ModelSerializer):
 
 class HabitSerializer(serializers.ModelSerializer):
     completed_today = serializers.SerializerMethodField()
-    
+    last_completed_at = serializers.SerializerMethodField()
+
     class Meta:
         model = Habit
         fields = [
-            'id', 'name', 'description', 'category', 'xp_reward', 
-            'frequency', 'streak', 'is_active', 'completed_today'
+            'id', 'name', 'description', 'category', 'xp_reward',
+            'frequency', 'streak', 'is_active', 'completed_today', 'last_completed_at'
         ]
-    
+
     def get_completed_today(self, obj):
         from django.utils import timezone
         today = timezone.now().date()
@@ -33,6 +34,12 @@ class HabitSerializer(serializers.ModelSerializer):
             completed_at__date=today,
             user=self.context['request'].user
         ).exists()
+
+    def get_last_completed_at(self, obj):
+        completion = obj.completions.filter(
+            user=self.context['request'].user
+        ).order_by('-completed_at').first()
+        return completion.completed_at if completion else None
 
 
 class HabitCompletionSerializer(serializers.ModelSerializer):

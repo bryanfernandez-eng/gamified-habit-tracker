@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Zap, Target, Trophy, TrendingUp, Users, Sparkles } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
 import ConnectionStatus from '../components/ConnectionStatus'
 
 export default function Home() {
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+
+  // Redirect to dashboard if user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">

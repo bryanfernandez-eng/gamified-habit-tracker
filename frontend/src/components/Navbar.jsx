@@ -51,7 +51,7 @@ export default function Navbar() {
             <div className="flex items-center bg-gray-800 border-2 border-yellow-600 px-2 sm:px-6 py-1 sm:py-2 shadow-md h-8 sm:h-10">
               <Sword className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1 sm:mr-2" />
               <a
-                href="/"
+                href="/dashboard"
                 className="text-sm sm:text-lg font-bold text-yellow-400 uppercase tracking-wider hover:text-yellow-300 transition-colors"
               >
                 <span className="hidden xs:inline">Quest Tracker</span>
@@ -63,7 +63,7 @@ export default function Navbar() {
           {/* Center Section - Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-3">
             <a
-              href="/"
+              href="/dashboard"
               className="group flex items-center px-4 py-2 bg-gray-800 border-2 border-gray-700 text-gray-300 hover:bg-gray-700 hover:border-yellow-600 hover:text-yellow-400 transition-all duration-200 uppercase text-xs font-bold rounded-sm h-10"
             >
               <Home className="w-4 h-4 mr-2 group-hover:animate-bounce" />
@@ -140,13 +140,13 @@ export default function Navbar() {
 
         {/* Mobile Navigation Menu - Collapsible */}
         <div className={`lg:hidden transition-all duration-300 ease-in-out ${
-          mobileMenuOpen 
-            ? 'max-h-96 opacity-100 border-t border-gray-700 py-3' 
+          mobileMenuOpen
+            ? 'max-h-96 opacity-100 border-t border-gray-700 py-3'
             : 'max-h-0 opacity-0 overflow-hidden'
         }`}>
           <div className="flex flex-col space-y-2">
             <a
-              href="/"
+              href="/dashboard"
               onClick={closeMobileMenu}
               className="flex items-center px-4 py-3 bg-gray-800 border-2 border-gray-700 text-gray-300 hover:bg-gray-700 hover:border-yellow-600 hover:text-yellow-400 transition-all text-sm font-bold rounded-sm min-h-12 active:bg-gray-600"
             >
