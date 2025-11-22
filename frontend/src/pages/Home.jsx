@@ -53,10 +53,10 @@ export default function Home() {
               Get Started
             </button>
             <button
-              onClick={() => navigate('/leaderboard')}
-              className="px-8 py-3 bg-gray-700 text-gray-200 hover:bg-gray-600 font-bold uppercase text-lg rounded-sm transition-all border-2 border-gray-600 hover:border-yellow-400"
+              onClick={() => navigate('/register')}
+              className="px-8 py-3 bg-purple-700 text-purple-100 hover:bg-purple-600 font-bold uppercase text-lg rounded-sm transition-all border-2 border-purple-600 hover:shadow-lg hover:shadow-purple-600/50"
             >
-              View Leaderboard
+              Create Account
             </button>
           </div>
         </div>

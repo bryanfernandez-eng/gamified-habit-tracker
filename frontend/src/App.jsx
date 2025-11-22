@@ -1,6 +1,6 @@
 // frontend/src/App.jsx
-import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Login from './components/Login'
 import Register from './components/Register'
@@ -15,18 +15,19 @@ import Settings from './pages/Settings'
 import Home from './pages/Home'
 
 function AuthScreen() {
-  const [isLogin, setIsLogin] = useState(true)
-  
+  const location = useLocation()
+  const isRegisterPage = location.pathname === '/register'
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {isLogin ? (
-            <Login onToggleMode={() => setIsLogin(false)} />
+          {isRegisterPage ? (
+            <Register />
           ) : (
-            <Register onToggleMode={() => setIsLogin(true)} />
+            <Login />
           )}
-          
+
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="text-center">
               <div className="mb-2">

@@ -2,11 +2,11 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { Zap, Lock, User, Mail, UserPlus, ChevronRight, Loader } from 'lucide-react'
+import { Zap, Lock, User, Mail, UserPlus, ChevronRight, Loader, Home } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
 import ConnectionStatus from './ConnectionStatus'
 
-export default function Register({ onToggleMode }) {
+export default function Register() {
   const navigate = useNavigate()
   const [step, setStep] = useState(1) // 1: account info, 2: survey
   const [formData, setFormData] = useState({
@@ -113,8 +113,8 @@ export default function Register({ onToggleMode }) {
   ]
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center justify-center px-4 py-8 overflow-y-auto">
-      <div className="w-full max-w-md my-auto">
+    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center px-4 py-8 overflow-y-auto">
+      <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -146,59 +146,62 @@ export default function Register({ onToggleMode }) {
             <form onSubmit={(e) => { e.preventDefault(); handleNextStep() }} className="space-y-5">
               <h2 className="text-xl font-bold text-yellow-400 uppercase mb-6">Create Your Account</h2>
 
-              {/* Username Field */}
-              <div>
-                <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                  Username
-                </label>
-                <div className="relative">
-                  <User size={18} className="absolute left-3 top-3 text-gray-500" />
-                  <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleAccountChange}
-                    required
-                    className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                      getFieldError('username')
-                        ? 'border-red-600 focus:border-red-500'
-                        : 'border-gray-700 focus:border-yellow-600'
-                    }`}
-                    placeholder="Choose a unique username"
-                  />
+              {/* Top Row: Username and Display Name */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Username Field */}
+                <div>
+                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
+                    Username
+                  </label>
+                  <div className="relative">
+                    <User size={18} className="absolute left-3 top-3 text-gray-500" />
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleAccountChange}
+                      required
+                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
+                        getFieldError('username')
+                          ? 'border-red-600 focus:border-red-500'
+                          : 'border-gray-700 focus:border-yellow-600'
+                      }`}
+                      placeholder="Choose a unique username"
+                    />
+                  </div>
+                  {getFieldError('username') && (
+                    <p className="mt-1 text-xs text-red-400">{getFieldError('username')}</p>
+                  )}
                 </div>
-                {getFieldError('username') && (
-                  <p className="mt-1 text-xs text-red-400">{getFieldError('username')}</p>
-                )}
+
+                {/* Display Name Field */}
+                <div>
+                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
+                    Display Name
+                  </label>
+                  <div className="relative">
+                    <User size={18} className="absolute left-3 top-3 text-gray-500" />
+                    <input
+                      type="text"
+                      name="display_name"
+                      value={formData.display_name}
+                      onChange={handleAccountChange}
+                      required
+                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
+                        getFieldError('display_name')
+                          ? 'border-red-600 focus:border-red-500'
+                          : 'border-gray-700 focus:border-yellow-600'
+                      }`}
+                      placeholder="How others will see your name"
+                    />
+                  </div>
+                  {getFieldError('display_name') && (
+                    <p className="mt-1 text-xs text-red-400">{getFieldError('display_name')}</p>
+                  )}
+                </div>
               </div>
 
-              {/* Display Name Field */}
-              <div>
-                <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                  Display Name
-                </label>
-                <div className="relative">
-                  <User size={18} className="absolute left-3 top-3 text-gray-500" />
-                  <input
-                    type="text"
-                    name="display_name"
-                    value={formData.display_name}
-                    onChange={handleAccountChange}
-                    required
-                    className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                      getFieldError('display_name')
-                        ? 'border-red-600 focus:border-red-500'
-                        : 'border-gray-700 focus:border-yellow-600'
-                    }`}
-                    placeholder="How others will see your name"
-                  />
-                </div>
-                {getFieldError('display_name') && (
-                  <p className="mt-1 text-xs text-red-400">{getFieldError('display_name')}</p>
-                )}
-              </div>
-
-              {/* Email Field */}
+              {/* Email Field - Full Width */}
               <div>
                 <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
                   Email
@@ -224,56 +227,59 @@ export default function Register({ onToggleMode }) {
                 )}
               </div>
 
-              {/* Password Field */}
-              <div>
-                <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-500" />
-                  <input
-                    type="password"
-                    name="password1"
-                    value={formData.password1}
-                    onChange={handleAccountChange}
-                    required
-                    className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                      getFieldError('password1')
-                        ? 'border-red-600 focus:border-red-500'
-                        : 'border-gray-700 focus:border-yellow-600'
-                    }`}
-                    placeholder="At least 8 characters"
-                  />
+              {/* Password Row: Password and Confirm Password */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Password Field */}
+                <div>
+                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3 top-3 text-gray-500" />
+                    <input
+                      type="password"
+                      name="password1"
+                      value={formData.password1}
+                      onChange={handleAccountChange}
+                      required
+                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
+                        getFieldError('password1')
+                          ? 'border-red-600 focus:border-red-500'
+                          : 'border-gray-700 focus:border-yellow-600'
+                      }`}
+                      placeholder="At least 8 characters"
+                    />
+                  </div>
+                  {getFieldError('password1') && (
+                    <p className="mt-1 text-xs text-red-400">{getFieldError('password1')}</p>
+                  )}
                 </div>
-                {getFieldError('password1') && (
-                  <p className="mt-1 text-xs text-red-400">{getFieldError('password1')}</p>
-                )}
-              </div>
 
-              {/* Confirm Password Field */}
-              <div>
-                <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-500" />
-                  <input
-                    type="password"
-                    name="password2"
-                    value={formData.password2}
-                    onChange={handleAccountChange}
-                    required
-                    className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                      getFieldError('password2')
-                        ? 'border-red-600 focus:border-red-500'
-                        : 'border-gray-700 focus:border-yellow-600'
-                    }`}
-                    placeholder="Repeat your password"
-                  />
+                {/* Confirm Password Field */}
+                <div>
+                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3 top-3 text-gray-500" />
+                    <input
+                      type="password"
+                      name="password2"
+                      value={formData.password2}
+                      onChange={handleAccountChange}
+                      required
+                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
+                        getFieldError('password2')
+                          ? 'border-red-600 focus:border-red-500'
+                          : 'border-gray-700 focus:border-yellow-600'
+                      }`}
+                      placeholder="Repeat your password"
+                    />
+                  </div>
+                  {getFieldError('password2') && (
+                    <p className="mt-1 text-xs text-red-400">{getFieldError('password2')}</p>
+                  )}
                 </div>
-                {getFieldError('password2') && (
-                  <p className="mt-1 text-xs text-red-400">{getFieldError('password2')}</p>
-                )}
               </div>
 
               {/* Next Button */}
@@ -352,11 +358,22 @@ export default function Register({ onToggleMode }) {
           <div className="text-center">
             <p className="text-gray-400 text-sm mb-3">Already have an account?</p>
             <button
-              onClick={onToggleMode}
+              onClick={() => navigate('/login')}
               className="text-yellow-400 hover:text-yellow-300 font-bold uppercase text-sm tracking-wider"
             >
               Sign In Here
             </button>
+
+            {/* Back to Home */}
+            <div className="mt-6">
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 border-2 border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500 transition-all font-bold uppercase text-sm w-full"
+              >
+                <Home size={16} />
+                Back to Home
+              </button>
+            </div>
           </div>
         )}
       </div>

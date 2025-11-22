@@ -2,10 +2,10 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { Zap, Lock, User, LogIn } from 'lucide-react'
+import { Zap, Lock, User, LogIn, Home } from 'lucide-react'
 import ConnectionStatus from './ConnectionStatus'
 
-export default function Login({ onToggleMode }) {
+export default function Login() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     login: '',
@@ -184,10 +184,21 @@ export default function Login({ onToggleMode }) {
         <div className="text-center">
           <p className="text-gray-400 text-sm mb-3">Don't have an account?</p>
           <button
-            onClick={onToggleMode}
+            onClick={() => navigate('/register')}
             className="text-yellow-400 hover:text-yellow-300 font-bold uppercase text-sm tracking-wider"
           >
             Create Account Here
+          </button>
+        </div>
+
+        {/* Back to Home */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 border-2 border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500 transition-all font-bold uppercase text-sm w-full"
+          >
+            <Home size={16} />
+            Back to Home
           </button>
         </div>
       </div>
