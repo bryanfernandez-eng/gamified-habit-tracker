@@ -10,6 +10,7 @@ import {
 
 import { gameApi } from '../../services/gameApi'
 import { DailyCheckInTracker } from './DailyCheckInTracker'
+import DefaultImg from '/src/assets/default.png'
 import ZoroImg from '/src/assets/zoro.png'
 
 export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
@@ -93,6 +94,14 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
   const xpPercentage = Math.min(100, (stats.current_xp / stats.next_level_xp) * 100)
   const hpPercentage = (stats.current_hp / stats.max_hp) * 100
 
+  const getCharacterImage = () => {
+    const characterMap = {
+      'default': DefaultImg,
+      'zoro': ZoroImg
+    }
+    return characterMap[stats.selected_character] || DefaultImg
+  }
+
   const handleCheckInSuccess = (updatedStats) => {
     // Update stats with the returned data from check-in
     setStats(updatedStats)
@@ -128,7 +137,7 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
         <div className="relative mb-6">
           {/* Character Avatar - Pixel Art Style */}
           <div className="h-64 w-full flex justify-center items-center border-4 border-gray-600 bg-gray-900">
-            <img src={ZoroImg} alt="Zoro Avatar" className="h-full object-contain" />
+            <img src={getCharacterImage()} alt="Character Avatar" className="h-full object-contain" />
           </div>
 
           {/* Health Bar */}

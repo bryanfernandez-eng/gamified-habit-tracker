@@ -39,6 +39,24 @@ def get_max_quests_for_level(level):
         return 4
 
 
+def get_available_characters(level):
+    """
+    Get available characters based on user level.
+
+    Characters:
+    - default: Available from level 1
+    - zoro: Available from level 2
+    """
+    characters = [
+        {'id': 'default', 'name': 'Default', 'unlock_level': 1}
+    ]
+
+    if level >= 2:
+        characters.append({'id': 'zoro', 'name': 'Zoro', 'unlock_level': 2})
+
+    return characters
+
+
 class UserStatsViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -100,6 +118,44 @@ class UserStatsViewSet(viewsets.ViewSet):
             })
 
         return Response(leaderboard_data)
+
+    @action(detail=False, methods=['get'])
+    def characters(self, request):
+        """Get available characters based on user level"""
+        characters = get_available_characters(request.user.level)
+        return Response({
+            'available_characters': characters,
+            'current_character': request.user.selected_character
+        })
+
+    @action(detail=False, methods=['post'])
+    def select_character(self, request):
+        """Select a character for the user"""
+        character_id = request.data.get('character_id')
+
+        if not character_id:
+            return Response(
+                {'error': 'character_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verify character is available for this user's level
+        available = get_available_characters(request.user.level)
+        available_ids = [c['id'] for c in available]
+
+        if character_id not in available_ids:
+            return Response(
+                {'error': f'Character "{character_id}" is not available at level {request.user.level}'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        request.user.selected_character = character_id
+        request.user.save()
+
+        return Response({
+            'message': f'Character changed to {character_id}',
+            'current_character': request.user.selected_character
+        })
 
 
 class HabitViewSet(viewsets.ModelViewSet):

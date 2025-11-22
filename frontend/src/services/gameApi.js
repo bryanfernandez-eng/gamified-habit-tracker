@@ -18,6 +18,18 @@ export const gameApi = {
     return response.data
   },
 
+  getAvailableCharacters: async () => {
+    const response = await api.get('/api/game/stats/characters/')
+    return response.data
+  },
+
+  selectCharacter: async (characterId) => {
+    const response = await api.post('/api/game/stats/select_character/', {
+      character_id: characterId
+    })
+    return response.data
+  },
+
   // Habits
   getHabits: async () => {
     const response = await api.get('/api/game/habits/')

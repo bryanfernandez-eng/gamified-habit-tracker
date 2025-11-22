@@ -2,14 +2,22 @@ import React, { useState, useEffect } from 'react'
 import { Shield, Shirt, Palette, Loader } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
 
-export function CharacterCustomizer() {
-  const [activeCategory, setActiveCategory] = useState('outfit')
+export function CharacterCustomizer({ onCharacterChanged }) {
+  const [activeCategory, setActiveCategory] = useState('character')
   const [equipment, setEquipment] = useState([])
+  const [characters, setCharacters] = useState([])
+  const [currentCharacter, setCurrentCharacter] = useState('default')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [equippingId, setEquippingId] = useState(null)
-  
+  const [selectingCharacterId, setSelectingCharacterId] = useState(null)
+
   const categories = [
+    {
+      id: 'character',
+      label: 'Characters',
+      icon: <Palette size={18} />,
+    },
     {
       id: 'outfit',
       label: 'Outfits',
@@ -29,17 +37,30 @@ export function CharacterCustomizer() {
 
   useEffect(() => {
     loadEquipment()
+    loadCharacters()
   }, [])
 
   const loadEquipment = async () => {
     try {
-      setLoading(true)
       setError(null)
       const data = await gameApi.getEquipment()
       setEquipment(data)
     } catch (err) {
       console.error('Failed to load equipment:', err)
       setError('Failed to load equipment')
+    }
+  }
+
+  const loadCharacters = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await gameApi.getAvailableCharacters()
+      setCharacters(data.available_characters)
+      setCurrentCharacter(data.current_character)
+    } catch (err) {
+      console.error('Failed to load characters:', err)
+      setError('Failed to load characters')
     } finally {
       setLoading(false)
     }
@@ -56,6 +77,24 @@ export function CharacterCustomizer() {
       setError('Failed to equip item')
     } finally {
       setEquippingId(null)
+    }
+  }
+
+  const handleSelectCharacter = async (characterId) => {
+    try {
+      setSelectingCharacterId(characterId)
+      await gameApi.selectCharacter(characterId)
+      setCurrentCharacter(characterId)
+      // Trigger stats refresh in parent component
+      if (onCharacterChanged) {
+        const updatedStats = await gameApi.getUserStats()
+        onCharacterChanged(updatedStats)
+      }
+    } catch (err) {
+      console.error('Failed to select character:', err)
+      setError('Failed to select character')
+    } finally {
+      setSelectingCharacterId(null)
     }
   }
 
@@ -85,12 +124,16 @@ export function CharacterCustomizer() {
     )
   }
 
-  const filteredItems = equipment.filter(item => item.equipment_type === activeCategory)
-  
+  const filteredItems = activeCategory === 'character'
+    ? characters
+    : equipment.filter(item => item.equipment_type === activeCategory)
+
+  const title = activeCategory === 'character' ? 'Characters' : 'Equipment & Items'
+
   return (
     <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
       <h2 className="text-2xl font-bold text-yellow-400 uppercase mb-4 border-b-2 border-gray-700 pb-2">
-        Equipment & Items
+        {title}
       </h2>
       <div className="flex border-b-4 border-gray-700 mb-4">
         {categories.map((category) => (
@@ -127,70 +170,104 @@ export function CharacterCustomizer() {
             No items available in this category
           </div>
         ) : (
-          filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className={`border-4 ${
-                item.is_unlocked ? 'border-gray-600 bg-gray-700' : 'border-gray-700 bg-gray-800'
-              }`}
-            >
-              <div className="p-4">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mr-4">
-                    {activeCategory === 'outfit' && (
-                      <Shirt size={24} className="text-yellow-500" />
-                    )}
-                    {activeCategory === 'accessory' && (
-                      <Shield size={24} className="text-yellow-500" />
-                    )}
-                    {activeCategory === 'theme' && (
-                      <Palette size={24} className="text-yellow-500" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <h3
-                      className={`font-medium ${
-                        item.is_unlocked ? 'text-gray-200' : 'text-gray-500'
-                      }`}
-                    >
-                      {item.name}
-                    </h3>
-                    {getStatBonusText(item.stat_bonus) && (
-                      <p className="text-xs text-yellow-500 mt-1">
-                        {getStatBonusText(item.stat_bonus)}
-                      </p>
-                    )}
-                    {!item.is_unlocked && item.unlock_requirement && (
-                      <p className="text-xs text-gray-500 mt-1 border-t border-gray-600 pt-1">
-                        Quest: {item.unlock_requirement}
-                      </p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleEquip(item.id)}
-                    disabled={!item.is_unlocked || equippingId === item.id}
-                    className={`px-3 py-1 text-sm border-2 ${
-                      item.is_unlocked
-                        ? item.is_equipped
-                          ? 'bg-green-700 text-green-300 border-green-600 hover:bg-green-600'
-                          : 'bg-yellow-700 text-yellow-300 border-yellow-600 hover:bg-yellow-600'
-                        : 'bg-gray-700 text-gray-500 border-gray-600 cursor-not-allowed'
-                    } ${equippingId === item.id ? 'opacity-50' : ''}`}
-                  >
-                    {equippingId === item.id ? (
-                      <Loader size={14} className="animate-spin inline" />
-                    ) : item.is_equipped ? (
-                      'EQUIPPED'
-                    ) : item.is_unlocked ? (
-                      'EQUIP'
+          filteredItems.map((item) => {
+            const isCharacter = activeCategory === 'character'
+            const isUnlocked = isCharacter ? true : item.is_unlocked
+            const isSelected = isCharacter && item.id === currentCharacter
+
+            return (
+              <div
+                key={item.id}
+                className={`border-4 ${
+                  isUnlocked ? 'border-gray-600 bg-gray-700' : 'border-gray-700 bg-gray-800'
+                }`}
+              >
+                <div className="p-4">
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mr-4">
+                      {activeCategory === 'character' && (
+                        <Palette size={24} className="text-yellow-500" />
+                      )}
+                      {activeCategory === 'outfit' && (
+                        <Shirt size={24} className="text-yellow-500" />
+                      )}
+                      {activeCategory === 'accessory' && (
+                        <Shield size={24} className="text-yellow-500" />
+                      )}
+                      {activeCategory === 'theme' && (
+                        <Palette size={24} className="text-yellow-500" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3
+                        className={`font-medium ${
+                          isUnlocked ? 'text-gray-200' : 'text-gray-500'
+                        }`}
+                      >
+                        {item.name}
+                      </h3>
+                      {isCharacter && item.unlock_level && (
+                        <p className="text-xs text-yellow-500 mt-1">
+                          Unlock Level: {item.unlock_level}
+                        </p>
+                      )}
+                      {!isCharacter && getStatBonusText(item.stat_bonus) && (
+                        <p className="text-xs text-yellow-500 mt-1">
+                          {getStatBonusText(item.stat_bonus)}
+                        </p>
+                      )}
+                      {!isUnlocked && !isCharacter && item.unlock_requirement && (
+                        <p className="text-xs text-gray-500 mt-1 border-t border-gray-600 pt-1">
+                          Quest: {item.unlock_requirement}
+                        </p>
+                      )}
+                    </div>
+                    {isCharacter ? (
+                      <button
+                        onClick={() => handleSelectCharacter(item.id)}
+                        disabled={selectingCharacterId === item.id}
+                        className={`px-3 py-1 text-sm border-2 ${
+                          isSelected
+                            ? 'bg-green-700 text-green-300 border-green-600'
+                            : 'bg-yellow-700 text-yellow-300 border-yellow-600 hover:bg-yellow-600'
+                        } ${selectingCharacterId === item.id ? 'opacity-50' : ''}`}
+                      >
+                        {selectingCharacterId === item.id ? (
+                          <Loader size={14} className="animate-spin inline" />
+                        ) : isSelected ? (
+                          'SELECTED'
+                        ) : (
+                          'SELECT'
+                        )}
+                      </button>
                     ) : (
-                      'LOCKED'
+                      <button
+                        onClick={() => handleEquip(item.id)}
+                        disabled={!item.is_unlocked || equippingId === item.id}
+                        className={`px-3 py-1 text-sm border-2 ${
+                          item.is_unlocked
+                            ? item.is_equipped
+                              ? 'bg-green-700 text-green-300 border-green-600 hover:bg-green-600'
+                              : 'bg-yellow-700 text-yellow-300 border-yellow-600 hover:bg-yellow-600'
+                            : 'bg-gray-700 text-gray-500 border-gray-600 cursor-not-allowed'
+                        } ${equippingId === item.id ? 'opacity-50' : ''}`}
+                      >
+                        {equippingId === item.id ? (
+                          <Loader size={14} className="animate-spin inline" />
+                        ) : item.is_equipped ? (
+                          'EQUIPPED'
+                        ) : item.is_unlocked ? (
+                          'EQUIP'
+                        ) : (
+                          'LOCKED'
+                        )}
+                      </button>
                     )}
-                  </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            )
+          })
         )}
       </div>
     </div>

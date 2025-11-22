@@ -30,7 +30,14 @@ class CustomUser(AbstractUser):
     creativity_xp = models.IntegerField(default=0)
     social_xp = models.IntegerField(default=0)
     health_xp = models.IntegerField(default=0)
-    
+
+    # Character Selection
+    selected_character = models.CharField(
+        max_length=50,
+        default='default',
+        help_text="Selected character skin (default, zoro, etc.)"
+    )
+
     def __str__(self):
         return f"{self.username} (Level {self.level})"
     

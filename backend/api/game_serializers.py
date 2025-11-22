@@ -12,7 +12,8 @@ class UserStatsSerializer(serializers.ModelSerializer):
         fields = [
             'level', 'current_hp', 'max_hp', 'current_xp', 'next_level_xp',
             'strength', 'intelligence', 'creativity', 'social', 'health',
-            'strength_xp', 'intelligence_xp', 'creativity_xp', 'social_xp', 'health_xp'
+            'strength_xp', 'intelligence_xp', 'creativity_xp', 'social_xp', 'health_xp',
+            'selected_character'
         ]
 
 

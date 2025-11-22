@@ -19,7 +19,7 @@ export function GameDashboard({ userStats, onStatsUpdate, updateTrigger }) {
       case 'achievements':
         return <AchievementPanel />
       case 'customize':
-        return <CharacterCustomizer />
+        return <CharacterCustomizer onCharacterChanged={onStatsUpdate} />
       default:
         return <HabitTracker onHabitCompleted={onStatsUpdate} />
     }
