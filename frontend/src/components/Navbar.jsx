@@ -1,34 +1,23 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { Sword, Shield, LogOut, Home, BarChart3, Settings, Menu, X } from "lucide-react"
-import { gameApi } from "../services/gameApi"
 
-export default function Navbar() {
+export default function Navbar({ userStats = null }) {
   const { user, logout } = useAuth()
-  const [userStats, setUserStats] = useState({
+  const [displayStats, setDisplayStats] = useState({
     level: 1,
   })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showUserModal, setShowUserModal] = useState(false)
 
   useEffect(() => {
-    // Fetch real user stats from API
-    const fetchUserStats = async () => {
-      try {
-        const stats = await gameApi.getUserStats()
-        setUserStats({
-          level: stats.level || 1,
-        })
-      } catch (err) {
-        console.error('Failed to fetch user stats:', err)
-        setUserStats({ level: 1 })
-      }
+    // Update display stats from received userStats prop
+    if (userStats) {
+      setDisplayStats({
+        level: userStats.level || 1,
+      })
     }
-
-    if (user) {
-      fetchUserStats()
-    }
-  }, [user])
+  }, [userStats])
 
   const handleLogout = async () => {
     await logout()
@@ -102,14 +91,14 @@ export default function Navbar() {
             {/* User Profile Card - Responsive */}
             <button onClick={() => setShowUserModal(true)} className="bg-gray-800 border-2 border-gray-700 hover:border-yellow-600 hover:bg-gray-700 px-2 sm:px-4 py-1 sm:py-2 shadow-md rounded-sm h-8 sm:h-10 flex items-center transition-all cursor-pointer">
               <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-yellow-600 to-yellow-500 border-2 border-yellow-400 flex items-center justify-center mr-2 sm:mr-3 rounded-sm shadow-inner">
-                <span className="text-xs font-bold text-white">{userStats.level}</span>
+                <span className="text-xs font-bold text-white">{displayStats.level}</span>
               </div>
               <div className="flex items-center">
                 <span className="text-yellow-400 text-xs sm:text-sm font-bold uppercase tracking-wide mr-1 sm:mr-2 truncate max-w-20 sm:max-w-none">
                   {user?.display_name || user?.username}
                 </span>
                 <span className="text-gray-400 text-xs uppercase tracking-wider hidden sm:inline">
-                  Lv.{userStats.level}
+                  Lv.{displayStats.level}
                 </span>
               </div>
             </button>
@@ -243,7 +232,7 @@ export default function Navbar() {
               {/* Level */}
               <div>
                 <label className="text-xs uppercase text-gray-400 font-bold tracking-wide">Level</label>
-                <p className="text-yellow-400 text-sm font-bold mt-1">Lv.{userStats.level}</p>
+                <p className="text-yellow-400 text-sm font-bold mt-1">Lv.{displayStats.level}</p>
               </div>
 
               {/* Member Since */}

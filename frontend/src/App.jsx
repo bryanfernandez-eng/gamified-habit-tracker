@@ -1,7 +1,8 @@
 // frontend/src/App.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { gameApi } from './services/gameApi'
 import Login from './components/Login'
 import Register from './components/Register'
 import Dashboard from './components/Dashboard'
@@ -47,6 +48,19 @@ function AppContent() {
   const [userStats, setUserStats] = useState(null)
   const [updateTrigger, setUpdateTrigger] = useState(0)
 
+  // Load initial stats when user authenticates
+  useEffect(() => {
+    if (isAuthenticated && !userStats) {
+      gameApi.getUserStats()
+        .then(stats => {
+          setUserStats(stats)
+        })
+        .catch(err => {
+          console.error('[App] Failed to load initial stats:', err)
+        })
+    }
+  }, [isAuthenticated])
+
   const handleStatsUpdate = (stats) => {
     if (stats) {
       setUserStats(stats)
@@ -88,7 +102,7 @@ function AppContent() {
 
   return (
     <>
-      {isAuthenticated && <Navbar />}
+      {isAuthenticated && <Navbar userStats={userStats} />}
       <Routes>
         <Route
           path="/"

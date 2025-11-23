@@ -13,7 +13,7 @@ import { DailyCheckInTracker } from './DailyCheckInTracker'
 import DefaultImg from '/src/assets/default.png'
 import ZoroImg from '/src/assets/zoro.png'
 
-export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
+export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onStatsUpdate }) {
   const [stats, setStats] = useState({
     level: 1,
     current_hp: 100,
@@ -30,6 +30,7 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
   const [levelUpData, setLevelUpData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   const loadStats = useCallback(async (isInitialLoad = false) => {
     try {
@@ -53,11 +54,8 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
   // Update with external stats immediately (optimistic update)
   useEffect(() => {
     if (externalStats) {
-      console.log('CharacterAvatar: Received externalStats, updating:', externalStats)
-      console.log('CharacterAvatar: Previous stats:', stats)
-
-      // Check if user leveled up (comparing to current stats level)
-      if (externalStats.level && externalStats.level > stats.level) {
+      // Skip level-up popup on initial load (only after first render)
+      if (!isInitialLoad && externalStats.level && externalStats.level > stats.level) {
         setLevelUpData({
           newLevel: externalStats.level,
           oldLevel: stats.level,
@@ -78,10 +76,15 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
         return () => clearTimeout(timer)
       }
 
+      // Mark initial load as complete after first externalStats update
+      if (isInitialLoad) {
+        setIsInitialLoad(false)
+      }
+
       setStats(externalStats)
       setError(null)
     }
-  }, [externalStats])
+  }, [externalStats, isInitialLoad, stats.level])
 
   // Verify stats with server when refreshTrigger changes
   useEffect(() => {
@@ -136,6 +139,9 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
     // This will trigger the externalStats effect to check for level-ups
     if (updatedStats) {
       setStats(updatedStats)
+
+      // Call parent callback to update navbar and other components
+      onStatsUpdate?.(updatedStats)
 
       // Check if user leveled up from daily check-in
       if (updatedStats.level && updatedStats.level > stats.level) {
