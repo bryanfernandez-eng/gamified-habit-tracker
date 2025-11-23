@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Shield, Shirt, Palette, Loader } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
+import DefaultImg from '/src/assets/default.png'
+import ZoroImg from '/src/assets/zoro.png'
 
 export function CharacterCustomizer({ onCharacterChanged }) {
   const [activeCategory, setActiveCategory] = useState('character')
@@ -110,6 +112,14 @@ export function CharacterCustomizer({ onCharacterChanged }) {
     return bonuses
   }
 
+  const getCharacterImage = (characterId) => {
+    const imageMap = {
+      'default': DefaultImg,
+      'zoro': ZoroImg,
+    }
+    return imageMap[characterId] || DefaultImg
+  }
+
   if (loading) {
     return (
       <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
@@ -184,19 +194,20 @@ export function CharacterCustomizer({ onCharacterChanged }) {
               >
                 <div className="p-4">
                   <div className="flex items-center">
-                    <div className="w-12 h-12 bg-gray-800 border-2 border-gray-600 flex items-center justify-center mr-4">
-                      {activeCategory === 'character' && (
-                        <Palette size={24} className="text-yellow-500" />
-                      )}
-                      {activeCategory === 'outfit' && (
+                    <div className="w-20 h-20 bg-gray-900 border-4 border-gray-600 flex items-center justify-center mr-4 overflow-hidden">
+                      {activeCategory === 'character' ? (
+                        <img
+                          src={getCharacterImage(item.id)}
+                          alt={item.name}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : activeCategory === 'outfit' ? (
                         <Shirt size={24} className="text-yellow-500" />
-                      )}
-                      {activeCategory === 'accessory' && (
+                      ) : activeCategory === 'accessory' ? (
                         <Shield size={24} className="text-yellow-500" />
-                      )}
-                      {activeCategory === 'theme' && (
+                      ) : activeCategory === 'theme' ? (
                         <Palette size={24} className="text-yellow-500" />
-                      )}
+                      ) : null}
                     </div>
                     <div className="flex-1">
                       <h3

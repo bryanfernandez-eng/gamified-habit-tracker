@@ -128,6 +128,18 @@ export function StatsDisplay() {
     borderColor,
     stat,
   }) => {
+    // Determine darker bg color for summary section based on stat color
+    const getDarkerBg = (bg) => {
+      const bgMap = {
+        'bg-red-900': 'bg-red-950',
+        'bg-blue-900': 'bg-blue-950',
+        'bg-purple-900': 'bg-purple-950',
+        'bg-green-900': 'bg-green-950',
+        'bg-pink-900': 'bg-pink-950',
+      }
+      return bgMap[bg] || 'bg-gray-900'
+    }
+
     return (
       <div
         className={`${bgColor} border-4 border-double ${borderColor} overflow-hidden`}
@@ -139,8 +151,8 @@ export function StatsDisplay() {
               {icon}
             </div>
             <div>
-              <h3 className="font-bold text-gray-200 uppercase">{name}</h3>
-              <p className="text-sm text-gray-400">{stat.description}</p>
+              <h3 className="font-bold text-yellow-300 uppercase">{name}</h3>
+              <p className="text-sm text-gray-300">{stat.description}</p>
             </div>
             <div className="ml-auto">
               <span className={`text-2xl font-bold ${color}`}>
@@ -151,36 +163,36 @@ export function StatsDisplay() {
         </div>
 
         {/* Stats Summary */}
-        <div className="p-3 border-b-2 border-gray-700 bg-gray-900/50">
+        <div className={`p-3 border-b-2 ${borderColor} ${getDarkerBg(bgColor)}`}>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="text-center">
-              <p className="text-gray-500">Quests</p>
-              <p className={`font-bold ${color}`}>{stat.habitsInfo.completed}/{stat.habitsInfo.total}</p>
+              <p className="text-gray-400 uppercase text-xs font-bold">Quests</p>
+              <p className={`font-bold ${color} text-lg`}>{stat.habitsInfo.completed}/{stat.habitsInfo.total}</p>
             </div>
             <div className="text-center">
-              <p className="text-gray-500">Total XP</p>
-              <p className="font-bold text-yellow-400">{stat.habitsInfo.totalXp}</p>
+              <p className="text-gray-400 uppercase text-xs font-bold">Total XP</p>
+              <p className="font-bold text-yellow-300 text-lg">{stat.habitsInfo.totalXp}</p>
             </div>
             <div className="text-center">
-              <p className="text-gray-500">Progress</p>
-              <p className="font-bold text-blue-400">{stat.habitsInfo.total > 0 ? Math.round((stat.habitsInfo.completed / stat.habitsInfo.total) * 100) : 0}%</p>
+              <p className="text-gray-400 uppercase text-xs font-bold">Progress</p>
+              <p className={`font-bold ${color} text-lg`}>{stat.habitsInfo.total > 0 ? Math.round((stat.habitsInfo.completed / stat.habitsInfo.total) * 100) : 0}%</p>
             </div>
           </div>
         </div>
 
         {/* Recent Habits */}
         {stat.habitsInfo.total > 0 && (
-          <div className="p-3">
-            <h4 className="text-xs font-bold text-gray-300 uppercase mb-2 border-b border-gray-700 pb-1">
+          <div className={`p-3 ${getDarkerBg(bgColor)}`}>
+            <h4 className="text-xs font-bold text-yellow-300 uppercase mb-2 border-b border-opacity-50 pb-1" style={{borderColor: `currentColor`}}>
               Active Quests
             </h4>
             <div className="space-y-1 max-h-40 overflow-y-auto stats-scrollbar">
               {stat.habitsInfo.habits.slice(0, 5).map((habit) => (
-                <div key={habit.id} className="flex items-center justify-between text-xs p-1 bg-gray-800 rounded border-l-2 border-yellow-500">
-                  <span className={`flex-1 ${habit.completed_today ? 'text-gray-500 line-through' : 'text-gray-300'}`}>
+                <div key={habit.id} className={`flex items-center justify-between text-xs p-2 rounded border-l-4 ${color} bg-black/20 hover:bg-black/40 transition`}>
+                  <span className={`flex-1 ${habit.completed_today ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
                     {habit.name}
                   </span>
-                  <span className="text-yellow-400 font-bold ml-1">+{habit.xp_reward}</span>
+                  <span className="text-yellow-300 font-bold ml-1 text-xs">+{habit.xp_reward}</span>
                 </div>
               ))}
               {stat.habitsInfo.total > 5 && (
@@ -192,7 +204,7 @@ export function StatsDisplay() {
 
         {/* Empty State */}
         {stat.habitsInfo.total === 0 && (
-          <div className="p-3 text-center text-xs text-gray-500">
+          <div className={`p-3 text-center text-xs text-gray-400 ${getDarkerBg(bgColor)}`}>
             No quests in this category yet
           </div>
         )}
@@ -201,7 +213,7 @@ export function StatsDisplay() {
   }
   
   return (
-    <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
+    <div className="bg-gray-900 border-4 border-double border-yellow-700 p-4">
       <style>{`
         .stats-scrollbar::-webkit-scrollbar {
           width: 6px;
@@ -223,8 +235,8 @@ export function StatsDisplay() {
           scrollbar-width: thin;
         }
       `}</style>
-      <h2 className="text-2xl font-bold text-yellow-400 uppercase mb-4 border-b-2 border-gray-700 pb-2">
-        Character Stats
+      <h2 className="text-2xl font-bold text-yellow-300 uppercase mb-4 border-b-4 border-double border-yellow-600 pb-3">
+        ⚔️ Character Stats
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <StatCard
