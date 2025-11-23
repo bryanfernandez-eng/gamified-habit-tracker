@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
     Custom User model with display_name field and game stats
     """
     display_name = models.CharField(max_length=150, help_text="User's display name")
-    
+
     # Game Stats
     level = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     current_hp = models.IntegerField(default=100, validators=[MinValueValidator(0), MaxValueValidator(100)])
