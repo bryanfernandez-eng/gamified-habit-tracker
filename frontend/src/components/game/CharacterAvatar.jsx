@@ -65,6 +65,7 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
           nextLevelXp: externalStats.next_level_xp,
         })
         setShowLevelUpPopup(true)
+        playLevelUpSound()
 
         // Auto-hide popup after 4 seconds
         const timer = setTimeout(() => {
@@ -100,9 +101,61 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
     return characterMap[stats.selected_character] || DefaultImg
   }
 
+  // Play level up sound effect
+  const playLevelUpSound = () => {
+    // Create a simple retro level-up sound using Web Audio API
+    try {
+      const audioContext = new (window.AudioContext)()
+      const now = audioContext.currentTime
+
+      // Create oscillator for the sound
+      const osc = audioContext.createOscillator()
+      const gain = audioContext.createGain()
+
+      osc.connect(gain)
+      gain.connect(audioContext.destination)
+
+      // Set up the frequency sweep (low to high for "level up" effect)
+      osc.frequency.setValueAtTime(400, now)
+      osc.frequency.exponentialRampToValueAtTime(800, now + 0.1)
+      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.2)
+
+      // Volume envelope
+      gain.gain.setValueAtTime(0.3, now)
+      gain.gain.exponentialRampToValueAtTime(0.05, now + 0.5)
+
+      osc.start(now)
+      osc.stop(now + 0.5)
+    } catch {
+      console.log('Audio not available')
+    }
+  }
+
   const handleCheckInSuccess = (updatedStats) => {
     // Update stats with the returned data from check-in
-    setStats(updatedStats)
+    // This will trigger the externalStats effect to check for level-ups
+    if (updatedStats) {
+      setStats(updatedStats)
+
+      // Check if user leveled up from daily check-in
+      if (updatedStats.level && updatedStats.level > stats.level) {
+        setLevelUpData({
+          newLevel: updatedStats.level,
+          oldLevel: stats.level,
+          currentXp: updatedStats.current_xp,
+          nextLevelXp: updatedStats.next_level_xp,
+        })
+        setShowLevelUpPopup(true)
+        playLevelUpSound()
+
+        // Auto-hide popup after 4 seconds
+        const timer = setTimeout(() => {
+          setShowLevelUpPopup(false)
+        }, 4000)
+
+        return () => clearTimeout(timer)
+      }
+    }
   }
 
   if (loading) {

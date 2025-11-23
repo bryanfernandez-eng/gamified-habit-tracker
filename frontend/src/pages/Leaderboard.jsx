@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import { gameApi } from "../services/gameApi";
 
 const demoPlayers = [
@@ -50,60 +51,109 @@ const Badge = ({ children, color = "gold" }) => (
   </span>
 );
 
-const PodiumCard = ({ player, place }) => (
+const PodiumCard = ({ player, place, isCurrentUser }) => (
   <div
     className={classNames(
-      "relative rounded-2xl p-4 sm:p-5 shadow-xl",
-      "bg-slate-800/70 border border-yellow-500/25",
-      place === 1 && "ring-2 ring-yellow-400/60",
-      "hover:bg-orange-500/30"
+      "relative rounded-none p-5 shadow-2xl border-4",
+      place === 1
+        ? "bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-300 text-gray-900"
+        : "bg-gray-800 border-gray-700 text-slate-100",
+      isCurrentUser && place !== 1 && "ring-2 ring-yellow-400",
+      "hover:shadow-2xl transition-all"
     )}
   >
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-4">
       <Medal place={place} />
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <h3 className="truncate text-yellow-300 font-semibold text-lg">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className={classNames(
+            "truncate font-extrabold text-lg",
+            place === 1 ? "text-gray-900" : "text-gray-100"
+          )}>
             {player.name}
           </h3>
-          <Badge>Lvl {player.level}</Badge>
+          <span className={classNames(
+            "px-3 py-1 text-xs font-bold border-2 rounded-sm",
+            place === 1
+              ? "bg-yellow-600 border-yellow-700 text-yellow-900"
+              : "bg-yellow-700 border-yellow-600 text-yellow-200"
+          )}>
+            Lvl {player.level}
+          </span>
         </div>
-        <p className="text-slate-300/90 text-sm">Current Floor</p>
-        <div className="mt-1 flex items-center gap-2">
-          <span className="text-2xl font-extrabold text-slate-100">
+        <p className={classNames(
+          "text-sm mt-1",
+          place === 1 ? "text-gray-800" : "text-gray-400"
+        )}>
+          Current Floor
+        </p>
+        <div className="mt-2 flex items-center gap-2">
+          <span className={classNames(
+            "text-3xl font-black",
+            place === 1 ? "text-gray-900" : "text-gray-100"
+          )}>
             {player.currentFloor}
           </span>
-          <span className="text-xs text-slate-400">FLR</span>
+          <span className={classNames(
+            "text-sm font-bold uppercase",
+            place === 1 ? "text-gray-800" : "text-gray-400"
+          )}>
+            FLR
+          </span>
         </div>
       </div>
-      <div className="hidden sm:flex flex-col items-end gap-1">
-        <div className="w-28 h-5 bg-slate-700 rounded-md border border-slate-600 overflow-hidden">
+      <div className="flex flex-col items-end gap-2">
+        <div className={classNames(
+          "w-32 h-6 rounded-sm border-2 overflow-hidden",
+          place === 1
+            ? "bg-yellow-600 border-yellow-700"
+            : "bg-gray-700 border-gray-600"
+        )}>
           <div
-            className="h-full bg-yellow-500"
+            className={classNames(
+              "h-full",
+              place === 1 ? "bg-yellow-900" : "bg-yellow-500"
+            )}
             style={{ width: `${Math.min(100, player.xp)}%` }}
           />
         </div>
-        <span className="text-[10px] text-slate-400">XP {player.xp}/100</span>
+        <span className={classNames(
+          "text-xs font-bold",
+          place === 1 ? "text-gray-800" : "text-gray-400"
+        )}>
+          XP {Math.round(player.xp)}/100
+        </span>
       </div>
     </div>
   </div>
 );
 
-const Row = ({ index, player }) => (
+const Row = ({ index, player, isCurrentUser }) => (
   <div
     className={classNames(
-      "grid grid-cols-12 items-center px-3 sm:px-4 py-3",
-      index % 2 ? "bg-slate-800/40" : "bg-slate-800/20",
-      "hover:bg-orange-500/30 transition-colors"
+      "grid grid-cols-12 items-center px-3 sm:px-4 py-3 border-l-4 transition-all",
+      isCurrentUser
+        ? "bg-yellow-500/15 border-l-yellow-400"
+        : index % 2 ? "bg-slate-800/40" : "bg-slate-800/20",
+      "hover:bg-orange-500/30"
     )}
   >
     <div className="col-span-2 sm:col-span-1 flex items-center gap-2">
-      <span className="text-slate-300 font-mono text-sm w-6 tabular-nums">
+      <span className={classNames(
+        "font-mono text-sm w-6 tabular-nums font-bold",
+        isCurrentUser ? "text-yellow-400" : "text-slate-300"
+      )}>
         {index + 1}
       </span>
+      {isCurrentUser && <span className="text-xs text-yellow-400">★</span>}
     </div>
     <div className="col-span-6 sm:col-span-6 flex items-center gap-3">
-      <div className="w-8 h-8 rounded-full bg-slate-600/40 border border-slate-500/50 flex items-center justify-center text-slate-200 text-xs font-bold">
+      <div className={classNames(
+        "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border",
+        isCurrentUser
+          ? "bg-yellow-500/30 border-yellow-400 text-yellow-300"
+          : "bg-slate-600/40 border-slate-500/50 text-slate-200"
+      )}>
         {player.name
           .split(" ")
           .map((n) => n[0])
@@ -111,26 +161,50 @@ const Row = ({ index, player }) => (
           .join("")}
       </div>
       <div className="min-w-0">
-        <p className="truncate text-slate-100 font-medium">{player.name}</p>
-        <p className="text-[11px] text-slate-400">Lvl {player.level}</p>
+        <p className={classNames(
+          "truncate font-medium",
+          isCurrentUser ? "text-yellow-300 font-bold" : "text-slate-100"
+        )}>
+          {player.name}
+        </p>
+        <p className={classNames(
+          "text-[11px]",
+          isCurrentUser ? "text-yellow-400" : "text-slate-400"
+        )}>
+          Lvl {player.level}
+        </p>
       </div>
     </div>
-    <div className="col-span-2 sm:col-span-2 text-yellow-300 font-semibold text-right">
+    <div className={classNames(
+      "col-span-2 sm:col-span-2 font-semibold text-right",
+      isCurrentUser ? "text-yellow-400" : "text-yellow-300"
+    )}>
       {player.currentFloor}
     </div>
     <div className="col-span-2 sm:col-span-3 flex items-center justify-end gap-2">
-      <div className="w-28 h-3.5 bg-slate-700 rounded-md overflow-hidden border border-slate-600">
+      <div className={classNames(
+        "w-28 h-3.5 rounded-md overflow-hidden border",
+        isCurrentUser
+          ? "bg-yellow-600/40 border-yellow-500"
+          : "bg-slate-700 border-slate-600"
+      )}>
         <div
-          className="h-full bg-yellow-500"
+          className={isCurrentUser ? "h-full bg-yellow-500" : "h-full bg-yellow-500"}
           style={{ width: `${Math.min(100, player.xp)}%` }}
         />
       </div>
-      <span className="text-[10px] text-slate-400 w-14 text-right">XP {player.xp}/100</span>
+      <span className={classNames(
+        "text-[10px] w-14 text-right",
+        isCurrentUser ? "text-yellow-400" : "text-slate-400"
+      )}>
+        XP {Math.round(player.xp)}/100
+      </span>
     </div>
   </div>
 );
 
 const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
+  const { user } = useAuth();
   const [leaderboardData, setLeaderboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -157,6 +231,7 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
   // Use backend data if available, otherwise use demo/props data
   const displayPlayers = leaderboardData ? leaderboardData.map((player) => ({
     id: player.id,
+    username: player.username,
     name: player.display_name || player.username,
     level: player.level,
     currentFloor: player.level * 3 + Math.floor(player.current_xp / 10), // Calculate floor based on level and XP
@@ -204,7 +279,12 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
         {/* Podium */}
         <section className="grid sm:grid-cols-3 gap-4">
           {top3.map((p, idx) => (
-            <PodiumCard key={p.id} player={p} place={idx + 1} />
+            <PodiumCard
+              key={p.id}
+              player={p}
+              place={idx + 1}
+              isCurrentUser={user?.username === p.username}
+            />
           ))}
         </section>
 
@@ -219,7 +299,12 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
             </div>
             <div>
               {rest.map((p, i) => (
-                <Row key={p.id} index={i + 3} player={p} />
+                <Row
+                  key={p.id}
+                  index={i + 3}
+                  player={p}
+                  isCurrentUser={user?.username === p.username}
+                />
               ))}
             </div>
           </section>
