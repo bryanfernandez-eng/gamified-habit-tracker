@@ -2,26 +2,17 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { Zap, Lock, User, Mail, UserPlus, ChevronRight, Loader, Home } from 'lucide-react'
-import { gameApi } from '../services/gameApi'
+import { Zap, Lock, User, Mail, UserPlus, Home } from 'lucide-react'
 import ConnectionStatus from './ConnectionStatus'
 
 export default function Register() {
   const navigate = useNavigate()
-  const [step, setStep] = useState(1) // 1: account info, 2: survey
   const [formData, setFormData] = useState({
     username: '',
     display_name: '',
     email: '',
     password1: '',
     password2: ''
-  })
-  const [surveyData, setSurveyData] = useState({
-    strength: 'neutral',
-    intelligence: 'neutral',
-    creativity: 'neutral',
-    social: 'neutral',
-    health: 'neutral'
   })
   const [fieldErrors, setFieldErrors] = useState({})
   const { register, loading, error } = useAuth()
@@ -41,7 +32,7 @@ export default function Register() {
     }
   }
 
-  const validateAccountForm = () => {
+  const validateForm = () => {
     const errors = {}
     if (!formData.username.trim()) errors.username = 'Username is required'
     if (!formData.display_name.trim()) errors.display_name = 'Display name is required'
@@ -51,25 +42,15 @@ export default function Register() {
     return errors
   }
 
-  const handleNextStep = () => {
-    const errors = validateAccountForm()
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setFieldErrors({})
+
+    const errors = validateForm()
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
       return
     }
-    setStep(2)
-  }
-
-  const handleSurveyChange = (category, value) => {
-    setSurveyData(prev => ({
-      ...prev,
-      [category]: value
-    }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setFieldErrors({})
 
     const result = await register(formData)
     if (!result.success && result.fieldErrors) {
@@ -77,17 +58,7 @@ export default function Register() {
       return
     }
 
-    // If registration successful, create initial habits based on survey
     if (result.success) {
-      try {
-        console.log('Creating initial habits with survey data:', surveyData)
-        const habitsResult = await gameApi.createInitialHabits(surveyData)
-        console.log('Initial habits created:', habitsResult)
-        // Registration and habit creation successful - navigate to dashboard
-      } catch (err) {
-        console.error('Failed to create initial habits:', err)
-        // Don't block on habit creation failure
-      }
       navigate('/dashboard', { replace: true })
     }
   }
@@ -95,22 +66,6 @@ export default function Register() {
   const getFieldError = (fieldName) => {
     return fieldErrors[fieldName]
   }
-
-  const categories = [
-    { id: 'strength', label: 'Strength', icon: '💪', color: 'red' },
-    { id: 'intelligence', label: 'Intelligence', icon: '🧠', color: 'blue' },
-    { id: 'creativity', label: 'Creativity', icon: '🎨', color: 'purple' },
-    { id: 'social', label: 'Social', icon: '👥', color: 'green' },
-    { id: 'health', label: 'Health', icon: '❤️', color: 'pink' }
-  ]
-
-  const likelihoodOptions = [
-    { value: 'very_unlikely', label: 'Very Unlikely', icon: '😞' },
-    { value: 'somewhat_unlikely', label: 'Somewhat Unlikely', icon: '😟' },
-    { value: 'neutral', label: 'Neutral', icon: '😐' },
-    { value: 'somewhat_likely', label: 'Somewhat Likely', icon: '🙂' },
-    { value: 'very_likely', label: 'Very Likely', icon: '😄' }
-  ]
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center px-4 py-8 overflow-y-auto">
@@ -122,17 +77,12 @@ export default function Register() {
             <h1 className="text-3xl font-bold text-yellow-400 uppercase tracking-wider">Quest Tracker</h1>
           </div>
           <p className="text-gray-400 text-sm uppercase tracking-widest">
-            {step === 1 ? 'Begin Your Journey' : 'Customize Your Path'}
+            Begin Your Journey
           </p>
         </div>
 
         {/* Main Card */}
         <div className="bg-gray-800 border-4 border-double border-gray-700 p-8 mb-6">
-          {/* Step Indicator */}
-          <div className="mb-8 flex gap-2">
-            <div className={`flex-1 h-2 border-2 ${step === 1 ? 'bg-yellow-600 border-yellow-600' : 'bg-gray-600 border-gray-600'}`} />
-            <div className={`flex-1 h-2 border-2 ${step === 2 ? 'bg-yellow-600 border-yellow-600' : 'bg-gray-600 border-gray-600'}`} />
-          </div>
 
           {/* Error Message */}
           {error && (
@@ -141,9 +91,8 @@ export default function Register() {
             </div>
           )}
 
-          {/* Step 1: Account Creation */}
-          {step === 1 && (
-            <form onSubmit={(e) => { e.preventDefault(); handleNextStep() }} className="space-y-5">
+          {/* Account Creation Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
               <h2 className="text-xl font-bold text-yellow-400 uppercase mb-6">Create Your Account</h2>
 
               {/* Top Row: Username and Display Name */}
@@ -282,80 +231,24 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Next Button */}
+              {/* Create Account Button */}
               <button
                 type="submit"
-                className="w-full py-3 px-4 font-bold uppercase tracking-wider border-2 bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600 transition-all flex items-center justify-center gap-2 mt-8"
+                disabled={loading}
+                className={`w-full py-3 px-4 font-bold uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 mt-8 ${
+                  loading
+                    ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600'
+                }`}
               >
-                Next: Customize Path
-                <ChevronRight size={18} />
+                <UserPlus size={18} />
+                {loading ? 'Creating...' : 'Create Account'}
               </button>
             </form>
-          )}
-
-          {/* Step 2: Habit Survey */}
-          {step === 2 && (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <h2 className="text-xl font-bold text-yellow-400 uppercase mb-6">
-                What habits will you work on?
-              </h2>
-              <p className="text-gray-400 text-sm">Rate your interest in each category. This will help us recommend daily quests for you.</p>
-
-              {/* Survey Questions */}
-              {categories.map((category) => (
-                <div key={category.id}>
-                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-3">
-                    {category.icon} {category.label}
-                  </label>
-                  <div className="grid grid-cols-5 gap-2">
-                    {likelihoodOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => handleSurveyChange(category.id, option.value)}
-                        className={`py-2 px-2 text-xs font-bold border-2 transition-all ${
-                          surveyData[category.id] === option.value
-                            ? `bg-${category.color}-700 border-${category.color}-600 text-${category.color}-200`
-                            : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'
-                        }`}
-                        title={option.label}
-                      >
-                        {option.icon}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-              {/* Form Actions */}
-              <div className="flex gap-3 pt-6">
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="flex-1 py-3 px-4 font-bold uppercase tracking-wider border-2 bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600 transition-all"
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`flex-1 py-3 px-4 font-bold uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 ${
-                    loading
-                      ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed'
-                      : 'bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600'
-                  }`}
-                >
-                  <UserPlus size={18} />
-                  {loading ? 'Creating...' : 'Create Account'}
-                </button>
-              </div>
-            </form>
-          )}
         </div>
 
         {/* Sign In Link */}
-        {step === 1 && (
-          <div className="text-center">
+        <div className="text-center">
             <p className="text-gray-400 text-sm mb-3">Already have an account?</p>
             <button
               onClick={() => navigate('/login')}
@@ -374,8 +267,7 @@ export default function Register() {
                 Back to Home
               </button>
             </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Connection Status - Bottom Right */}
