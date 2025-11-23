@@ -26,7 +26,6 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
     social: 1,
     health: 1,
   })
-  const [previousLevel, setPreviousLevel] = useState(1)
   const [showLevelUpPopup, setShowLevelUpPopup] = useState(false)
   const [levelUpData, setLevelUpData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -57,16 +56,15 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
       console.log('CharacterAvatar: Received externalStats, updating:', externalStats)
       console.log('CharacterAvatar: Previous stats:', stats)
 
-      // Check if user leveled up
-      if (externalStats.level && externalStats.level > previousLevel) {
+      // Check if user leveled up (comparing to current stats level)
+      if (externalStats.level && externalStats.level > stats.level) {
         setLevelUpData({
           newLevel: externalStats.level,
-          oldLevel: previousLevel,
+          oldLevel: stats.level,
           currentXp: externalStats.current_xp,
           nextLevelXp: externalStats.next_level_xp,
         })
         setShowLevelUpPopup(true)
-        setPreviousLevel(externalStats.level)
 
         // Auto-hide popup after 4 seconds
         const timer = setTimeout(() => {
@@ -82,7 +80,7 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats }) {
       setStats(externalStats)
       setError(null)
     }
-  }, [externalStats, previousLevel])
+  }, [externalStats])
 
   // Verify stats with server when refreshTrigger changes
   useEffect(() => {
