@@ -9,7 +9,9 @@
       "Bash(npm run build:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nFix login redirect issue and add automatic navigation after authentication\n\n- Add useNavigate to Login and Register components to redirect to / after successful login/registration\n- Fix initialState in AuthContext to set isAuthenticated based on token existence in localStorage\n- Add error logging for debugging user data fetch failures\n- Register component now properly navigates to home after habit creation\n- Both login and register flows now properly handle authentication state transitions\n\nThe issue was that after successful login/registration, the user stayed on /login or /register routes because there was no navigation. Now the components properly navigate to / which renders the Dashboard for authenticated users.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(ls -la \"c:\\Users\\brfer\\OneDrive\\Desktop\\capstone 2 project\\gamified-habit-tracker\\frontend\"\" | grep -E \"public)",
+      "Bash(dist \")"
     ],
     "deny": [],
     "ask": []
