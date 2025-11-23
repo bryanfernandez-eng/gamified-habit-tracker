@@ -23,12 +23,11 @@ export default function ConnectionStatus() {
     fail: 'Connection failed',
   }[state]
 
+  if (state !== 'fail') return null
+
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-2 border rounded-lg ${badge}`}>
-      <span className={`h-2.5 w-2.5 rounded-full ${
-        state==='loading' ? 'bg-yellow-500 animate-pulse' :
-        state==='ok' ? 'bg-green-500' : 'bg-red-500'
-      }`}/>
+      <span className={`h-2.5 w-2.5 rounded-full bg-red-500`}/>
       <span className="font-medium">{text}</span>
     </div>
   )

@@ -13,3 +13,29 @@
 .font-pixel {
   font-family: 'Press Start 2P', cursive;
 }
+
+/* Custom Scrollbar Styling - Retro Game Theme */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111827;
+  border-left: 2px solid #374151;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b8860b;
+  border: 2px solid #7c2d12;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #fbbf24;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-color: #b8860b #111827;
+  scrollbar-width: thin;
+}

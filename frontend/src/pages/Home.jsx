@@ -226,7 +226,7 @@ export default function Home() {
       <footer className="border-t-4 border-gray-700 bg-gray-900 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-4">
-            <p className="text-center text-gray-400">Quest Tracker © 2024 | Gamifying Habits, One Quest at a Time</p>
+            <p className="text-center text-gray-400">Quest Tracker © 2025 | Gamifying Habits, One Quest at a Time</p>
             <div className="flex justify-center">
               <ConnectionStatus />
             </div>
