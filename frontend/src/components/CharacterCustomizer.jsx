@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Shield, Shirt, Palette, Loader, Lock, Check } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
 import { getThemePreviewImage } from '../utils/themeBackgrounds'
-import DefaultImg from '/src/assets/characters/default/default.png'
-import ZoroImg from '/src/assets/characters/zoro/zoro.png'
+import DefaultImg from '/src/assets/characters/default/level1-default.png'
+import ZoroImg from '/src/assets/characters/zoro/zoro-default.png'
 
 export function CharacterCustomizer({ onCharacterChanged }) {
   const [activeCategory, setActiveCategory] = useState('character')
