@@ -233,7 +233,7 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
     <div className="min-h-screen w-full bg-rulebook-paper pt-20 pb-12">
       {/* Content */}
       <main className="mx-auto max-w-6xl px-4">
-        <div className="flex items-center justify-between mb-8 border-b-4 border-double border-rulebook-charcoal pb-4">
+        <div className="flex items-center justify-between mb-8 border-b-4 border-double border-rulebook-charcoal pb-4 mt-10">
           <h1 className="text-3xl font-serif font-bold text-rulebook-ink uppercase tracking-widest">
             {title} — <span className="text-rulebook-crimson">Current Floor</span>
           </h1>

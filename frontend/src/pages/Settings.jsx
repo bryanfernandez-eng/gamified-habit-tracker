@@ -115,7 +115,7 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-rulebook-paper text-rulebook-ink py-20">
+    <div className="min-h-screen bg-rulebook-paper text-rulebook-ink py-20 mt-10">
       <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
         <h1 className="text-4xl font-serif font-bold text-rulebook-ink mb-8 text-center uppercase tracking-widest">
