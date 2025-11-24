@@ -152,7 +152,10 @@ export function AuthProvider({ children }) {
       
       return { success: true }
     } catch (error) {
+      console.error('Registration error:', error)
+      console.error('Error response:', error.response?.data)
       const { generalError, fieldErrors } = parseErrorResponse(error)
+      console.log('Parsed errors:', { generalError, fieldErrors })
       dispatch({ type: 'REGISTER_FAILURE', error: generalError })
       return { success: false, error: generalError, fieldErrors }
     }
