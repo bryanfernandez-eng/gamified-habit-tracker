@@ -7,7 +7,8 @@ from .views import (
 )
 from .game_views import (
     UserStatsViewSet, HabitViewSet,
-    AchievementViewSet, EquipmentViewSet, DailyCheckInViewSet
+    AchievementViewSet, EquipmentViewSet, DailyCheckInViewSet,
+    TowerViewSet
 )
 
 # Create router for viewsets
@@ -18,6 +19,7 @@ router.register(r'game/habits', HabitViewSet, basename='game-habits')
 router.register(r'game/achievements', AchievementViewSet, basename='game-achievements')
 router.register(r'game/equipment', EquipmentViewSet, basename='game-equipment')
 router.register(r'game/daily-checkin', DailyCheckInViewSet, basename='game-daily-checkin')
+router.register(r'game/tower', TowerViewSet, basename='game-tower')
 
 urlpatterns = [
     path("health/", health),

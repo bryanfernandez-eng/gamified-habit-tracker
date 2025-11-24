@@ -12,7 +12,7 @@ import { gameApi } from '../../services/gameApi'
 import { DailyCheckInTracker } from './DailyCheckInTracker'
 import DefaultImg from '/src/assets/default.png'
 import ZoroImg from '/src/assets/zoro.png'
-import PixelForestBg from '/src/assets/pixel-forest-bg.png'
+import PixelForestBg from '/src/assets/forest-bg-new.jpg'
 
 export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onStatsUpdate }) {
   const [stats, setStats] = useState({

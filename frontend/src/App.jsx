@@ -14,6 +14,7 @@ import ConnectionStatus from './components/ConnectionStatus'
 import Leaderboard from './pages/Leaderboard'
 import Settings from './pages/Settings'
 import Home from './pages/Home'
+import { Tower } from './pages/Tower'
 
 function AuthScreen() {
   const location = useLocation()
@@ -145,6 +146,14 @@ function AppContent() {
           element={
             <ProtectedRoute fallback={<Home />}>
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tower"
+          element={
+            <ProtectedRoute fallback={<Home />}>
+              <Tower />
             </ProtectedRoute>
           }
         />
