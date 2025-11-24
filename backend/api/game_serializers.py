@@ -12,7 +12,13 @@ class EnemySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'level', 'base_hp', 'base_damage', 'sprite_path', 'xp_reward', 'gold_reward']
 
 class UserStatsSerializer(serializers.ModelSerializer):
-    """Serializer for user game stats"""
+    """Serializer for user game stats with equipment bonuses"""
+    strength = serializers.SerializerMethodField()
+    intelligence = serializers.SerializerMethodField()
+    creativity = serializers.SerializerMethodField()
+    social = serializers.SerializerMethodField()
+    health = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
         fields = [
@@ -21,6 +27,38 @@ class UserStatsSerializer(serializers.ModelSerializer):
             'strength_xp', 'intelligence_xp', 'creativity_xp', 'social_xp', 'health_xp',
             'selected_character', 'selected_theme'
         ]
+
+    def _get_total_stat(self, user, stat_name):
+        """Calculate total stat including equipment bonuses"""
+        base_stat = getattr(user, stat_name)
+
+        # Get all equipped items and sum their bonuses for this stat
+        equipped_items = UserEquipment.objects.filter(
+            user=user,
+            is_equipped=True
+        ).select_related('equipment')
+
+        total_bonus = 0
+        for user_eq in equipped_items:
+            stat_bonus = user_eq.equipment.stat_bonus or {}
+            total_bonus += stat_bonus.get(stat_name, 0)
+
+        return base_stat + total_bonus
+
+    def get_strength(self, obj):
+        return self._get_total_stat(obj, 'strength')
+
+    def get_intelligence(self, obj):
+        return self._get_total_stat(obj, 'intelligence')
+
+    def get_creativity(self, obj):
+        return self._get_total_stat(obj, 'creativity')
+
+    def get_social(self, obj):
+        return self._get_total_stat(obj, 'social')
+
+    def get_health(self, obj):
+        return self._get_total_stat(obj, 'health')
 
 
 class HabitSerializer(serializers.ModelSerializer):
@@ -98,7 +136,41 @@ class EquipmentSerializer(serializers.ModelSerializer):
     
     def get_is_unlocked(self, obj):
         user = self.context['request'].user
-        return UserEquipment.objects.filter(user=user, equipment=obj).exists()
+
+        # Check if user has this equipment in their inventory
+        has_equipment = UserEquipment.objects.filter(user=user, equipment=obj).exists()
+        if has_equipment:
+            return True
+
+        # For character-specific appearance items (armor)
+        if obj.equipment_slot == 'armor' and obj.character_specific:
+            if obj.is_default:
+                # Default appearances unlock when character is unlocked
+                from api.game_views import get_available_characters
+                available_chars = get_available_characters(user.level)
+                char_ids = [c['id'] for c in available_chars if c['is_unlocked']]
+                return obj.character_specific in char_ids
+            else:
+                # Non-default appearances unlock by level requirement
+                return self._check_level_requirement(obj.unlock_requirement, user.level)
+
+        # For themes, unlock based on level requirement
+        if obj.equipment_type == 'theme':
+            if obj.is_default:
+                return True
+            return self._check_level_requirement(obj.unlock_requirement, user.level)
+
+        return False
+
+    def _check_level_requirement(self, unlock_requirement, user_level):
+        """Check if user meets level requirement from unlock_requirement string"""
+        if 'Level 3' in unlock_requirement:
+            return user_level >= 3
+        elif 'Level 2' in unlock_requirement:
+            return user_level >= 2
+        elif 'Level 1' in unlock_requirement:
+            return user_level >= 1
+        return False
     
     def get_is_equipped(self, obj):
         user = self.context['request'].user
