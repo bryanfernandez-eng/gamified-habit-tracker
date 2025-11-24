@@ -1,11 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd:*)",
-      "Bash(python manage.py migrate:*)",
-      "Bash(tree:*)",
-      "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nFix locked character display and unlock status\n\n- Update get_available_characters() to return all characters with is_unlocked status\n- Now shows Zoro as locked (Unlock at Level 2) for level 1 users instead of hiding it\n- Update CharacterCustomizer to use item.is_unlocked instead of hardcoded true\n- Disable SUMMON button for locked characters, display unlock level requirement\n- Characters now properly show locked state with visual feedback\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(ls -la \"c:\\Users\\brfer\\OneDrive\\Desktop\\capstone 2 project\\gamified-habit-tracker\\frontend\\src\\assets\\characters\\default\"\" && echo \"---\" && ls -la \"c:UsersbrferOneDriveDesktopcapstone 2 projectgamified-habit-trackerfrontendsrcassetscharacterszoro\"\")"
     ],
     "deny": [],
     "ask": []

@@ -11,8 +11,8 @@ import {
 import { gameApi } from '../../services/gameApi'
 import { DailyCheckInTracker } from './DailyCheckInTracker'
 import { getThemeBackground } from '../../utils/themeBackgrounds'
-import DefaultImg from '/src/assets/characters/default/default.png'
-import ZoroImg from '/src/assets/characters/zoro/zoro.png'
+import DefaultImg from '/src/assets/characters/default/level1-default.png'
+import ZoroImg from '/src/assets/characters/zoro/zoro-default.png'
 import PixelForestBg from '/src/assets/themes/forest-pixel.jpg'
 
 export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onStatsUpdate }) {
