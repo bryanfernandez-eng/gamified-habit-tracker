@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0006_customuser_selected_theme'),
+        ('api', '0006_merge_0006_customuser_selected_theme_0006_enemy_towerprogress'),
     ]
 
     operations = [

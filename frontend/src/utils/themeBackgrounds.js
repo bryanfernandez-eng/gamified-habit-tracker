@@ -1,6 +1,6 @@
-import PixelForestBg from '/src/assets/pixel-forest-bg.png'
-import ForestBg from '/src/assets/forest-bg.png'
-import ForestBgGreen from '/src/assets/forest-bg-green.png'
+import ForestGreenBg from '/src/assets/themes/forest-green.png'
+import ForestPixelBg from '/src/assets/themes/forest-pixel.jpg'
+import ForestStandardBg from '/src/assets/themes/forest-standard.png'
 
 // White background as a data URL for Default Theme
 const WHITE_BG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4='
@@ -11,9 +11,9 @@ const WHITE_BG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4
  */
 export const THEME_BACKGROUNDS = {
   'Default Theme': WHITE_BG, // White background
-  'Forest Green': ForestBgGreen, // Green forest background
-  'Forest Pixel': PixelForestBg, // Pixel art forest background
-  'Forest Standard': ForestBg, // Standard forest background
+  'Forest Green': ForestGreenBg, // Green forest background
+  'Forest Pixel': ForestPixelBg, // Pixel art forest background
+  'Forest Standard': ForestStandardBg, // Standard forest background
 }
 
 /**
@@ -22,9 +22,9 @@ export const THEME_BACKGROUNDS = {
  */
 export const THEME_PREVIEW_IMAGES = {
   'Default Theme': null, // No preview image for default (white)
-  'Forest Green': ForestBgGreen,
-  'Forest Pixel': PixelForestBg,
-  'Forest Standard': ForestBg,
+  'Forest Green': ForestGreenBg,
+  'Forest Pixel': ForestPixelBg,
+  'Forest Standard': ForestStandardBg,
 }
 
 /**

@@ -5,7 +5,7 @@ import { gameApi } from '../services/gameApi';
 import Loader from '../components/Loader';
 import { Sword, Skull, Trophy, ArrowRight, Flame, Map } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PixelForestBg from '/src/assets/forest-bg-new.jpg';
+import PixelForestBg from '/src/assets/themes/forest-pixel.jpg';
 
 export function Tower() {
     const [gameState, setGameState] = useState('loading'); // loading, lobby, combat, victory, defeat

@@ -7,94 +7,40 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         equipment_data = [
-            # Outfits
+            # Default Character Appearance
             {
-                'name': 'Casual Outfit',
-                'equipment_type': 'outfit',
-                'description': 'A comfortable everyday outfit. Perfect for beginners.',
-                'stat_bonus': {},
-                'unlock_requirement': 'Starter outfit. Always unlocked.',
-                'is_default': True,
-            },
-            {
-                'name': 'Gym Champion',
-                'equipment_type': 'outfit',
-                'description': 'Athletic gear for the fitness enthusiast.',
-                'stat_bonus': {'strength': 3},
-                'unlock_requirement': 'Reach Strength level 5',
-                'is_default': False,
-            },
-            {
-                'name': "Scholar's Robe",
-                'equipment_type': 'outfit',
-                'description': 'Robes of knowledge and wisdom.',
-                'stat_bonus': {'intelligence': 3},
-                'unlock_requirement': 'Reach Intelligence level 5',
-                'is_default': False,
-            },
-            {
-                'name': "Artist's Smock",
-                'equipment_type': 'outfit',
-                'description': 'Paint-stained garment of creative expression.',
-                'stat_bonus': {'creativity': 3},
-                'unlock_requirement': 'Reach Creativity level 5',
-                'is_default': False,
-            },
-            {
-                'name': 'Party Attire',
-                'equipment_type': 'outfit',
-                'description': 'Stylish outfit for social gatherings.',
-                'stat_bonus': {'social': 3},
-                'unlock_requirement': 'Reach Social level 5',
-                'is_default': False,
-            },
-            {
-                'name': 'Wellness Suit',
-                'equipment_type': 'outfit',
-                'description': 'Comfortable health-focused clothing.',
-                'stat_bonus': {'health': 3},
-                'unlock_requirement': 'Reach Health level 5',
-                'is_default': False,
-            },
-            {
-                'name': 'Legend Armor',
-                'equipment_type': 'outfit',
-                'description': 'Ultimate achievement outfit of legendary status.',
-                'stat_bonus': {'strength': 2, 'intelligence': 2, 'creativity': 2, 'social': 2, 'health': 2},
-                'unlock_requirement': 'Reach Level 20',
-                'is_default': False,
-            },
-            # Armor (equipment_slot: armor)
-            {
-                'name': 'None',
+                'name': 'Default Appearance',
                 'equipment_type': 'accessory',
                 'equipment_slot': 'armor',
-                'description': 'No armor equipped. Shows original character.',
+                'sprite_path': 'characters/default/default.png',
+                'character_specific': 'default',
+                'description': 'Default character appearance.',
                 'stat_bonus': {},
                 'unlock_requirement': 'Always available.',
                 'is_default': True,
             },
-            # Weapons (equipment_slot: weapon)
+            # Zoro Character Appearances
             {
-                'name': 'None',
+                'name': 'Zoro',
                 'equipment_type': 'accessory',
-                'equipment_slot': 'weapon',
-                'description': 'No weapon equipped. Shows original character.',
-                'stat_bonus': {},
-                'unlock_requirement': 'Always available.',
-                'is_default': True,
-            },
-            # Character-Specific Weapons
-            {
-                'name': 'Zoro Sword',
-                'equipment_type': 'accessory',
-                'equipment_slot': 'weapon',
-                'sprite_path': 'sword.png',
+                'equipment_slot': 'armor',
+                'sprite_path': 'characters/zoro/zoro.png',
                 'character_specific': 'zoro',
-                'description': 'A legendary sword wielded by the great swordsman Zoro.',
-                'stat_bonus': {'strength': 5},
-                'unlock_requirement': 'Unlock Zoro character',
+                'description': 'Zoro in his standard appearance.',
+                'stat_bonus': {},
+                'unlock_requirement': 'Unlocked at Level 1',
                 'is_default': True,
+            },
+            {
+                'name': 'Zoro with Sword',
+                'equipment_type': 'accessory',
+                'equipment_slot': 'armor',
+                'sprite_path': 'characters/zoro/zoro-none-sword.png',
+                'character_specific': 'zoro',
+                'description': 'Zoro wielding his legendary sword.',
+                'stat_bonus': {'strength': 5},
+                'unlock_requirement': 'Unlocked at Level 1',
+                'is_default': False,
             },
             # Themes
             {

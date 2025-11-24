@@ -11,9 +11,9 @@ import {
 import { gameApi } from '../../services/gameApi'
 import { DailyCheckInTracker } from './DailyCheckInTracker'
 import { getThemeBackground } from '../../utils/themeBackgrounds'
-import DefaultImg from '/src/assets/default.png'
-import ZoroImg from '/src/assets/zoro.png'
-import PixelForestBg from '/src/assets/forest-bg-new.jpg'
+import DefaultImg from '/src/assets/characters/default/default.png'
+import ZoroImg from '/src/assets/characters/zoro/zoro.png'
+import PixelForestBg from '/src/assets/themes/forest-pixel.jpg'
 
 export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onStatsUpdate }) {
   const [stats, setStats] = useState({
@@ -31,7 +31,6 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
     selected_theme: 'Default Theme',
   })
   const [equippedArmor, setEquippedArmor] = useState(null)
-  const [equippedWeapon, setEquippedWeapon] = useState(null)
   const [showLevelUpPopup, setShowLevelUpPopup] = useState(false)
   const [levelUpData, setLevelUpData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -45,12 +44,10 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
       const data = await gameApi.getUserStats()
       setStats(data)
 
-      // Load equipped armor and weapon
+      // Load equipped armor (which now includes weapon combinations)
       const equippedItems = await gameApi.getEquippedItems()
       const armor = equippedItems.find(item => item.equipment_slot === 'armor')
-      const weapon = equippedItems.find(item => item.equipment_slot === 'weapon')
       setEquippedArmor(armor || null)
-      setEquippedWeapon(weapon || null)
     } catch (err) {
       console.error('Failed to load stats:', err)
       setError('Failed to load character stats')
@@ -224,11 +221,9 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
             <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-rulebook-crimson z-10"></div>
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-rulebook-crimson z-10"></div>
 
-            {/* Display armor, weapon, or character image */}
+            {/* Display armor (includes weapon combinations) or character image */}
             {equippedArmor && equippedArmor.sprite_path && equippedArmor.name !== 'None' ? (
               <img src={`/src/assets/${equippedArmor.sprite_path}`} alt={equippedArmor.name} className="h-full object-contain filter drop-shadow-md z-10 relative" />
-            ) : equippedWeapon && equippedWeapon.sprite_path && equippedWeapon.name !== 'None' ? (
-              <img src={`/src/assets/${equippedWeapon.sprite_path}`} alt={equippedWeapon.name} className="h-full object-contain filter drop-shadow-md z-10 relative" />
             ) : (
               <img src={getCharacterImage()} alt="Character Avatar" className="h-full object-contain filter drop-shadow-md z-10 relative" />
             )}

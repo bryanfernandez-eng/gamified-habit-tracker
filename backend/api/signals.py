@@ -71,15 +71,18 @@ def initialize_user_equipment(sender, instance, created, **kwargs):
         return
 
     try:
-        # Get all default equipment items
-        default_equipment = Equipment.objects.filter(is_default=True)
+        # Get all equipment items
+        all_equipment = Equipment.objects.all()
 
-        # Create UserEquipment records for each default item
-        for equipment in default_equipment:
-            # Always equip "None" armor and "None" weapon by default
-            # Character-specific weapons are unlocked but not equipped
-            is_equipped = equipment.name == 'None'
+        # Create UserEquipment records for each item
+        for equipment in all_equipment:
+            # Determine if item should be equipped
+            is_equipped = (
+                (equipment.equipment_slot == 'armor' and equipment.character_specific == instance.selected_character and equipment.is_default) or
+                (equipment.equipment_type == 'theme' and equipment.name == 'Default Theme')
+            )
 
+            # All items are unlocked by default
             UserEquipment.objects.get_or_create(
                 user=instance,
                 equipment=equipment,
