@@ -30,6 +30,7 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
     id: null,
     selected_theme: 'Default Theme',
   })
+  const [equippedArmor, setEquippedArmor] = useState(null)
   const [equippedWeapon, setEquippedWeapon] = useState(null)
   const [showLevelUpPopup, setShowLevelUpPopup] = useState(false)
   const [levelUpData, setLevelUpData] = useState(null)
@@ -44,9 +45,11 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
       const data = await gameApi.getUserStats()
       setStats(data)
 
-      // Load equipped weapon
+      // Load equipped armor and weapon
       const equippedItems = await gameApi.getEquippedItems()
+      const armor = equippedItems.find(item => item.equipment_slot === 'armor')
       const weapon = equippedItems.find(item => item.equipment_slot === 'weapon')
+      setEquippedArmor(armor || null)
       setEquippedWeapon(weapon || null)
     } catch (err) {
       console.error('Failed to load stats:', err)
@@ -221,8 +224,10 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
             <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-rulebook-crimson z-10"></div>
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-rulebook-crimson z-10"></div>
 
-            {/* Character or weapon image */}
-            {equippedWeapon && equippedWeapon.sprite_path && equippedWeapon.name !== 'None' ? (
+            {/* Display armor, weapon, or character image */}
+            {equippedArmor && equippedArmor.sprite_path && equippedArmor.name !== 'None' ? (
+              <img src={`/src/assets/${equippedArmor.sprite_path}`} alt={equippedArmor.name} className="h-full object-contain filter drop-shadow-md z-10 relative" />
+            ) : equippedWeapon && equippedWeapon.sprite_path && equippedWeapon.name !== 'None' ? (
               <img src={`/src/assets/${equippedWeapon.sprite_path}`} alt={equippedWeapon.name} className="h-full object-contain filter drop-shadow-md z-10 relative" />
             ) : (
               <img src={getCharacterImage()} alt="Character Avatar" className="h-full object-contain filter drop-shadow-md z-10 relative" />

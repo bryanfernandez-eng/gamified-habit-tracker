@@ -164,22 +164,41 @@ class UserStatsViewSet(viewsets.ViewSet):
             equipment__character_specific=character_id
         ).update(is_equipped=False)
 
-        # 2. Auto-equip character-specific weapon if it exists and no weapon is equipped
-        character_weapon = UserEquipment.objects.filter(
+        # 2. If no weapon is currently equipped, equip "None"
+        has_equipped_weapon = UserEquipment.objects.filter(
             user=request.user,
             equipment__equipment_slot='weapon',
-            equipment__character_specific=character_id
-        ).first()
+            is_equipped=True
+        ).exists()
 
-        if character_weapon:
-            # Unequip "None" first
-            UserEquipment.objects.filter(
+        if not has_equipped_weapon:
+            # Equip "None" weapon as fallback
+            none_weapon = UserEquipment.objects.filter(
                 user=request.user,
-                equipment__name='None'
-            ).update(is_equipped=False)
-            # Equip the character-specific weapon
-            character_weapon.is_equipped = True
-            character_weapon.save()
+                equipment__name='None',
+                equipment__equipment_slot='weapon'
+            ).first()
+            if none_weapon:
+                none_weapon.is_equipped = True
+                none_weapon.save()
+
+        # 3. If no armor is currently equipped, equip "None" armor
+        has_equipped_armor = UserEquipment.objects.filter(
+            user=request.user,
+            equipment__equipment_slot='armor',
+            is_equipped=True
+        ).exists()
+
+        if not has_equipped_armor:
+            # Equip "None" armor as fallback
+            none_armor = UserEquipment.objects.filter(
+                user=request.user,
+                equipment__name='None',
+                equipment__equipment_slot='armor'
+            ).first()
+            if none_armor:
+                none_armor.is_equipped = True
+                none_armor.save()
 
         return Response({
             'message': f'Character changed to {character_id}',

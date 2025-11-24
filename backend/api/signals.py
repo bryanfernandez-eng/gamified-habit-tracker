@@ -76,7 +76,7 @@ def initialize_user_equipment(sender, instance, created, **kwargs):
 
         # Create UserEquipment records for each default item
         for equipment in default_equipment:
-            # Only equip "None" weapon by default for all users
+            # Always equip "None" armor and "None" weapon by default
             # Character-specific weapons are unlocked but not equipped
             is_equipped = equipment.name == 'None'
 

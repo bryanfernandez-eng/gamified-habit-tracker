@@ -64,7 +64,17 @@ class Command(BaseCommand):
                 'unlock_requirement': 'Reach Level 20',
                 'is_default': False,
             },
-            # Accessories (weapons/relics)
+            # Armor (equipment_slot: armor)
+            {
+                'name': 'None',
+                'equipment_type': 'accessory',
+                'equipment_slot': 'armor',
+                'description': 'No armor equipped. Shows original character.',
+                'stat_bonus': {},
+                'unlock_requirement': 'Always available.',
+                'is_default': True,
+            },
+            # Weapons (equipment_slot: weapon)
             {
                 'name': 'None',
                 'equipment_type': 'accessory',
@@ -74,7 +84,7 @@ class Command(BaseCommand):
                 'unlock_requirement': 'Always available.',
                 'is_default': True,
             },
-            # Character-Specific Armor
+            # Character-Specific Weapons
             {
                 'name': 'Zoro Sword',
                 'equipment_type': 'accessory',
@@ -138,9 +148,16 @@ class Command(BaseCommand):
             if 'character_specific' in item_data:
                 defaults['character_specific'] = item_data['character_specific']
 
+            # Use equipment_slot in lookup key if present to distinguish between different "None" items
+            lookup_fields = {
+                'name': item_data['name'],
+                'equipment_type': item_data['equipment_type'],
+            }
+            if 'equipment_slot' in item_data:
+                lookup_fields['equipment_slot'] = item_data['equipment_slot']
+
             equipment, created = Equipment.objects.get_or_create(
-                name=item_data['name'],
-                equipment_type=item_data['equipment_type'],
+                **lookup_fields,
                 defaults=defaults
             )
             if created:
