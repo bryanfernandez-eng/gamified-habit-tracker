@@ -96,8 +96,8 @@ export function CharacterCustomizer({ onCharacterChanged }) {
       // Refresh equipment data
       await loadEquipment()
 
-      // If it's a theme, trigger stats refresh to update avatar background
-      if (item && item.equipment_type === 'theme' && onCharacterChanged) {
+      // Trigger parent component refresh to update avatar (for weapons, themes, etc.)
+      if (onCharacterChanged) {
         const updatedStats = await gameApi.getUserStats()
         onCharacterChanged(updatedStats)
       }

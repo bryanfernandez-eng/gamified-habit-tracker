@@ -76,10 +76,14 @@ def initialize_user_equipment(sender, instance, created, **kwargs):
 
         # Create UserEquipment records for each default item
         for equipment in default_equipment:
+            # Only equip "None" weapon by default for all users
+            # Character-specific weapons are unlocked but not equipped
+            is_equipped = equipment.name == 'None'
+
             UserEquipment.objects.get_or_create(
                 user=instance,
                 equipment=equipment,
-                defaults={'is_equipped': True}
+                defaults={'is_equipped': is_equipped}
             )
     except Exception as e:
         print(f"[!] Error initializing equipment for user {instance.username}: {e}")

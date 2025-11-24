@@ -152,6 +152,33 @@ class UserStatsViewSet(viewsets.ViewSet):
         request.user.selected_character = character_id
         request.user.save()
 
+        # Handle character-specific weapons
+        # 1. Unequip any character-specific weapons that don't match the new character
+        UserEquipment.objects.filter(
+            user=request.user,
+            equipment__equipment_slot='weapon',
+            equipment__character_specific__isnull=False
+        ).exclude(
+            equipment__character_specific=character_id
+        ).update(is_equipped=False)
+
+        # 2. Auto-equip character-specific weapon if it exists and no weapon is equipped
+        character_weapon = UserEquipment.objects.filter(
+            user=request.user,
+            equipment__equipment_slot='weapon',
+            equipment__character_specific=character_id
+        ).first()
+
+        if character_weapon:
+            # Unequip "None" first
+            UserEquipment.objects.filter(
+                user=request.user,
+                equipment__name='None'
+            ).update(is_equipped=False)
+            # Equip the character-specific weapon
+            character_weapon.is_equipped = True
+            character_weapon.save()
+
         return Response({
             'message': f'Character changed to {character_id}',
             'current_character': request.user.selected_character
@@ -435,30 +462,38 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     def equip(self, request, pk=None):
         """Equip or unequip an item"""
         equipment = self.get_object()
-        
+
         try:
             user_equipment = UserEquipment.objects.get(
                 user=request.user,
                 equipment=equipment
             )
-            
+
             # Toggle equipped status
             user_equipment.is_equipped = not user_equipment.is_equipped
-            
-            # Unequip other items of the same type if equipping
+
+            # If equipping, unequip other items in the same slot
             if user_equipment.is_equipped:
-                UserEquipment.objects.filter(
-                    user=request.user,
-                    equipment__equipment_type=equipment.equipment_type
-                ).exclude(id=user_equipment.id).update(is_equipped=False)
-            
+                # For weapons/slots, unequip other items in the same slot
+                if equipment.equipment_slot and equipment.equipment_slot != 'accessory':
+                    UserEquipment.objects.filter(
+                        user=request.user,
+                        equipment__equipment_slot=equipment.equipment_slot
+                    ).exclude(id=user_equipment.id).update(is_equipped=False)
+                else:
+                    # For generic accessories, unequip other accessories
+                    UserEquipment.objects.filter(
+                        user=request.user,
+                        equipment__equipment_type=equipment.equipment_type
+                    ).exclude(id=user_equipment.id).update(is_equipped=False)
+
             user_equipment.save()
-            
+
             return Response({
                 'message': f"{'Equipped' if user_equipment.is_equipped else 'Unequipped'} {equipment.name}",
                 'is_equipped': user_equipment.is_equipped
             })
-            
+
         except UserEquipment.DoesNotExist:
             return Response(
                 {'error': 'Equipment not unlocked'},

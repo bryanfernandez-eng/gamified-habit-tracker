@@ -221,13 +221,12 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
             <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-rulebook-crimson z-10"></div>
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-rulebook-crimson z-10"></div>
 
-            {/* Character with optional weapon overlay */}
-            <div className="h-full w-full flex justify-center items-center relative z-10">
-              <img src={getCharacterImage()} alt="Character Avatar" className="h-full object-contain filter drop-shadow-md absolute" />
-              {equippedWeapon && equippedWeapon.sprite_path && equippedWeapon.name !== 'None' && (
-                <img src={`/src/assets/${equippedWeapon.sprite_path}`} alt={equippedWeapon.name} className="h-full object-contain filter drop-shadow-md" />
-              )}
-            </div>
+            {/* Character or weapon image */}
+            {equippedWeapon && equippedWeapon.sprite_path && equippedWeapon.name !== 'None' ? (
+              <img src={`/src/assets/${equippedWeapon.sprite_path}`} alt={equippedWeapon.name} className="h-full object-contain filter drop-shadow-md z-10 relative" />
+            ) : (
+              <img src={getCharacterImage()} alt="Character Avatar" className="h-full object-contain filter drop-shadow-md z-10 relative" />
+            )}
           </div>
 
           {/* Health Bar */}
