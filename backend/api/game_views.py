@@ -149,36 +149,43 @@ class UserStatsViewSet(viewsets.ViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        request.user.selected_character = character_id
-        request.user.save()
-
-        # Handle character-specific appearances
-        # 1. Unequip any appearance that doesn't match the new character
-        UserEquipment.objects.filter(
-            user=request.user,
-            equipment__equipment_slot='armor'
-        ).update(is_equipped=False)
-
-        # 2. Get or create the default appearance for this character and equip it
-        default_appearance_eq = Equipment.objects.filter(
+        # Get the default appearance for this character
+        default_appearance = Equipment.objects.filter(
             equipment_slot='armor',
             character_specific=character_id,
             is_default=True
         ).first()
 
-        if default_appearance_eq:
-            default_appearance, created = UserEquipment.objects.get_or_create(
-                user=request.user,
-                equipment=default_appearance_eq,
-                defaults={'is_equipped': True}
+        if not default_appearance:
+            return Response(
+                {'error': f'Default appearance for character "{character_id}" not found'},
+                status=status.HTTP_404_NOT_FOUND
             )
-            if not created:
-                default_appearance.is_equipped = True
-                default_appearance.save()
+
+        # Update user's character and appearance selections
+        request.user.selected_character = character_id
+        request.user.selected_appearance = default_appearance
+        request.user.save()
+
+        # Update UserEquipment: unequip all armor, equip only the default appearance
+        UserEquipment.objects.filter(
+            user=request.user,
+            equipment__equipment_slot='armor'
+        ).update(is_equipped=False)
+
+        user_equipment, created = UserEquipment.objects.get_or_create(
+            user=request.user,
+            equipment=default_appearance,
+            defaults={'is_equipped': True}
+        )
+        if not created:
+            user_equipment.is_equipped = True
+            user_equipment.save()
 
         return Response({
             'message': f'Character changed to {character_id}',
-            'current_character': request.user.selected_character
+            'current_character': request.user.selected_character,
+            'current_appearance': default_appearance.id
         })
 
     @action(detail=False, methods=['post'])
@@ -531,6 +538,11 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
                     user=request.user,
                     equipment__equipment_slot=equipment.equipment_slot
                 ).exclude(id=user_equipment.id).update(is_equipped=False)
+
+                # If equipping armor (character appearance), update selected_appearance
+                if equipment.equipment_slot == 'armor':
+                    request.user.selected_appearance = equipment
+                    request.user.save()
             else:
                 # Unequip other accessories/themes
                 UserEquipment.objects.filter(
@@ -542,7 +554,8 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response({
             'message': f"{'Equipped' if user_equipment.is_equipped else 'Unequipped'} {equipment.name}",
-            'is_equipped': user_equipment.is_equipped
+            'is_equipped': user_equipment.is_equipped,
+            'user_stats': UserStatsSerializer(request.user).data
         })
     
     @action(detail=False, methods=['get'])

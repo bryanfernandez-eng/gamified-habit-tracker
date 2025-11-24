@@ -263,10 +263,8 @@ export function HabitTracker({ onHabitCompleted }) {
       })
       setHabits(updatedHabits)
 
-      // Reload habits in background to verify and get any server-side updates
-      loadHabits()
-
       // Trigger character avatar refresh with stats from server response
+      // The server response already contains updated user stats, so no need to refetch habits
       if (onHabitCompleted && result.user_stats) {
         console.log('HabitTracker: Calling onHabitCompleted with stats:', result.user_stats)
         onHabitCompleted(result.user_stats)
@@ -446,50 +444,51 @@ export function HabitTracker({ onHabitCompleted }) {
             </div>
           </div>
         )}
+      </div>
 
-        {celebrationModal.show && (
-          <div
-            className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-rulebook-ink/80 backdrop-blur-sm transition-opacity duration-300"
-          >
-            <div className="rulebook-card p-8 max-w-md w-full text-center relative overflow-hidden bg-rulebook-paper transform transition-all duration-300 scale-100">
-              {/* Subtle corner decorations instead of flickering sparkles */}
-              <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-rulebook-crimson/20 pointer-events-none"></div>
-              <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-rulebook-crimson/20 pointer-events-none"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-rulebook-crimson/20 pointer-events-none"></div>
-              <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-rulebook-crimson/20 pointer-events-none"></div>
+      {/* Celebration Modal - Rendered outside card to avoid positioning context issues */}
+      {celebrationModal.show && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-rulebook-ink/80 backdrop-blur-sm transition-opacity duration-300 pointer-events-none"
+        >
+          <div className="rulebook-card p-8 max-w-md w-full text-center relative overflow-hidden bg-rulebook-paper transform transition-all duration-300 scale-100 pointer-events-auto">
+            {/* Subtle corner decorations instead of flickering sparkles */}
+            <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-rulebook-crimson/20 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-rulebook-crimson/20 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-rulebook-crimson/20 pointer-events-none"></div>
+            <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-rulebook-crimson/20 pointer-events-none"></div>
 
-              {/* Subtle glow animation - no flicker */}
-              <div className="absolute inset-0 pointer-events-none opacity-20">
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-rulebook-crimson rounded-full blur-3xl animate-pulse"></div>
+            {/* Subtle glow animation - no flicker */}
+            <div className="absolute inset-0 pointer-events-none opacity-20">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-rulebook-crimson rounded-full blur-3xl animate-pulse"></div>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={() => setCelebrationModal(prev => ({ ...prev, show: false }))}
+              className="absolute top-3 right-3 text-rulebook-ink/40 hover:text-rulebook-crimson transition-colors z-20"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Content */}
+            <div className="relative z-10">
+              <h2 className="text-3xl font-serif font-bold text-rulebook-ink uppercase mb-3 tracking-wider">
+                Quest Complete!
+              </h2>
+              <p className="text-rulebook-ink/80 text-lg font-serif italic mb-2">
+                {celebrationModal.habitName}
+              </p>
+              <div className="text-5xl font-serif font-bold text-rulebook-crimson my-8 border-y-2 border-rulebook-ink/10 py-4">
+                +{celebrationModal.xp} XP
               </div>
-
-              {/* Close button */}
-              <button
-                onClick={() => setCelebrationModal(prev => ({ ...prev, show: false }))}
-                className="absolute top-3 right-3 text-rulebook-ink/40 hover:text-rulebook-crimson transition-colors z-20"
-              >
-                <X size={24} />
-              </button>
-
-              {/* Content */}
-              <div className="relative z-10">
-                <h2 className="text-3xl font-serif font-bold text-rulebook-ink uppercase mb-3 tracking-wider">
-                  Quest Complete!
-                </h2>
-                <p className="text-rulebook-ink/80 text-lg font-serif italic mb-2">
-                  {celebrationModal.habitName}
-                </p>
-                <div className="text-5xl font-serif font-bold text-rulebook-crimson my-8 border-y-2 border-rulebook-ink/10 py-4">
-                  +{celebrationModal.xp} XP
-                </div>
-                <p className="text-rulebook-ink/60 text-sm uppercase tracking-widest font-serif">
-                  Well done, adventurer!
-                </p>
-              </div>
+              <p className="text-rulebook-ink/60 text-sm uppercase tracking-widest font-serif">
+                Well done, adventurer!
+              </p>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {showCreation && (
         <HabitCreation

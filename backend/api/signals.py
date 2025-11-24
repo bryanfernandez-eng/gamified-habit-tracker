@@ -65,24 +65,32 @@ def create_demo_users(sender, **kwargs):
 @receiver(post_save, sender=User)
 def initialize_user_equipment(sender, instance, created, **kwargs):
     """
-    Auto-initialize default equipment for new users
+    Auto-initialize default appearance and equipment for new users
     """
     if not created:
         return
 
     try:
-        # Get all equipment items
-        all_equipment = Equipment.objects.all()
+        # Step 1: Set the default appearance for the selected character
+        default_appearance = Equipment.objects.filter(
+            equipment_slot='armor',
+            character_specific=instance.selected_character,
+            is_default=True
+        ).first()
 
-        # Create UserEquipment records for each item
+        if default_appearance:
+            instance.selected_appearance = default_appearance
+            instance.save(update_fields=['selected_appearance'])
+
+        # Step 2: Create UserEquipment records for all items the user starts with
+        all_equipment = Equipment.objects.all()
         for equipment in all_equipment:
-            # Determine if item should be equipped
+            # Mark as equipped ONLY if it's the selected appearance or the default theme
             is_equipped = (
-                (equipment.equipment_slot == 'armor' and equipment.character_specific == instance.selected_character and equipment.is_default) or
+                equipment == default_appearance or
                 (equipment.equipment_type == 'theme' and equipment.name == 'Default Theme')
             )
 
-            # All items are unlocked by default
             UserEquipment.objects.get_or_create(
                 user=instance,
                 equipment=equipment,

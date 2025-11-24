@@ -58,6 +58,7 @@ class Command(BaseCommand):
         seed_commands = [
             ('seed_equipment', 'equipment'),
             ('seed_achievements', 'achievements'),
+            ('seed_demo_users', 'demo users'),
             ('create_mock_users', 'mock users'),
         ]
 

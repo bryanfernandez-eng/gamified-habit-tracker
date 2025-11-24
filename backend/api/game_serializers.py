@@ -18,6 +18,7 @@ class UserStatsSerializer(serializers.ModelSerializer):
     creativity = serializers.SerializerMethodField()
     social = serializers.SerializerMethodField()
     health = serializers.SerializerMethodField()
+    selected_appearance_id = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -25,8 +26,11 @@ class UserStatsSerializer(serializers.ModelSerializer):
             'id', 'level', 'current_hp', 'max_hp', 'current_xp', 'next_level_xp',
             'strength', 'intelligence', 'creativity', 'social', 'health',
             'strength_xp', 'intelligence_xp', 'creativity_xp', 'social_xp', 'health_xp',
-            'selected_character', 'selected_theme'
+            'selected_character', 'selected_theme', 'selected_appearance_id'
         ]
+
+    def get_selected_appearance_id(self, obj):
+        return obj.selected_appearance.id if obj.selected_appearance else None
 
     def _get_total_stat(self, user, stat_name):
         """Calculate total stat including equipment bonuses"""
