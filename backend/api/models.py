@@ -45,6 +45,16 @@ class CustomUser(AbstractUser):
         help_text="Selected theme/background (e.g., Default Theme, Forest Green, etc.)"
     )
 
+    # Appearance Selection
+    selected_appearance = models.ForeignKey(
+        'Equipment',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='selected_by_users',
+        help_text="Currently equipped appearance for the selected character"
+    )
+
     def __str__(self):
         return f"{self.username} (Level {self.level})"
     

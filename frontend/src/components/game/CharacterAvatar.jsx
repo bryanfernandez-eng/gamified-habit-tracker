@@ -15,7 +15,7 @@ import DefaultImg from '/src/assets/characters/default/level1-default.png'
 import ZoroImg from '/src/assets/characters/zoro/zoro-default.png'
 import PixelForestBg from '/src/assets/themes/forest-pixel.jpg'
 
-export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onStatsUpdate }) {
+export function CharacterAvatar({ userStats: externalStats, onStatsUpdate }) {
   const [stats, setStats] = useState({
     level: 1,
     current_hp: 100,
@@ -96,12 +96,25 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
     }
   }, [externalStats, isInitialLoad, stats.level])
 
-  // Verify stats with server when refreshTrigger changes
+  // Reload equipped items when character or appearance changes
   useEffect(() => {
-    if (refreshTrigger > 0) {
-      loadStats(false) // Don't show loading, just update silently
+    const shouldReload =
+      (externalStats?.selected_character && externalStats.selected_character !== stats.selected_character) ||
+      (externalStats?.selected_appearance_id && externalStats.selected_appearance_id !== equippedArmor?.id)
+
+    if (shouldReload) {
+      const loadEquippedArmor = async () => {
+        try {
+          const equippedItems = await gameApi.getEquippedItems()
+          const armor = equippedItems.find(item => item.equipment_slot === 'armor')
+          setEquippedArmor(armor || null)
+        } catch (err) {
+          console.error('Failed to load equipped items:', err)
+        }
+      }
+      loadEquippedArmor()
     }
-  }, [refreshTrigger])
+  }, [externalStats?.selected_character, externalStats?.selected_appearance_id, stats.selected_character, equippedArmor?.id])
 
   const xpPercentage = Math.min(100, (stats.current_xp / stats.next_level_xp) * 100)
   const hpPercentage = (stats.current_hp / stats.max_hp) * 100

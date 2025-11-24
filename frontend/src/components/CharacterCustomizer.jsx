@@ -89,22 +89,27 @@ export function CharacterCustomizer({ onCharacterChanged, userStats }) {
       // Find the item to check if it's a theme
       const item = equipment.find(eq => eq.id === itemId)
 
+      let updatedStats = null
+
       if (item && item.equipment_type === 'theme') {
         // For themes, use the selectTheme endpoint
         await gameApi.selectTheme(item.name)
         // Immediately update the current theme state
         setCurrentTheme(item.name)
+        // Fetch stats for theme change
+        updatedStats = await gameApi.getUserStats()
       } else {
         // For other equipment, use the regular equipItem endpoint
-        await gameApi.equipItem(itemId)
+        const result = await gameApi.equipItem(itemId)
+        // Use the stats from the response if available
+        updatedStats = result.user_stats || await gameApi.getUserStats()
       }
 
       // Refresh equipment data
       await loadEquipment()
 
       // Trigger parent component refresh to update avatar (for weapons, themes, etc.)
-      if (onCharacterChanged) {
-        const updatedStats = await gameApi.getUserStats()
+      if (onCharacterChanged && updatedStats) {
         onCharacterChanged(updatedStats)
       }
     } catch (err) {

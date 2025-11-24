@@ -30,7 +30,7 @@ export function GameDashboard({ userStats, onStatsUpdate, updateTrigger }) {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Sidebar - Character */}
         <div className="lg:col-span-1">
-          <CharacterAvatar refreshTrigger={updateTrigger} userStats={userStats} onStatsUpdate={onStatsUpdate} />
+          <CharacterAvatar userStats={userStats} onStatsUpdate={onStatsUpdate} />
         </div>
 
         {/* Main Content Area */}
