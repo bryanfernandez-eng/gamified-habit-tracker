@@ -5,7 +5,7 @@ import { getThemePreviewImage } from '../utils/themeBackgrounds'
 import DefaultImg from '/src/assets/characters/default/level1-default.png'
 import ZoroImg from '/src/assets/characters/zoro/zoro-default.png'
 
-export function CharacterCustomizer({ onCharacterChanged }) {
+export function CharacterCustomizer({ onCharacterChanged, userStats }) {
   const [activeCategory, setActiveCategory] = useState('character')
   const [equipment, setEquipment] = useState([])
   const [characters, setCharacters] = useState([])
@@ -15,6 +15,7 @@ export function CharacterCustomizer({ onCharacterChanged }) {
   const [error, setError] = useState(null)
   const [equippingId, setEquippingId] = useState(null)
   const [selectingCharacterId, setSelectingCharacterId] = useState(null)
+  const [lastKnownLevel, setLastKnownLevel] = useState(null)
 
   const categories = [
     {
@@ -38,6 +39,16 @@ export function CharacterCustomizer({ onCharacterChanged }) {
     loadEquipment()
     loadCharacters()
   }, [])
+
+  // Reload equipment when user level changes (to update unlock status)
+  useEffect(() => {
+    if (userStats?.level && lastKnownLevel !== null && userStats.level !== lastKnownLevel) {
+      loadEquipment()
+    }
+    if (userStats?.level) {
+      setLastKnownLevel(userStats.level)
+    }
+  }, [userStats?.level])
 
   const loadEquipment = async () => {
     try {
@@ -109,6 +120,10 @@ export function CharacterCustomizer({ onCharacterChanged }) {
       setSelectingCharacterId(characterId)
       await gameApi.selectCharacter(characterId)
       setCurrentCharacter(characterId)
+
+      // Refresh equipment to reflect the new character's equipped appearance
+      await loadEquipment()
+
       // Trigger stats refresh in parent component
       if (onCharacterChanged) {
         const updatedStats = await gameApi.getUserStats()

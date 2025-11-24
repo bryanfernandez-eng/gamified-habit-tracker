@@ -39,7 +39,7 @@ class Command(BaseCommand):
                 'character_specific': 'zoro',
                 'description': 'Zoro wielding his legendary sword.',
                 'stat_bonus': {'strength': 5},
-                'unlock_requirement': 'Unlocked at Level 1',
+                'unlock_requirement': 'Unlocked at Level 3',
                 'is_default': False,
             },
             # Themes

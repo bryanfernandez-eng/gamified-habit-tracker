@@ -159,17 +159,22 @@ class UserStatsViewSet(viewsets.ViewSet):
             equipment__equipment_slot='armor'
         ).update(is_equipped=False)
 
-        # 2. Equip the default appearance for this character
-        default_appearance = UserEquipment.objects.filter(
-            user=request.user,
-            equipment__equipment_slot='armor',
-            equipment__character_specific=character_id,
-            equipment__is_default=True
+        # 2. Get or create the default appearance for this character and equip it
+        default_appearance_eq = Equipment.objects.filter(
+            equipment_slot='armor',
+            character_specific=character_id,
+            is_default=True
         ).first()
 
-        if default_appearance:
-            default_appearance.is_equipped = True
-            default_appearance.save()
+        if default_appearance_eq:
+            default_appearance, created = UserEquipment.objects.get_or_create(
+                user=request.user,
+                equipment=default_appearance_eq,
+                defaults={'is_equipped': True}
+            )
+            if not created:
+                default_appearance.is_equipped = True
+                default_appearance.save()
 
         return Response({
             'message': f'Character changed to {character_id}',
@@ -196,17 +201,13 @@ class UserStatsViewSet(viewsets.ViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        # Check if user has unlocked this theme
-        user_equipment = UserEquipment.objects.filter(
-            user=request.user,
-            equipment=theme
-        ).exists()
-
-        if not user_equipment:
-            return Response(
-                {'error': f'Theme "{theme_name}" is not unlocked'},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        # Check if user has unlocked this theme (check inventory first, then level-based unlock)
+        if not UserEquipment.objects.filter(user=request.user, equipment=theme).exists():
+            if not (theme.is_default or self._check_level_requirement(theme.unlock_requirement, request.user.level)):
+                return Response(
+                    {'error': f'Theme "{theme_name}" is not unlocked'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
         request.user.selected_theme = theme_name
         request.user.save()
@@ -215,6 +216,16 @@ class UserStatsViewSet(viewsets.ViewSet):
             'message': f'Theme changed to {theme_name}',
             'current_theme': request.user.selected_theme
         })
+
+    def _check_level_requirement(self, unlock_requirement, user_level):
+        """Check if user meets level requirement from unlock_requirement string"""
+        if 'Level 3' in unlock_requirement:
+            return user_level >= 3
+        elif 'Level 2' in unlock_requirement:
+            return user_level >= 2
+        elif 'Level 1' in unlock_requirement:
+            return user_level >= 1
+        return False
 
 
 class HabitViewSet(viewsets.ModelViewSet):
@@ -444,53 +455,95 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = EquipmentSerializer
     queryset = Equipment.objects.all()
-    
+
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
-    
+
+    def _check_level_requirement(self, unlock_requirement, user_level):
+        """Check if user meets level requirement from unlock_requirement string"""
+        if 'Level 3' in unlock_requirement:
+            return user_level >= 3
+        elif 'Level 2' in unlock_requirement:
+            return user_level >= 2
+        elif 'Level 1' in unlock_requirement:
+            return user_level >= 1
+        return False
+
+    def _is_equipment_unlocked(self, equipment, user):
+        """Check if equipment is unlocked for the user"""
+        # Check if user has this equipment in their inventory
+        if UserEquipment.objects.filter(user=user, equipment=equipment).exists():
+            return True
+
+        # For armor, check if it's a default appearance or level-based
+        if equipment.equipment_slot == 'armor' and equipment.character_specific:
+            if equipment.is_default:
+                available_chars = get_available_characters(user.level)
+                char_ids = [c['id'] for c in available_chars if c['is_unlocked']]
+                return equipment.character_specific in char_ids
+            else:
+                return self._check_level_requirement(equipment.unlock_requirement, user.level)
+
+        # For themes, check if default or meets level requirement
+        if equipment.equipment_type == 'theme':
+            if equipment.is_default:
+                return True
+            return self._check_level_requirement(equipment.unlock_requirement, user.level)
+
+        return False
+
     @action(detail=True, methods=['post'])
     def equip(self, request, pk=None):
         """Equip or unequip an item"""
         equipment = self.get_object()
 
-        try:
-            user_equipment = UserEquipment.objects.get(
-                user=request.user,
-                equipment=equipment
+        # Check if equipment is unlocked
+        if not self._is_equipment_unlocked(equipment, request.user):
+            return Response(
+                {'error': f'{equipment.name} is not unlocked'},
+                status=status.HTTP_403_FORBIDDEN
             )
 
-            # Toggle equipped status
-            user_equipment.is_equipped = not user_equipment.is_equipped
+        # Get or create UserEquipment record
+        user_equipment, created = UserEquipment.objects.get_or_create(
+            user=request.user,
+            equipment=equipment,
+            defaults={'is_equipped': True}
+        )
 
-            # If equipping, unequip other items in the same slot
-            if user_equipment.is_equipped:
-                # For weapons/slots, unequip other items in the same slot
-                if equipment.equipment_slot and equipment.equipment_slot != 'accessory':
-                    UserEquipment.objects.filter(
-                        user=request.user,
-                        equipment__equipment_slot=equipment.equipment_slot
-                    ).exclude(id=user_equipment.id).update(is_equipped=False)
-                else:
-                    # For generic accessories, unequip other accessories
-                    UserEquipment.objects.filter(
-                        user=request.user,
-                        equipment__equipment_type=equipment.equipment_type
-                    ).exclude(id=user_equipment.id).update(is_equipped=False)
-
-            user_equipment.save()
-
+        # If newly created, return with equipped status
+        if created:
             return Response({
-                'message': f"{'Equipped' if user_equipment.is_equipped else 'Unequipped'} {equipment.name}",
+                'message': f'Equipped {equipment.name}',
                 'is_equipped': user_equipment.is_equipped
             })
 
-        except UserEquipment.DoesNotExist:
-            return Response(
-                {'error': 'Equipment not unlocked'},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        # Toggle equipped status for existing records
+        user_equipment.is_equipped = not user_equipment.is_equipped
+
+        # If equipping, unequip other items in the same slot/type
+        if user_equipment.is_equipped:
+            if equipment.equipment_slot and equipment.equipment_slot != 'accessory':
+                # Unequip other items in the same slot
+                UserEquipment.objects.filter(
+                    user=request.user,
+                    equipment__equipment_slot=equipment.equipment_slot
+                ).exclude(id=user_equipment.id).update(is_equipped=False)
+            else:
+                # Unequip other accessories/themes
+                UserEquipment.objects.filter(
+                    user=request.user,
+                    equipment__equipment_type=equipment.equipment_type
+                ).exclude(id=user_equipment.id).update(is_equipped=False)
+
+        user_equipment.save()
+
+        return Response({
+            'message': f"{'Equipped' if user_equipment.is_equipped else 'Unequipped'} {equipment.name}",
+            'is_equipped': user_equipment.is_equipped
+        })
     
     @action(detail=False, methods=['get'])
     def equipped(self, request):
