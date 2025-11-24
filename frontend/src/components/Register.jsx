@@ -68,205 +68,199 @@ export default function Register() {
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center px-4 py-8 overflow-y-auto">
+    <div className="min-h-screen bg-rulebook-paper flex flex-col items-center px-4 py-8 overflow-y-auto font-mono text-rulebook-ink">
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <Zap className="w-8 h-8 text-yellow-400 mr-2" />
-            <h1 className="text-3xl font-bold text-yellow-400 uppercase tracking-wider">Quest Tracker</h1>
+            <div className="border-2 border-rulebook-ink p-1 rounded-sm mr-3">
+              <Zap className="w-6 h-6 text-rulebook-crimson" />
+            </div>
+            <h1 className="text-3xl font-serif font-bold text-rulebook-ink uppercase tracking-wider">Quest Tracker</h1>
           </div>
-          <p className="text-gray-400 text-sm uppercase tracking-widest">
+          <p className="text-rulebook-ink/60 text-sm uppercase tracking-widest font-serif">
             Begin Your Journey
           </p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-gray-800 border-4 border-double border-gray-700 p-8 mb-6">
+        <div className="rulebook-card p-8 mb-6">
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-900 border-2 border-red-700 text-red-200 text-sm">
+            <div className="mb-6 p-4 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson text-sm font-bold">
               {error}
             </div>
           )}
 
           {/* Account Creation Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-              <h2 className="text-xl font-bold text-yellow-400 uppercase mb-6">Create Your Account</h2>
+            <h2 className="text-xl font-serif font-bold text-rulebook-ink uppercase mb-6 border-b-2 border-rulebook-ink/20 pb-2">Create Your Account</h2>
 
-              {/* Top Row: Username and Display Name */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Username Field */}
-                <div>
-                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                    Username
-                  </label>
-                  <div className="relative">
-                    <User size={18} className="absolute left-3 top-3 text-gray-500" />
-                    <input
-                      type="text"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleAccountChange}
-                      required
-                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                        getFieldError('username')
-                          ? 'border-red-600 focus:border-red-500'
-                          : 'border-gray-700 focus:border-yellow-600'
-                      }`}
-                      placeholder="Choose a unique username"
-                    />
-                  </div>
-                  {getFieldError('username') && (
-                    <p className="mt-1 text-xs text-red-400">{getFieldError('username')}</p>
-                  )}
-                </div>
-
-                {/* Display Name Field */}
-                <div>
-                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                    Display Name
-                  </label>
-                  <div className="relative">
-                    <User size={18} className="absolute left-3 top-3 text-gray-500" />
-                    <input
-                      type="text"
-                      name="display_name"
-                      value={formData.display_name}
-                      onChange={handleAccountChange}
-                      required
-                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                        getFieldError('display_name')
-                          ? 'border-red-600 focus:border-red-500'
-                          : 'border-gray-700 focus:border-yellow-600'
-                      }`}
-                      placeholder="How others will see your name"
-                    />
-                  </div>
-                  {getFieldError('display_name') && (
-                    <p className="mt-1 text-xs text-red-400">{getFieldError('display_name')}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Email Field - Full Width */}
+            {/* Top Row: Username and Display Name */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Username Field */}
               <div>
-                <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                  Email
+                <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
+                  Username
                 </label>
-                <div className="relative">
-                  <Mail size={18} className="absolute left-3 top-3 text-gray-500" />
+                <div className="relative group">
+                  <User size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    type="text"
+                    name="username"
+                    value={formData.username}
                     onChange={handleAccountChange}
                     required
-                    className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                      getFieldError('email')
-                        ? 'border-red-600 focus:border-red-500'
-                        : 'border-gray-700 focus:border-yellow-600'
-                    }`}
-                    placeholder="your.email@example.com"
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('username')
+                        ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                        : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
+                      }`}
+                    placeholder="Choose a unique username"
                   />
                 </div>
-                {getFieldError('email') && (
-                  <p className="mt-1 text-xs text-red-400">{getFieldError('email')}</p>
+                {getFieldError('username') && (
+                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('username')}</p>
                 )}
               </div>
 
-              {/* Password Row: Password and Confirm Password */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Password Field */}
-                <div>
-                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock size={18} className="absolute left-3 top-3 text-gray-500" />
-                    <input
-                      type="password"
-                      name="password1"
-                      value={formData.password1}
-                      onChange={handleAccountChange}
-                      required
-                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                        getFieldError('password1')
-                          ? 'border-red-600 focus:border-red-500'
-                          : 'border-gray-700 focus:border-yellow-600'
+              {/* Display Name Field */}
+              <div>
+                <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
+                  Display Name
+                </label>
+                <div className="relative group">
+                  <User size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
+                  <input
+                    type="text"
+                    name="display_name"
+                    value={formData.display_name}
+                    onChange={handleAccountChange}
+                    required
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('display_name')
+                        ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                        : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
                       }`}
-                      placeholder="At least 8 characters"
-                    />
-                  </div>
-                  {getFieldError('password1') && (
-                    <p className="mt-1 text-xs text-red-400">{getFieldError('password1')}</p>
-                  )}
+                    placeholder="How others will see your name"
+                  />
                 </div>
+                {getFieldError('display_name') && (
+                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('display_name')}</p>
+                )}
+              </div>
+            </div>
 
-                {/* Confirm Password Field */}
-                <div>
-                  <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <Lock size={18} className="absolute left-3 top-3 text-gray-500" />
-                    <input
-                      type="password"
-                      name="password2"
-                      value={formData.password2}
-                      onChange={handleAccountChange}
-                      required
-                      className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                        getFieldError('password2')
-                          ? 'border-red-600 focus:border-red-500'
-                          : 'border-gray-700 focus:border-yellow-600'
+            {/* Email Field - Full Width */}
+            <div>
+              <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
+                Email
+              </label>
+              <div className="relative group">
+                <Mail size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleAccountChange}
+                  required
+                  className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('email')
+                      ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                      : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
+                    }`}
+                  placeholder="your.email@example.com"
+                />
+              </div>
+              {getFieldError('email') && (
+                <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('email')}</p>
+              )}
+            </div>
+
+            {/* Password Row: Password and Confirm Password */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Password Field */}
+              <div>
+                <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
+                  Password
+                </label>
+                <div className="relative group">
+                  <Lock size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
+                  <input
+                    type="password"
+                    name="password1"
+                    value={formData.password1}
+                    onChange={handleAccountChange}
+                    required
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('password1')
+                        ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                        : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
                       }`}
-                      placeholder="Repeat your password"
-                    />
-                  </div>
-                  {getFieldError('password2') && (
-                    <p className="mt-1 text-xs text-red-400">{getFieldError('password2')}</p>
-                  )}
+                    placeholder="At least 8 characters"
+                  />
                 </div>
+                {getFieldError('password1') && (
+                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('password1')}</p>
+                )}
               </div>
 
-              {/* Create Account Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full py-3 px-4 font-bold uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 mt-8 ${
-                  loading
-                    ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed'
-                    : 'bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600'
+              {/* Confirm Password Field */}
+              <div>
+                <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
+                  Confirm Password
+                </label>
+                <div className="relative group">
+                  <Lock size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
+                  <input
+                    type="password"
+                    name="password2"
+                    value={formData.password2}
+                    onChange={handleAccountChange}
+                    required
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('password2')
+                        ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                        : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
+                      }`}
+                    placeholder="Repeat your password"
+                  />
+                </div>
+                {getFieldError('password2') && (
+                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('password2')}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Create Account Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full btn-primary flex items-center justify-center gap-2 mt-8 ${loading ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
-              >
-                <UserPlus size={18} />
-                {loading ? 'Creating...' : 'Create Account'}
-              </button>
-            </form>
+            >
+              <UserPlus size={18} />
+              {loading ? 'Creating...' : 'Create Account'}
+            </button>
+          </form>
         </div>
 
         {/* Sign In Link */}
         <div className="text-center">
-            <p className="text-gray-400 text-sm mb-3">Already have an account?</p>
-            <button
-              onClick={() => navigate('/login')}
-              className="text-yellow-400 hover:text-yellow-300 font-bold uppercase text-sm tracking-wider"
-            >
-              Sign In Here
-            </button>
+          <p className="text-rulebook-ink/60 text-sm mb-3 font-serif italic">Already have an account?</p>
+          <button
+            onClick={() => navigate('/login')}
+            className="text-rulebook-crimson hover:text-rulebook-ink font-bold uppercase text-sm tracking-widest font-serif border-b-2 border-transparent hover:border-rulebook-ink transition-all"
+          >
+            Sign In Here
+          </button>
 
-            {/* Back to Home */}
-            <div className="mt-6">
-              <button
-                onClick={() => navigate('/')}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 border-2 border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500 transition-all font-bold uppercase text-sm w-full"
-              >
-                <Home size={16} />
-                Back to Home
-              </button>
-            </div>
+          {/* Back to Home */}
+          <div className="mt-6">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center justify-center gap-2 px-4 py-2 text-rulebook-ink/60 hover:text-rulebook-crimson transition-all font-bold uppercase text-sm w-full font-serif tracking-widest"
+            >
+              <Home size={16} />
+              Back to Home
+            </button>
+          </div>
         </div>
       </div>
 

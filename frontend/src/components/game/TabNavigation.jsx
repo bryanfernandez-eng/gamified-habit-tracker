@@ -29,17 +29,16 @@ export function TabNavigation({ activeTab, setActiveTab }) {
       icon: <Shirt size={18} />,
     },
   ]
-  
+
   return (
-    <div className="flex overflow-x-auto bg-gray-800 border-4 border-gray-700">
+    <div className="flex overflow-x-auto bg-rulebook-paper border-b-4 border-double border-rulebook-charcoal mb-6">
       {tabs.map((tab) => (
         <button
           key={tab.id}
-          className={`flex items-center px-6 py-3 font-medium text-sm whitespace-nowrap uppercase ${
-            activeTab === tab.id 
-              ? 'bg-yellow-700 text-yellow-300 border-t-4 border-yellow-500' 
-              : 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-gray-300'
-          }`}
+          className={`flex items-center px-6 py-3 font-serif font-bold text-sm whitespace-nowrap uppercase tracking-wider transition-colors ${activeTab === tab.id
+              ? 'text-rulebook-crimson border-b-4 border-rulebook-crimson bg-rulebook-ink/5'
+              : 'text-rulebook-ink/60 hover:text-rulebook-ink hover:bg-rulebook-ink/5'
+            }`}
           onClick={() => setActiveTab(tab.id)}
         >
           <span className="mr-2">{tab.icon}</span>

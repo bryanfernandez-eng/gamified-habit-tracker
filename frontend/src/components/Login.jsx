@@ -62,34 +62,36 @@ export default function Login() {
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-rulebook-paper flex flex-col items-center justify-center px-4 font-mono text-rulebook-ink">
       <div className="w-full max-w-md flex-1 flex flex-col justify-center">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <Zap className="w-8 h-8 text-yellow-400 mr-2" />
-            <h1 className="text-3xl font-bold text-yellow-400 uppercase tracking-wider">Quest Tracker</h1>
+            <div className="border-2 border-rulebook-ink p-1 rounded-sm mr-3">
+              <Zap className="w-6 h-6 text-rulebook-crimson" />
+            </div>
+            <h1 className="text-3xl font-serif font-bold text-rulebook-ink uppercase tracking-wider">Quest Tracker</h1>
           </div>
-          <p className="text-gray-400 text-sm uppercase tracking-widest">Enter your credentials to begin</p>
+          <p className="text-rulebook-ink/60 text-sm uppercase tracking-widest font-serif">Enter your credentials to begin</p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-gray-800 border-4 border-double border-gray-700 p-8 mb-6">
+        <div className="rulebook-card p-8 mb-6">
           {/* Demo User Quick Login */}
-          <div className="mb-8 p-4 bg-yellow-900/30 border-2 border-yellow-600/50">
-            <p className="text-xs text-yellow-500 uppercase tracking-wide mb-3 font-bold">Quick Demo Login</p>
+          <div className="mb-8 p-4 bg-rulebook-ink/5 border-2 border-rulebook-ink/20 rounded-sm">
+            <p className="text-xs text-rulebook-ink/70 uppercase tracking-wide mb-3 font-bold font-serif">Quick Demo Login</p>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => fillDemoCredentials('admin')}
-                className="flex-1 px-4 py-2 text-xs font-bold bg-red-700 text-red-200 border-2 border-red-600 hover:bg-red-600 uppercase transition-all"
+                className="flex-1 px-4 py-2 text-xs font-bold bg-rulebook-crimson text-rulebook-paper border-2 border-rulebook-ink hover:bg-rulebook-ink hover:text-rulebook-paper uppercase transition-all font-serif"
               >
                 Admin
               </button>
               <button
                 type="button"
                 onClick={() => fillDemoCredentials('user')}
-                className="flex-1 px-4 py-2 text-xs font-bold bg-yellow-700 text-yellow-200 border-2 border-yellow-600 hover:bg-yellow-600 uppercase transition-all"
+                className="flex-1 px-4 py-2 text-xs font-bold bg-transparent text-rulebook-ink border-2 border-rulebook-ink hover:bg-rulebook-royal hover:text-rulebook-paper hover:border-rulebook-royal uppercase transition-all font-serif"
               >
                 User
               </button>
@@ -98,7 +100,7 @@ export default function Login() {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-900 border-2 border-red-700 text-red-200 text-sm">
+            <div className="mb-6 p-4 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson text-sm font-bold">
               {error}
             </div>
           )}
@@ -107,59 +109,57 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username/Email Field */}
             <div>
-              <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
+              <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
                 Username or Email
               </label>
-              <div className="relative">
-                <User size={18} className="absolute left-3 top-3 text-gray-500" />
+              <div className="relative group">
+                <User size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
                 <input
                   type="text"
                   name="login"
                   value={formData.login}
                   onChange={handleChange}
                   required
-                  className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                    getFieldError('login') || getFieldError('non_field_errors')
-                      ? 'border-red-600 focus:border-red-500'
-                      : 'border-gray-700 focus:border-yellow-600'
-                  }`}
+                  className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('login') || getFieldError('non_field_errors')
+                      ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                      : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
+                    }`}
                   placeholder="Enter your username"
                 />
               </div>
               {getFieldError('login') && (
-                <p className="mt-1 text-xs text-red-400">{getFieldError('login')}</p>
+                <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('login')}</p>
               )}
             </div>
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-bold text-yellow-400 uppercase tracking-wider mb-2">
+              <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
                 Password
               </label>
-              <div className="relative">
-                <Lock size={18} className="absolute left-3 top-3 text-gray-500" />
+              <div className="relative group">
+                <Lock size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className={`w-full pl-10 pr-4 py-2 bg-gray-900 border-2 text-gray-200 placeholder-gray-500 focus:outline-none transition-all ${
-                    getFieldError('password') || getFieldError('non_field_errors')
-                      ? 'border-red-600 focus:border-red-500'
-                      : 'border-gray-700 focus:border-yellow-600'
-                  }`}
+                  className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('password') || getFieldError('non_field_errors')
+                      ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                      : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
+                    }`}
                   placeholder="Enter your password"
                 />
               </div>
               {getFieldError('password') && (
-                <p className="mt-1 text-xs text-red-400">{getFieldError('password')}</p>
+                <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('password')}</p>
               )}
             </div>
 
             {/* Non-field Errors */}
             {getFieldError('non_field_errors') && (
-              <div className="p-3 bg-red-900 border-2 border-red-700 text-red-200 text-sm">
+              <div className="p-3 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson text-sm font-bold">
                 {getFieldError('non_field_errors')}
               </div>
             )}
@@ -168,11 +168,8 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 px-4 font-bold uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 ${
-                loading
-                  ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed'
-                  : 'bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600'
-              }`}
+              className={`w-full btn-primary flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
             >
               <LogIn size={18} />
               {loading ? 'Signing In...' : 'Sign In'}
@@ -182,10 +179,10 @@ export default function Login() {
 
         {/* Register Link */}
         <div className="text-center">
-          <p className="text-gray-400 text-sm mb-3">Don't have an account?</p>
+          <p className="text-rulebook-ink/60 text-sm mb-3 font-serif italic">Don't have an account?</p>
           <button
             onClick={() => navigate('/register')}
-            className="text-yellow-400 hover:text-yellow-300 font-bold uppercase text-sm tracking-wider"
+            className="text-rulebook-crimson hover:text-rulebook-ink font-bold uppercase text-sm tracking-widest font-serif border-b-2 border-transparent hover:border-rulebook-ink transition-all"
           >
             Create Account Here
           </button>
@@ -195,7 +192,7 @@ export default function Login() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 border-2 border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500 transition-all font-bold uppercase text-sm w-full"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-rulebook-ink/60 hover:text-rulebook-crimson transition-all font-bold uppercase text-sm w-full font-serif tracking-widest"
           >
             <Home size={16} />
             Back to Home

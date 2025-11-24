@@ -57,31 +57,31 @@ export function AchievementPanel() {
 
   if (loading) {
     return (
-      <div className="bg-gray-800 border-4 border-double border-gray-700 p-8">
+      <div className="rulebook-card p-8">
         <div className="text-center">
           <div className="animate-spin inline-block">
-            <Trophy size={32} className="text-yellow-400" />
+            <Trophy size={32} className="text-rulebook-crimson" />
           </div>
-          <p className="text-gray-300 mt-4">Loading achievements...</p>
+          <p className="text-rulebook-ink/60 mt-4 font-serif">Loading achievements...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
+    <div className="rulebook-card p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-yellow-400 uppercase mb-2 border-b-2 border-gray-700 pb-2">
+        <h2 className="text-2xl font-serif font-bold text-rulebook-ink uppercase mb-2 border-b-2 border-rulebook-ink/20 pb-2">
           Trophies
         </h2>
         <div className="flex items-center justify-between mt-4">
-          <div className="text-sm text-gray-300">
-            <span className="text-yellow-400 font-bold">{unlockedCount}</span> of{' '}
-            <span className="text-yellow-400 font-bold">{totalCount}</span> unlocked
+          <div className="text-sm text-rulebook-ink/60 font-mono">
+            <span className="text-rulebook-crimson font-bold">{unlockedCount}</span> of{' '}
+            <span className="text-rulebook-ink font-bold">{totalCount}</span> unlocked
           </div>
-          <div className="w-48 h-2 bg-gray-900 border-2 border-gray-700">
+          <div className="w-48 h-2 bg-rulebook-ink/10 border border-rulebook-ink/20 rounded-full overflow-hidden">
             <div
-              className="h-full bg-yellow-500 transition-all"
+              className="h-full bg-rulebook-crimson transition-all"
               style={{ width: `${(unlockedCount / totalCount) * 100}%` }}
             />
           </div>
@@ -89,12 +89,12 @@ export function AchievementPanel() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-900 border-2 border-red-700 text-red-200 flex items-center">
+        <div className="mb-4 p-3 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson flex items-center rounded-sm">
           <AlertCircle size={18} className="mr-2" />
           {error}
           <button
             onClick={loadAchievements}
-            className="ml-auto text-red-100 hover:text-red-50 font-semibold"
+            className="ml-auto text-rulebook-crimson font-bold hover:underline"
           >
             Retry
           </button>
@@ -102,7 +102,7 @@ export function AchievementPanel() {
       )}
 
       {/* Filter Buttons */}
-      <div className="flex gap-2 mb-4 border-b-2 border-gray-700 pb-4">
+      <div className="flex gap-2 mb-6 border-b-2 border-rulebook-ink/10 pb-4">
         {[
           { id: 'all', label: 'All' },
           { id: 'unlocked', label: `Unlocked (${unlockedCount})` },
@@ -111,11 +111,10 @@ export function AchievementPanel() {
           <button
             key={btn.id}
             onClick={() => setFilter(btn.id)}
-            className={`px-4 py-2 font-medium transition-all ${
-              filter === btn.id
-                ? 'bg-yellow-700 text-yellow-200 border-b-2 border-yellow-400'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
+            className={`px-4 py-2 font-serif font-bold text-sm uppercase tracking-wider transition-all rounded-sm ${filter === btn.id
+                ? 'bg-rulebook-ink text-rulebook-paper'
+                : 'bg-transparent text-rulebook-ink/40 hover:text-rulebook-ink hover:bg-rulebook-ink/5'
+              }`}
           >
             {btn.label}
           </button>
@@ -128,26 +127,24 @@ export function AchievementPanel() {
           filteredAchievements.map((achievement) => (
             <div
               key={achievement.id}
-              className={`border-4 transition-all ${
-                achievement.is_unlocked
-                  ? 'border-yellow-600 bg-yellow-900'
-                  : 'border-gray-600 bg-gray-700'
-              }`}
+              className={`border-2 transition-all p-1 ${achievement.is_unlocked
+                  ? 'border-rulebook-crimson bg-rulebook-paper'
+                  : 'border-rulebook-ink/20 bg-rulebook-ink/5'
+                }`}
             >
-              <div className="p-4">
+              <div className={`p-4 h-full border ${achievement.is_unlocked ? 'border-rulebook-crimson/20' : 'border-transparent'}`}>
                 <div className="flex items-start">
                   {/* Icon */}
                   <div
-                    className={`p-2 text-2xl w-14 h-14 flex items-center justify-center ${
-                      achievement.is_unlocked
-                        ? 'bg-yellow-600 border-2 border-yellow-500'
-                        : 'bg-gray-600 border-2 border-gray-500'
-                    } mr-3`}
+                    className={`p-2 text-2xl w-14 h-14 flex items-center justify-center border-2 rounded-sm ${achievement.is_unlocked
+                        ? 'bg-rulebook-crimson text-rulebook-paper border-rulebook-crimson'
+                        : 'bg-transparent text-rulebook-ink/20 border-rulebook-ink/20'
+                      } mr-3`}
                   >
                     {achievement.is_unlocked ? (
-                      <Trophy size={24} className="text-white" />
+                      <Trophy size={24} />
                     ) : (
-                      <Lock size={24} className="text-white" />
+                      <Lock size={24} />
                     )}
                   </div>
 
@@ -155,35 +152,34 @@ export function AchievementPanel() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3
-                        className={`font-bold text-lg ${
-                          achievement.is_unlocked
-                            ? 'text-yellow-300'
-                            : 'text-gray-300'
-                        }`}
+                        className={`font-serif font-bold text-lg ${achievement.is_unlocked
+                            ? 'text-rulebook-ink'
+                            : 'text-rulebook-ink/40'
+                          }`}
                       >
                         {achievement.name}
                       </h3>
                       {achievement.is_unlocked && (
-                        <CheckCircle size={18} className="text-green-400" />
+                        <CheckCircle size={18} className="text-rulebook-forest" />
                       )}
                     </div>
 
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className={`text-sm mt-1 font-mono ${achievement.is_unlocked ? 'text-rulebook-ink/70' : 'text-rulebook-ink/40'}`}>
                       {achievement.description}
                     </p>
 
                     {/* Progress Bar */}
                     {!achievement.is_unlocked && (
                       <div className="mt-3">
-                        <div className="flex justify-between text-xs text-gray-400 mb-1">
+                        <div className="flex justify-between text-xs text-rulebook-ink/40 mb-1 font-mono">
                           <span>Progress</span>
                           <span>
                             {achievement.user_progress}/{achievement.requirement_value}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-900 border-2 border-gray-700 h-3 overflow-hidden">
+                        <div className="w-full bg-rulebook-ink/10 border border-rulebook-ink/20 h-2 overflow-hidden rounded-full">
                           <div
-                            className="bg-blue-600 h-full transition-all"
+                            className="bg-rulebook-ink/40 h-full transition-all"
                             style={{
                               width: `${getProgressPercentage(achievement)}%`,
                             }}
@@ -193,10 +189,13 @@ export function AchievementPanel() {
                     )}
 
                     {/* Reward */}
-                    <div className="mt-3 bg-gray-900 border-2 border-gray-600 p-2 flex items-center">
-                      <Zap size={14} className="text-yellow-500 mr-2" />
-                      <span className="text-xs text-gray-300">
-                        <span className="text-yellow-400 font-bold">
+                    <div className={`mt-3 border p-2 flex items-center rounded-sm ${achievement.is_unlocked
+                        ? 'bg-rulebook-royal/5 border-rulebook-royal/20'
+                        : 'bg-transparent border-rulebook-ink/10'
+                      }`}>
+                      <Zap size={14} className={`${achievement.is_unlocked ? 'text-rulebook-royal' : 'text-rulebook-ink/30'} mr-2`} />
+                      <span className={`text-xs font-mono ${achievement.is_unlocked ? 'text-rulebook-ink/80' : 'text-rulebook-ink/40'}`}>
+                        <span className={`font-bold ${achievement.is_unlocked ? 'text-rulebook-royal' : ''}`}>
                           {achievement.reward_xp} XP
                         </span>{' '}
                         - {achievement.reward_description}
@@ -204,12 +203,12 @@ export function AchievementPanel() {
                     </div>
 
                     {/* Type Badge */}
-                    <div className="mt-2 flex items-center">
-                      <span className="text-2xl mr-2">
+                    <div className="mt-2 flex items-center opacity-60">
+                      <span className="text-xl mr-2 grayscale">
                         {getAchievementIcon(achievement.requirement_type)}
                       </span>
-                      <span className="text-xs text-gray-400">
-                        {achievement.requirement_type.replace(/_/g, ' ').toUpperCase()}
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-rulebook-ink/50">
+                        {achievement.requirement_type.replace(/_/g, ' ')}
                       </span>
                     </div>
                   </div>
@@ -218,9 +217,9 @@ export function AchievementPanel() {
             </div>
           ))
         ) : (
-          <div className="col-span-2 text-center py-8 text-gray-400">
+          <div className="col-span-2 text-center py-12 text-rulebook-ink/40 border-2 border-dashed border-rulebook-ink/20 rounded-sm">
             <Trophy size={32} className="mx-auto mb-2 opacity-50" />
-            <p>No achievements to display</p>
+            <p className="font-serif italic">No achievements to display</p>
           </div>
         )}
       </div>

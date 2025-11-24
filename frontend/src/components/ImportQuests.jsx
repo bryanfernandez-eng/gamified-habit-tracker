@@ -35,15 +35,15 @@ const getCategoryIcon = (category) => {
   const iconProps = { size: 16, className: 'mr-1' }
   switch (category) {
     case 'strength':
-      return <Dumbbell {...iconProps} className="text-red-400 mr-1" />
+      return <Dumbbell {...iconProps} className="text-rulebook-crimson mr-1" />
     case 'intelligence':
-      return <BookOpen {...iconProps} className="text-blue-400 mr-1" />
+      return <BookOpen {...iconProps} className="text-rulebook-royal mr-1" />
     case 'creativity':
-      return <Brush {...iconProps} className="text-purple-400 mr-1" />
+      return <Brush {...iconProps} className="text-rulebook-ink mr-1" />
     case 'social':
-      return <Users {...iconProps} className="text-green-400 mr-1" />
+      return <Users {...iconProps} className="text-rulebook-forest mr-1" />
     case 'health':
-      return <Heart {...iconProps} className="text-pink-400 mr-1" />
+      return <Heart {...iconProps} className="text-rulebook-crimson mr-1" />
     default:
       return <Dumbbell {...iconProps} />
   }
@@ -52,17 +52,17 @@ const getCategoryIcon = (category) => {
 const getCategoryColor = (category) => {
   switch (category) {
     case 'strength':
-      return 'bg-red-900/20 border-red-700/50'
+      return 'bg-rulebook-crimson/10 border-rulebook-crimson/30'
     case 'intelligence':
-      return 'bg-blue-900/20 border-blue-700/50'
+      return 'bg-rulebook-royal/10 border-rulebook-royal/30'
     case 'creativity':
-      return 'bg-purple-900/20 border-purple-700/50'
+      return 'bg-rulebook-ink/10 border-rulebook-ink/30'
     case 'social':
-      return 'bg-green-900/20 border-green-700/50'
+      return 'bg-rulebook-forest/10 border-rulebook-forest/30'
     case 'health':
-      return 'bg-pink-900/20 border-pink-700/50'
+      return 'bg-rulebook-crimson/10 border-rulebook-crimson/30'
     default:
-      return 'bg-gray-900/20 border-gray-700/50'
+      return 'bg-rulebook-ink/5 border-rulebook-ink/20'
   }
 }
 
@@ -148,36 +148,34 @@ export function ImportQuests({ onQuestsImported, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 overflow-y-auto"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      className="fixed inset-0 flex items-center justify-center z-50 overflow-y-auto bg-rulebook-ink/40 backdrop-blur-sm"
     >
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
+        .quest-scrollbar::-webkit-scrollbar {
+          width: 6px;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 4px;
+        .quest-scrollbar::-webkit-scrollbar-track {
+          background: rgba(43, 43, 43, 0.1);
+          border-radius: 3px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #a855f7, #7c3aed);
-          border-radius: 4px;
-          border: 2px solid rgba(0, 0, 0, 0.1);
+        .quest-scrollbar::-webkit-scrollbar-thumb {
+          background: #8B0000;
+          border-radius: 3px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #9333ea, #6d28d9);
+        .quest-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #B22222;
         }
-        .custom-scrollbar {
-          scrollbar-color: #a855f7 rgba(0, 0, 0, 0.2);
+        .quest-scrollbar {
+          scrollbar-color: #8B0000 rgba(43, 43, 43, 0.1);
           scrollbar-width: thin;
         }
       `}</style>
-      <div className="bg-gray-900 border-4 border-purple-600 max-w-2xl w-full mx-4 p-6 my-8">
-        <div className="flex justify-between items-center mb-6">
+      <div className="rulebook-card max-w-2xl w-full mx-4 p-6 my-8">
+        <div className="flex justify-between items-center mb-6 border-b-2 border-rulebook-ink/20 pb-4">
           <div>
-            <h2 className="text-2xl font-bold text-purple-400 uppercase">Import Quests</h2>
+            <h2 className="text-2xl font-serif font-bold text-rulebook-ink uppercase tracking-widest">Import Quests</h2>
             {questLimit && (
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-rulebook-ink/60 mt-1 font-mono">
                 {questLimit.quests_remaining} slot{questLimit.quests_remaining !== 1 ? 's' : ''} available
                 {questLimit.max_quests < 999 && (
                   <span className="ml-2">
@@ -189,31 +187,30 @@ export function ImportQuests({ onQuestsImported, onClose }) {
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-200"
+            className="text-rulebook-ink/60 hover:text-rulebook-crimson transition-colors"
           >
             <X size={24} />
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-900/30 border-2 border-red-600 text-red-300 rounded">
+          <div className="mb-4 p-3 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson font-serif rounded-sm">
             {error}
           </div>
         )}
 
         {/* Category Filter */}
         <div className="mb-6">
-          <p className="text-sm font-bold text-gray-400 uppercase mb-3">Filter by Category</p>
+          <p className="text-sm font-serif font-bold text-rulebook-ink/80 uppercase mb-3 tracking-wide">Filter by Category</p>
           <div className="flex gap-2 flex-wrap">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-2 text-xs font-bold uppercase border-2 transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-purple-700 border-purple-600 text-purple-200'
-                    : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600'
-                }`}
+                className={`px-3 py-2 text-xs font-serif font-bold uppercase tracking-wider border-2 transition-all rounded-sm ${selectedCategory === cat
+                    ? 'bg-rulebook-crimson border-rulebook-crimson text-rulebook-paper'
+                    : 'bg-rulebook-ink/5 border-rulebook-ink/20 text-rulebook-ink hover:border-rulebook-ink/40'
+                  }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
               </button>
@@ -222,14 +219,14 @@ export function ImportQuests({ onQuestsImported, onClose }) {
         </div>
 
         {/* Quests List with Custom Scrollbar */}
-        <div className="max-h-96 overflow-y-auto mb-6 custom-scrollbar">
-          <div className="flex justify-between items-center mb-4 pb-2 border-b-2 border-gray-700 pr-2">
-            <p className="text-sm font-bold text-gray-300">
+        <div className="max-h-96 overflow-y-auto mb-6 quest-scrollbar">
+          <div className="flex justify-between items-center mb-4 pb-2 border-b-2 border-rulebook-ink/20 pr-2">
+            <p className="text-sm font-mono font-bold text-rulebook-ink">
               {selectedQuests.length} / {filteredQuests.length} selected
             </p>
             <button
               onClick={selectAll}
-              className="text-xs font-bold text-purple-400 hover:text-purple-300 uppercase"
+              className="text-xs font-serif font-bold text-rulebook-crimson hover:text-rulebook-royal uppercase transition-colors"
             >
               {selectedQuests.length === filteredQuests.length ? 'Deselect All' : 'Select All'}
             </button>
@@ -239,23 +236,22 @@ export function ImportQuests({ onQuestsImported, onClose }) {
             {filteredQuests.map((quest) => (
               <label
                 key={quest.name}
-                className={`flex items-start p-3 border-2 cursor-pointer transition-all ${
-                  getCategoryColor(quest.category)
-                } ${selectedQuests.includes(quest.name) ? 'border-purple-500 bg-purple-900/20' : 'border-gray-700'}`}
+                className={`flex items-start p-3 border-2 cursor-pointer transition-all rounded-sm ${getCategoryColor(quest.category)
+                  } ${selectedQuests.includes(quest.name) ? 'border-rulebook-crimson bg-rulebook-crimson/10' : 'border-rulebook-ink/20'}`}
               >
                 <input
                   type="checkbox"
                   checked={selectedQuests.includes(quest.name)}
                   onChange={() => toggleQuest(quest.name)}
-                  className="mt-1 mr-3 cursor-pointer"
+                  className="mt-1 mr-3 cursor-pointer accent-rulebook-crimson"
                 />
                 <div className="flex-1">
                   <div className="flex items-center">
                     {getCategoryIcon(quest.category)}
-                    <span className="font-bold text-gray-200">{quest.name}</span>
+                    <span className="font-serif font-bold text-rulebook-ink">{quest.name}</span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">{quest.description}</p>
-                  <div className="flex gap-3 mt-2 text-xs text-gray-500">
+                  <p className="text-xs text-rulebook-ink/60 mt-1 font-mono">{quest.description}</p>
+                  <div className="flex gap-3 mt-2 text-xs text-rulebook-ink/50 font-mono">
                     <span>XP: {quest.xp_reward}</span>
                     <span>Frequency: {quest.frequency}</span>
                   </div>
@@ -269,7 +265,7 @@ export function ImportQuests({ onQuestsImported, onClose }) {
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 bg-gray-700 border-2 border-gray-600 text-gray-200 hover:bg-gray-600 font-bold uppercase transition-all"
+            className="flex-1 px-4 py-3 bg-rulebook-ink/10 border-2 border-rulebook-ink/20 text-rulebook-ink hover:bg-rulebook-ink/20 font-serif font-bold uppercase tracking-wider transition-all rounded-sm"
           >
             Cancel
           </button>
@@ -285,13 +281,12 @@ export function ImportQuests({ onQuestsImported, onClose }) {
                 ? `You can only import ${questLimit.quests_remaining} quest(s)`
                 : ''
             }
-            className={`flex-1 px-4 py-3 font-bold uppercase border-2 transition-all flex items-center justify-center gap-2 ${
-              loading ||
-              selectedQuests.length === 0 ||
-              (questLimit && selectedQuests.length > questLimit.quests_remaining)
-                ? 'bg-gray-600 border-gray-500 text-gray-400 cursor-not-allowed'
-                : 'bg-purple-700 border-purple-600 text-purple-200 hover:bg-purple-600'
-            }`}
+            className={`flex-1 px-4 py-3 font-serif font-bold uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 shadow-sm rounded-sm ${loading ||
+                selectedQuests.length === 0 ||
+                (questLimit && selectedQuests.length > questLimit.quests_remaining)
+                ? 'bg-rulebook-ink/20 border-rulebook-ink/20 text-rulebook-ink/40 cursor-not-allowed'
+                : 'bg-rulebook-crimson border-rulebook-ink text-rulebook-paper hover:bg-rulebook-ink hover:border-rulebook-crimson'
+              }`}
           >
             <Plus size={16} />
             {loading ? 'Importing...' : `Import (${selectedQuests.length})`}

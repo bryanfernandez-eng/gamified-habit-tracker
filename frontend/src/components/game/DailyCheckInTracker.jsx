@@ -98,8 +98,8 @@ export function DailyCheckInTracker({ onCheckInSuccess }) {
 
   if (loading) {
     return (
-      <div className="bg-gray-800 border-2 border-gray-700 p-4 text-center text-gray-400">
-        <p>Loading check-in data...</p>
+      <div className="rulebook-card p-4 text-center text-rulebook-ink/60">
+        <p className="font-serif">Loading check-in data...</p>
       </div>
     )
   }
@@ -111,36 +111,35 @@ export function DailyCheckInTracker({ onCheckInSuccess }) {
   }
 
   return (
-    <div className="bg-gray-800 border-2 border-gray-700 p-4 mt-4">
+    <div className="rulebook-card p-4 mt-4">
       {/* Check-In Button */}
       <div className="mb-4">
         <button
           onClick={handleCheckIn}
           disabled={checkingIn || checkinData?.checked_in_today}
-          className={`w-full py-3 px-4 font-bold uppercase border-2 transition-all flex items-center justify-center gap-2 ${
-            checkinData?.checked_in_today
-              ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed'
+          className={`w-full py-3 px-4 font-serif font-bold uppercase tracking-wider border-2 transition-all flex items-center justify-center gap-2 rounded-sm shadow-sm ${checkinData?.checked_in_today
+              ? 'bg-rulebook-ink/10 border-rulebook-ink/20 text-rulebook-ink/40 cursor-not-allowed'
               : checkingIn
-              ? 'bg-yellow-700 border-yellow-600 text-yellow-200'
-              : 'bg-yellow-600 border-yellow-500 text-yellow-100 hover:bg-yellow-500'
-          }`}
+                ? 'bg-rulebook-ink text-rulebook-paper border-rulebook-ink'
+                : 'bg-rulebook-crimson text-rulebook-paper border-rulebook-ink hover:bg-rulebook-ink hover:border-rulebook-crimson'
+            }`}
         >
-          <Check size={16} />
+          <Check size={18} />
           {checkinData?.checked_in_today
             ? 'Checked In Today!'
             : checkingIn
-            ? 'Checking In...'
-            : 'Daily Check-In'}
+              ? 'Signing Ledger...'
+              : 'Daily Check-In'}
         </button>
 
         {success && (
-          <div className="mt-2 p-2 bg-green-900/30 border-2 border-green-600 text-green-300 text-center text-sm font-bold">
+          <div className="mt-2 p-2 bg-rulebook-forest/10 border-2 border-rulebook-forest text-rulebook-forest text-center text-sm font-serif font-bold">
             ✓ You earned 100 XP!
           </div>
         )}
 
         {error && (
-          <div className="mt-2 p-2 bg-red-900/30 border-2 border-red-600 text-red-300 text-center text-sm flex items-center justify-center gap-2">
+          <div className="mt-2 p-2 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson text-center text-sm flex items-center justify-center gap-2 font-serif font-bold">
             <AlertCircle size={14} />
             {error}
           </div>
@@ -149,10 +148,10 @@ export function DailyCheckInTracker({ onCheckInSuccess }) {
 
       {/* Contribution Calendar */}
       <div className="mt-6">
-        <div className="flex items-center gap-2 mb-3">
-          <Calendar size={16} className="text-purple-400" />
-          <h3 className="text-sm font-bold text-gray-300 uppercase">
-            Contribution Calendar ({checkinData?.total_checkins || 0} total)
+        <div className="flex items-center gap-2 mb-3 border-b border-rulebook-ink/10 pb-2">
+          <Calendar size={16} className="text-rulebook-royal" />
+          <h3 className="text-sm font-bold text-rulebook-ink uppercase tracking-wide font-serif">
+            Adventure Log ({checkinData?.total_checkins || 0} days)
           </h3>
         </div>
 
@@ -161,19 +160,19 @@ export function DailyCheckInTracker({ onCheckInSuccess }) {
             height: 8px;
           }
           .checkin-scrollbar::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(43, 43, 43, 0.05);
             border-radius: 4px;
           }
           .checkin-scrollbar::-webkit-scrollbar-thumb {
-            background: linear-gradient(90deg, #a855f7, #7c3aed);
+            background: #8B0000;
             border-radius: 4px;
-            border: 2px solid rgba(0, 0, 0, 0.1);
+            border: 2px solid #F0E6D2;
           }
           .checkin-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(90deg, #9333ea, #6d28d9);
+            background: #2B2B2B;
           }
           .checkin-scrollbar {
-            scrollbar-color: #a855f7 rgba(0, 0, 0, 0.2);
+            scrollbar-color: #8B0000 rgba(43, 43, 43, 0.05);
             scrollbar-width: thin;
           }
         `}</style>
@@ -181,7 +180,7 @@ export function DailyCheckInTracker({ onCheckInSuccess }) {
         {/* Calendar Grid */}
         <div
           ref={calendarContainerRef}
-          className="overflow-x-auto checkin-scrollbar"
+          className="overflow-x-auto checkin-scrollbar pb-2"
         >
           <div className="inline-block">
             {weeks.length > 0 ? (
@@ -191,11 +190,10 @@ export function DailyCheckInTracker({ onCheckInSuccess }) {
                     {week.map((day, dayIdx) => (
                       <div
                         key={`${weekIdx}-${dayIdx}`}
-                        className={`w-3 h-3 border border-gray-700 ${
-                          day.hasCheckin
-                            ? 'bg-green-600'
-                            : 'bg-gray-900'
-                        }`}
+                        className={`w-3 h-3 border ${day.hasCheckin
+                            ? 'bg-rulebook-crimson border-rulebook-ink/40'
+                            : 'bg-rulebook-ink/5 border-rulebook-ink/10'
+                          }`}
                         title={day.date}
                       />
                     ))}
@@ -203,30 +201,30 @@ export function DailyCheckInTracker({ onCheckInSuccess }) {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-gray-400">No check-ins yet. Start today!</p>
+              <p className="text-xs text-rulebook-ink/40 font-serif italic">No check-ins yet. Start your journey today!</p>
             )}
           </div>
         </div>
 
         {/* Legend */}
-        <div className="mt-3 flex items-center gap-3 text-xs text-gray-400">
+        <div className="mt-3 flex items-center gap-3 text-xs text-rulebook-ink/60 font-mono uppercase tracking-wide">
           <span>Less</span>
           <div className="flex gap-1">
-            <div className="w-2 h-2 bg-gray-900 border border-gray-700" />
-            <div className="w-2 h-2 bg-green-800 border border-gray-700" />
-            <div className="w-2 h-2 bg-green-600 border border-gray-700" />
+            <div className="w-2 h-2 bg-rulebook-ink/5 border border-rulebook-ink/10" />
+            <div className="w-2 h-2 bg-rulebook-crimson/40 border border-rulebook-ink/20" />
+            <div className="w-2 h-2 bg-rulebook-crimson border border-rulebook-ink/40" />
           </div>
           <span>More</span>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="mt-4 p-3 bg-gray-700 border-2 border-gray-600 text-center">
-        <p className="text-sm text-gray-300">
-          <span className="font-bold text-yellow-400">{checkinData?.total_checkins || 0}</span> Total Check-ins
+      <div className="mt-4 p-3 bg-rulebook-ink/5 border border-rulebook-ink/10 text-center rounded-sm">
+        <p className="text-sm text-rulebook-ink font-serif">
+          <span className="font-bold text-rulebook-crimson text-lg">{checkinData?.total_checkins || 0}</span> Total Check-ins
         </p>
         {checkinData?.checked_in_today && (
-          <p className="text-xs text-green-400 mt-1">✓ Already checked in today!</p>
+          <p className="text-xs text-rulebook-forest mt-1 font-bold font-serif uppercase tracking-wide">✓ Ledger Signed Today</p>
         )}
       </div>
     </div>

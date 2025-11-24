@@ -115,30 +115,30 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F1924] text-slate-100 py-8">
+    <div className="min-h-screen bg-rulebook-paper text-rulebook-ink py-20">
       <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
-        <h1 className="text-4xl font-bold text-yellow-400 mb-8 text-center uppercase">
+        <h1 className="text-4xl font-serif font-bold text-rulebook-ink mb-8 text-center uppercase tracking-widest">
           Settings
         </h1>
 
         {/* Messages */}
         {successMessage && (
-          <div className="mb-6 p-4 bg-green-900 border-2 border-green-700 text-green-200 flex items-center">
+          <div className="mb-6 p-4 bg-rulebook-forest/10 border-2 border-rulebook-forest text-rulebook-forest flex items-center rounded-sm font-serif">
             <Check size={20} className="mr-2" />
             {successMessage}
           </div>
         )}
 
         {errorMessage && (
-          <div className="mb-6 p-4 bg-red-900 border-2 border-red-700 text-red-200 flex items-center">
+          <div className="mb-6 p-4 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson flex items-center rounded-sm font-serif">
             <AlertCircle size={20} className="mr-2" />
             {errorMessage}
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex border-b-2 border-gray-700 mb-8 overflow-x-auto">
+        <div className="flex border-b-2 border-rulebook-charcoal mb-8 overflow-x-auto">
           {[
             { id: 'name', label: 'Display Name' },
             { id: 'password', label: 'Password' },
@@ -147,11 +147,10 @@ const Settings = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 font-semibold uppercase whitespace-nowrap transition-colors ${
-                activeTab === tab.id
-                  ? 'text-yellow-400 border-b-4 border-yellow-400'
-                  : 'text-gray-400 hover:text-gray-200'
-              }`}
+              className={`px-6 py-3 font-serif font-bold uppercase whitespace-nowrap transition-colors tracking-wider ${activeTab === tab.id
+                  ? 'text-rulebook-crimson border-b-4 border-rulebook-crimson bg-rulebook-ink/5'
+                  : 'text-rulebook-ink/60 hover:text-rulebook-ink hover:bg-rulebook-ink/5'
+                }`}
             >
               {tab.label}
             </button>
@@ -159,43 +158,43 @@ const Settings = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-gray-800 border-4 border-gray-700 p-6">
+        <div className="rulebook-card p-8">
           {/* Display Name Tab */}
           {activeTab === 'name' && (
             <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-6">Change Display Name</h2>
-              <div className="space-y-4">
+              <h2 className="text-2xl font-serif font-bold text-rulebook-ink mb-6 uppercase tracking-wide">Change Display Name</h2>
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Current Name: <span className="text-yellow-400">{user?.display_name || 'Not set'}</span>
+                  <label className="block text-sm font-bold text-rulebook-ink/60 mb-2 uppercase tracking-wide">
+                    Current Name: <span className="text-rulebook-ink font-serif text-lg ml-2">{user?.display_name || 'Not set'}</span>
                   </label>
                 </div>
 
                 {!isEditingName ? (
                   <button
                     onClick={() => setIsEditingName(true)}
-                    className="px-6 py-2 bg-yellow-700 border-2 border-yellow-600 text-yellow-200 hover:bg-yellow-600 font-medium"
+                    className="px-6 py-2 bg-rulebook-ink text-rulebook-paper hover:bg-rulebook-crimson transition-all font-serif font-bold uppercase tracking-wider rounded-sm"
                   >
                     Edit Display Name
                   </button>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <input
                       type="text"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       placeholder="Enter new display name"
-                      className="w-full bg-gray-700 border-2 border-gray-600 px-4 py-2 text-gray-200 placeholder-gray-500 focus:border-yellow-600 focus:outline-none"
+                      className="w-full bg-transparent border-b-2 border-rulebook-ink/30 px-2 py-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:border-rulebook-crimson focus:outline-none font-serif text-lg transition-colors"
                       maxLength={150}
                     />
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-rulebook-ink/40 font-mono text-right">
                       {displayName.length}/150 characters
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-4">
                       <button
                         onClick={handleUpdateDisplayName}
                         disabled={loadingName}
-                        className="px-6 py-2 bg-green-700 border-2 border-green-600 text-green-200 hover:bg-green-600 font-medium disabled:opacity-50"
+                        className="px-6 py-2 bg-rulebook-forest text-rulebook-paper hover:bg-green-700 transition-all font-serif font-bold uppercase tracking-wider rounded-sm disabled:opacity-50"
                       >
                         {loadingName ? 'Saving...' : 'Save'}
                       </button>
@@ -204,7 +203,7 @@ const Settings = () => {
                           setIsEditingName(false)
                           setDisplayName(user?.display_name || '')
                         }}
-                        className="px-6 py-2 bg-gray-700 border-2 border-gray-600 text-gray-200 hover:bg-gray-600 font-medium"
+                        className="px-6 py-2 bg-transparent border-2 border-rulebook-ink/20 text-rulebook-ink hover:border-rulebook-ink transition-all font-serif font-bold uppercase tracking-wider rounded-sm"
                       >
                         Cancel
                       </button>
@@ -218,25 +217,25 @@ const Settings = () => {
           {/* Password Tab */}
           {activeTab === 'password' && (
             <div>
-              <h2 className="text-2xl font-bold text-yellow-400 mb-6">Change Password</h2>
-              <div className="space-y-4">
+              <h2 className="text-2xl font-serif font-bold text-rulebook-ink mb-6 uppercase tracking-wide">Change Password</h2>
+              <div className="space-y-6">
                 {/* Old Password */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-xs font-bold text-rulebook-ink/60 mb-2 uppercase tracking-wide">
                     Current Password
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       type={showPasswords.old ? 'text' : 'password'}
                       value={oldPassword}
                       onChange={(e) => setOldPassword(e.target.value)}
                       placeholder="Enter your current password"
-                      className="w-full bg-gray-700 border-2 border-gray-600 px-4 py-2 text-gray-200 placeholder-gray-500 focus:border-yellow-600 focus:outline-none pr-10"
+                      className="w-full bg-transparent border-b-2 border-rulebook-ink/30 px-2 py-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:border-rulebook-crimson focus:outline-none pr-10 font-mono transition-colors"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPasswords(prev => ({ ...prev, old: !prev.old }))}
-                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-200"
+                      className="absolute right-2 top-2 text-rulebook-ink/40 hover:text-rulebook-crimson transition-colors"
                     >
                       {showPasswords.old ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -245,21 +244,21 @@ const Settings = () => {
 
                 {/* New Password */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-xs font-bold text-rulebook-ink/60 mb-2 uppercase tracking-wide">
                     New Password
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       type={showPasswords.new ? 'text' : 'password'}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Enter new password (min 8 characters)"
-                      className="w-full bg-gray-700 border-2 border-gray-600 px-4 py-2 text-gray-200 placeholder-gray-500 focus:border-yellow-600 focus:outline-none pr-10"
+                      className="w-full bg-transparent border-b-2 border-rulebook-ink/30 px-2 py-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:border-rulebook-crimson focus:outline-none pr-10 font-mono transition-colors"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
-                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-200"
+                      className="absolute right-2 top-2 text-rulebook-ink/40 hover:text-rulebook-crimson transition-colors"
                     >
                       {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -268,21 +267,21 @@ const Settings = () => {
 
                 {/* Confirm Password */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-xs font-bold text-rulebook-ink/60 mb-2 uppercase tracking-wide">
                     Confirm New Password
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       type={showPasswords.confirm ? 'text' : 'password'}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm new password"
-                      className="w-full bg-gray-700 border-2 border-gray-600 px-4 py-2 text-gray-200 placeholder-gray-500 focus:border-yellow-600 focus:outline-none pr-10"
+                      className="w-full bg-transparent border-b-2 border-rulebook-ink/30 px-2 py-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:border-rulebook-crimson focus:outline-none pr-10 font-mono transition-colors"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
-                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-200"
+                      className="absolute right-2 top-2 text-rulebook-ink/40 hover:text-rulebook-crimson transition-colors"
                     >
                       {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -292,7 +291,7 @@ const Settings = () => {
                 <button
                   onClick={handleChangePassword}
                   disabled={loadingPassword}
-                  className="w-full mt-6 px-6 py-3 bg-yellow-700 border-2 border-yellow-600 text-yellow-200 hover:bg-yellow-600 font-bold uppercase disabled:opacity-50"
+                  className="w-full mt-6 px-6 py-3 bg-rulebook-ink text-rulebook-paper hover:bg-rulebook-crimson transition-all font-serif font-bold uppercase tracking-wider rounded-sm disabled:opacity-50"
                 >
                   {loadingPassword ? 'Changing Password...' : 'Change Password'}
                 </button>
@@ -303,9 +302,9 @@ const Settings = () => {
           {/* Delete Account Tab */}
           {activeTab === 'delete' && (
             <div>
-              <h2 className="text-2xl font-bold text-red-400 mb-6">Delete Account</h2>
-              <div className="bg-red-900 border-2 border-red-700 p-4 mb-6">
-                <p className="text-red-200 text-sm">
+              <h2 className="text-2xl font-serif font-bold text-rulebook-crimson mb-6 uppercase tracking-wide">Delete Account</h2>
+              <div className="bg-rulebook-crimson/10 border-2 border-rulebook-crimson p-4 mb-6 rounded-sm">
+                <p className="text-rulebook-crimson text-sm font-serif">
                   ⚠️ <strong>Warning:</strong> Deleting your account is permanent and cannot be undone. All your data will be lost.
                 </p>
               </div>
@@ -313,27 +312,27 @@ const Settings = () => {
               {!showDeleteConfirm ? (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-6 py-2 bg-red-700 border-2 border-red-600 text-red-200 hover:bg-red-600 font-medium"
+                  className="px-6 py-2 bg-rulebook-crimson text-rulebook-paper hover:bg-red-800 transition-all font-serif font-bold uppercase tracking-wider rounded-sm"
                 >
                   Delete My Account
                 </button>
               ) : (
-                <div className="space-y-4">
-                  <p className="text-gray-300">
-                    To confirm deletion, please type <strong className="text-red-400">DELETE</strong> below:
+                <div className="space-y-6">
+                  <p className="text-rulebook-ink font-serif">
+                    To confirm deletion, please type <strong className="text-rulebook-crimson">DELETE</strong> below:
                   </p>
                   <input
                     type="text"
                     value={deleteConfirmText}
                     onChange={(e) => setDeleteConfirmText(e.target.value.toUpperCase())}
                     placeholder="Type DELETE to confirm"
-                    className="w-full bg-gray-700 border-2 border-gray-600 px-4 py-2 text-gray-200 placeholder-gray-500 focus:border-red-600 focus:outline-none"
+                    className="w-full bg-transparent border-b-2 border-rulebook-crimson px-2 py-2 text-rulebook-crimson placeholder-rulebook-crimson/30 focus:outline-none font-mono font-bold tracking-widest"
                   />
-                  <div className="flex gap-2">
+                  <div className="flex gap-4">
                     <button
                       onClick={handleDeleteAccount}
                       disabled={loadingDelete || deleteConfirmText !== 'DELETE'}
-                      className="px-6 py-2 bg-red-700 border-2 border-red-600 text-red-200 hover:bg-red-600 font-medium disabled:opacity-50"
+                      className="px-6 py-2 bg-rulebook-crimson text-rulebook-paper hover:bg-red-800 transition-all font-serif font-bold uppercase tracking-wider rounded-sm disabled:opacity-50"
                     >
                       {loadingDelete ? 'Deleting...' : 'Permanently Delete Account'}
                     </button>
@@ -342,7 +341,7 @@ const Settings = () => {
                         setShowDeleteConfirm(false)
                         setDeleteConfirmText('')
                       }}
-                      className="px-6 py-2 bg-gray-700 border-2 border-gray-600 text-gray-200 hover:bg-gray-600 font-medium"
+                      className="px-6 py-2 bg-transparent border-2 border-rulebook-ink/20 text-rulebook-ink hover:border-rulebook-ink transition-all font-serif font-bold uppercase tracking-wider rounded-sm"
                     >
                       Cancel
                     </button>

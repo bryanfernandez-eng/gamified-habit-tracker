@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Zap, Target, Trophy, TrendingUp, Users, Sparkles } from 'lucide-react'
+import { Zap, Target, Trophy, TrendingUp, Users, Sparkles, Scroll, Feather, Map } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import ConnectionStatus from '../components/ConnectionStatus'
 
@@ -16,218 +16,261 @@ export default function Home() {
   }, [isAuthenticated, navigate])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-rulebook-paper text-rulebook-ink font-mono selection:bg-rulebook-crimson selection:text-rulebook-paper">
       {/* Navbar for Home */}
-      <nav className="bg-gray-900 border-b-4 border-double border-gray-700 shadow-lg">
+      <nav className="bg-rulebook-paper border-b-4 border-double border-rulebook-charcoal fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Zap className="w-6 h-6 text-yellow-400 mr-2" />
-              <span className="text-xl font-bold text-yellow-400 uppercase">Quest Tracker</span>
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center gap-3">
+              <div className="border-2 border-rulebook-ink p-1 rounded-sm">
+                <Scroll className="w-6 h-6 text-rulebook-crimson" />
+              </div>
+              <span className="text-2xl font-serif font-bold text-rulebook-ink tracking-tight">Quest Tracker</span>
             </div>
-            <button
-              onClick={() => navigate('/login')}
-              className="px-6 py-2 bg-yellow-600 text-yellow-100 hover:bg-yellow-500 font-bold uppercase rounded-sm transition-all border-2 border-yellow-500"
-            >
-              Login
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/login')}
+                className="text-rulebook-ink font-serif font-bold hover:text-rulebook-crimson transition-colors uppercase tracking-widest text-sm"
+              >
+                Log In
+              </button>
+              <button
+                onClick={() => navigate('/register')}
+                className="px-6 py-2 bg-rulebook-ink text-rulebook-paper font-serif font-bold text-sm rounded-sm hover:bg-rulebook-crimson transition-colors shadow-sm uppercase tracking-widest border-2 border-transparent hover:border-rulebook-ink"
+              >
+                Start Quest
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-        <div className="text-center">
-          <h1 className="text-5xl sm:text-6xl font-bold text-yellow-400 mb-6 uppercase tracking-wider">
-            Gamify Your Habits
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-b-4 border-double border-rulebook-charcoal/20">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="inline-block mb-6 px-4 py-2 bg-rulebook-paper border-2 border-rulebook-charcoal rounded-sm shadow-rulebook">
+            <span className="text-rulebook-forest font-bold text-xs uppercase tracking-widest flex items-center gap-2">
+              <Feather className="w-4 h-4" /> Adventure Awaits
+            </span>
+          </div>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-rulebook-ink mb-8 leading-tight">
+            The Manual for <br />
+            <span className="text-rulebook-crimson italic decoration-rulebook-charcoal/30 underline decoration-2 underline-offset-8">Self-Mastery</span>
           </h1>
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Transform healthy habits into an epic RPG adventure. Track your progress, level up your character,
-            and unlock achievements as you build consistency and discipline.
+          <p className="text-lg text-rulebook-ink/80 mb-12 max-w-2xl mx-auto leading-relaxed border-l-4 border-rulebook-royal pl-6 italic">
+            "A comprehensive system to track your daily deeds, enhance your attributes, and record your legend for posterity."
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate('/login')}
-              className="px-8 py-3 bg-yellow-600 text-yellow-100 hover:bg-yellow-500 font-bold uppercase text-lg rounded-sm transition-all border-2 border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/50"
-            >
-              Get Started
-            </button>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <button
               onClick={() => navigate('/register')}
-              className="px-8 py-3 bg-purple-700 text-purple-100 hover:bg-purple-600 font-bold uppercase text-lg rounded-sm transition-all border-2 border-purple-600 hover:shadow-lg hover:shadow-purple-600/50"
+              className="btn-primary w-full sm:w-auto"
             >
-              Create Account
+              Begin Adventure
+            </button>
+            <button
+              onClick={() => navigate('/login')}
+              className="btn-secondary w-full sm:w-auto"
+            >
+              Resume Game
             </button>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t-4 border-gray-700">
-        <h2 className="text-4xl font-bold text-yellow-400 mb-12 text-center uppercase">
-          Core Features
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Feature 1 */}
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 hover:border-yellow-500 transition-all">
-            <div className="flex items-center mb-4">
-              <Target className="w-8 h-8 text-yellow-400 mr-3" />
-              <h3 className="text-xl font-bold text-yellow-300 uppercase">Track Habits</h3>
-            </div>
-            <p className="text-gray-300">
-              Log your daily habits across 5 categories: Strength, Intelligence, Creativity, Social, and Health.
-              Build streaks and maintain consistency.
+      {/* Features Grid */}
+      <section className="py-24 bg-rulebook-paper">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-rulebook-ink mb-4 border-b-2 border-rulebook-charcoal inline-block pb-2 px-8">
+              System Mechanics
+            </h2>
+            <p className="text-rulebook-ink/70 max-w-2xl mx-auto mt-6 font-serif italic text-lg">
+              Core rules for your personal progression system.
             </p>
           </div>
 
-          {/* Feature 2 */}
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 hover:border-yellow-500 transition-all">
-            <div className="flex items-center mb-4">
-              <TrendingUp className="w-8 h-8 text-yellow-400 mr-3" />
-              <h3 className="text-xl font-bold text-yellow-300 uppercase">Earn XP & Level Up</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Feature 1 */}
+            <div className="rulebook-card p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Target className="w-24 h-24" />
+              </div>
+              <div className="w-12 h-12 border-2 border-rulebook-charcoal flex items-center justify-center rounded-sm mb-6 bg-rulebook-paper shadow-sm">
+                <Target className="w-6 h-6 text-rulebook-crimson" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-rulebook-ink mb-3 uppercase tracking-wide">Quest Log</h3>
+              <p className="text-rulebook-ink/80 leading-relaxed text-sm">
+                Define your daily objectives. Categorize them by attribute to ensure balanced character development.
+              </p>
             </div>
-            <p className="text-gray-300">
-              Complete habits to earn XP and progress through levels. Unlock new achievements and equipment
-              as you advance your journey.
-            </p>
-          </div>
 
-          {/* Feature 3 */}
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 hover:border-yellow-500 transition-all">
-            <div className="flex items-center mb-4">
-              <Sparkles className="w-8 h-8 text-yellow-400 mr-3" />
-              <h3 className="text-xl font-bold text-yellow-300 uppercase">Customize Character</h3>
+            {/* Feature 2 */}
+            <div className="rulebook-card p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                <TrendingUp className="w-24 h-24" />
+              </div>
+              <div className="w-12 h-12 border-2 border-rulebook-charcoal flex items-center justify-center rounded-sm mb-6 bg-rulebook-paper shadow-sm">
+                <TrendingUp className="w-6 h-6 text-rulebook-forest" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-rulebook-ink mb-3 uppercase tracking-wide">Experience Points</h3>
+              <p className="text-rulebook-ink/80 leading-relaxed text-sm">
+                Gain XP for every completed task. Watch your level rise as you maintain consistency over time.
+              </p>
             </div>
-            <p className="text-gray-300">
-              Unlock outfits, accessories, and themes. Equip gear that grants stat bonuses and customize
-              your unique character appearance.
-            </p>
-          </div>
 
-          {/* Feature 4 */}
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 hover:border-yellow-500 transition-all">
-            <div className="flex items-center mb-4">
-              <Trophy className="w-8 h-8 text-yellow-400 mr-3" />
-              <h3 className="text-xl font-bold text-yellow-300 uppercase">Earn Achievements</h3>
+            {/* Feature 3 */}
+            <div className="rulebook-card p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Trophy className="w-24 h-24" />
+              </div>
+              <div className="w-12 h-12 border-2 border-rulebook-charcoal flex items-center justify-center rounded-sm mb-6 bg-rulebook-paper shadow-sm">
+                <Trophy className="w-6 h-6 text-rulebook-royal" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-rulebook-ink mb-3 uppercase tracking-wide">Achievements</h3>
+              <p className="text-rulebook-ink/80 leading-relaxed text-sm">
+                Unlock badges of honor for your deeds. A record of your triumphs to display on your character sheet.
+              </p>
             </div>
-            <p className="text-gray-300">
-              Unlock 24+ unique achievements based on streaks, levels, attribute progression, and habit
-              completion milestones.
-            </p>
-          </div>
 
-          {/* Feature 5 */}
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 hover:border-yellow-500 transition-all">
-            <div className="flex items-center mb-4">
-              <Users className="w-8 h-8 text-yellow-400 mr-3" />
-              <h3 className="text-xl font-bold text-yellow-300 uppercase">Compete Online</h3>
+            {/* Feature 4 */}
+            <div className="rulebook-card p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Sparkles className="w-24 h-24" />
+              </div>
+              <div className="w-12 h-12 border-2 border-rulebook-charcoal flex items-center justify-center rounded-sm mb-6 bg-rulebook-paper shadow-sm">
+                <Sparkles className="w-6 h-6 text-rulebook-ink" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-rulebook-ink mb-3 uppercase tracking-wide">Inventory</h3>
+              <p className="text-rulebook-ink/80 leading-relaxed text-sm">
+                Earn equipment to customize your avatar. Visual rewards that reflect your status and dedication.
+              </p>
             </div>
-            <p className="text-gray-300">
-              View the global leaderboard and see how your progress compares with other players.
-              Climb the ranks and become a legend.
-            </p>
-          </div>
 
-          {/* Feature 6 */}
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 hover:border-yellow-500 transition-all">
-            <div className="flex items-center mb-4">
-              <Zap className="w-8 h-8 text-yellow-400 mr-3" />
-              <h3 className="text-xl font-bold text-yellow-300 uppercase">5 Core Attributes</h3>
+            {/* Feature 5 */}
+            <div className="rulebook-card p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Users className="w-24 h-24" />
+              </div>
+              <div className="w-12 h-12 border-2 border-rulebook-charcoal flex items-center justify-center rounded-sm mb-6 bg-rulebook-paper shadow-sm">
+                <Users className="w-6 h-6 text-rulebook-crimson" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-rulebook-ink mb-3 uppercase tracking-wide">Guilds</h3>
+              <p className="text-rulebook-ink/80 leading-relaxed text-sm">
+                Compare your progress with other adventurers. Compete for glory on the global leaderboards.
+              </p>
             </div>
-            <p className="text-gray-300">
-              Develop Strength, Intelligence, Creativity, Social, and Health attributes. Each habit
-              contributes to specific attributes for balanced growth.
-            </p>
+
+            {/* Feature 6 */}
+            <div className="rulebook-card p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Zap className="w-24 h-24" />
+              </div>
+              <div className="w-12 h-12 border-2 border-rulebook-charcoal flex items-center justify-center rounded-sm mb-6 bg-rulebook-paper shadow-sm">
+                <Zap className="w-6 h-6 text-rulebook-forest" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-rulebook-ink mb-3 uppercase tracking-wide">Attributes</h3>
+              <p className="text-rulebook-ink/80 leading-relaxed text-sm">
+                STR, INT, CRE, SOC, HLT. Develop your core stats through specific actions and habits.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t-4 border-gray-700">
-        <h2 className="text-4xl font-bold text-yellow-400 mb-12 text-center uppercase">
-          How It Works
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gray-800 border-4 border-yellow-500 p-6 text-center">
-            <div className="text-4xl font-bold text-yellow-400 mb-3">1</div>
-            <h3 className="text-yellow-300 font-bold uppercase mb-2">Create Habits</h3>
-            <p className="text-gray-400 text-sm">
-              Define your habits with custom names, categories, and XP rewards.
-            </p>
-          </div>
-
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 text-center hover:border-yellow-500 transition-all">
-            <div className="text-4xl font-bold text-yellow-400 mb-3">2</div>
-            <h3 className="text-yellow-300 font-bold uppercase mb-2">Log Daily</h3>
-            <p className="text-gray-400 text-sm">
-              Complete your quests each day and watch your streaks grow.
-            </p>
-          </div>
-
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 text-center hover:border-yellow-500 transition-all">
-            <div className="text-4xl font-bold text-yellow-400 mb-3">3</div>
-            <h3 className="text-yellow-300 font-bold uppercase mb-2">Earn Rewards</h3>
-            <p className="text-gray-400 text-sm">
-              Gain XP, unlock achievements, and unlock new equipment.
-            </p>
-          </div>
-
-          <div className="bg-gray-800 border-4 border-gray-700 p-6 text-center hover:border-yellow-500 transition-all">
-            <div className="text-4xl font-bold text-yellow-400 mb-3">4</div>
-            <h3 className="text-yellow-300 font-bold uppercase mb-2">Level Up</h3>
-            <p className="text-gray-400 text-sm">
-              Progress through levels and rise up the global leaderboard.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t-4 border-gray-700">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+      {/* How It Works - Steps */}
+      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t-4 border-double border-rulebook-charcoal/20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
-            <div className="text-5xl font-bold text-yellow-400 mb-2">5</div>
-            <p className="text-gray-300 font-bold uppercase">Core Attributes</p>
+            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-rulebook-ink mb-6">
+              Gameplay Loop
+            </h2>
+            <div className="space-y-8 pl-4 border-l-2 border-rulebook-charcoal/20">
+              <div className="relative">
+                <div className="absolute -left-[25px] top-0 w-4 h-4 bg-rulebook-crimson rounded-full border-2 border-rulebook-paper shadow-sm"></div>
+                <h4 className="text-xl font-serif font-bold text-rulebook-ink mb-1">1. Draft Your Quests</h4>
+                <p className="text-rulebook-ink/70 text-sm">Identify the habits you wish to cultivate. Assign them difficulty ratings and attribute types.</p>
+              </div>
+              <div className="relative">
+                <div className="absolute -left-[25px] top-0 w-4 h-4 bg-rulebook-royal rounded-full border-2 border-rulebook-paper shadow-sm"></div>
+                <h4 className="text-xl font-serif font-bold text-rulebook-ink mb-1">2. Execute Daily</h4>
+                <p className="text-rulebook-ink/70 text-sm">Perform your tasks in the real world. Return to the log to mark them complete.</p>
+              </div>
+              <div className="relative">
+                <div className="absolute -left-[25px] top-0 w-4 h-4 bg-rulebook-forest rounded-full border-2 border-rulebook-paper shadow-sm"></div>
+                <h4 className="text-xl font-serif font-bold text-rulebook-ink mb-1">3. Reap Rewards</h4>
+                <p className="text-rulebook-ink/70 text-sm">Collect XP and Gold. Unlock new chapters of your journey and expand your capabilities.</p>
+              </div>
+            </div>
+            <div className="mt-10">
+              <button onClick={() => navigate('/register')} className="flex items-center gap-2 text-rulebook-crimson font-bold hover:gap-3 transition-all uppercase tracking-widest text-sm border-b-2 border-rulebook-crimson pb-1">
+                Start Campaign <Map className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-          <div>
-            <div className="text-5xl font-bold text-yellow-400 mb-2">24+</div>
-            <p className="text-gray-300 font-bold uppercase">Achievements</p>
-          </div>
-          <div>
-            <div className="text-5xl font-bold text-yellow-400 mb-2">30+</div>
-            <p className="text-gray-300 font-bold uppercase">Equipment Items</p>
-          </div>
-          <div>
-            <div className="text-5xl font-bold text-yellow-400 mb-2">∞</div>
-            <p className="text-gray-300 font-bold uppercase">Progression</p>
+
+          {/* Decorative Stat Block */}
+          <div className="bg-rulebook-paper border-4 double border-rulebook-charcoal p-8 shadow-rulebook rotate-1 hover:rotate-0 transition-transform duration-500">
+            <div className="border-b-2 border-rulebook-charcoal mb-4 pb-2 flex justify-between items-end">
+              <h3 className="font-serif font-bold text-2xl uppercase">Character Sheet</h3>
+              <span className="font-mono text-xs">Lvl. 1 Novice</span>
+            </div>
+            <div className="space-y-4 font-mono text-sm">
+              <div className="flex justify-between items-center">
+                <span>STR (Strength)</span>
+                <div className="w-32 h-2 bg-rulebook-charcoal/10 rounded-full overflow-hidden border border-rulebook-charcoal/20">
+                  <div className="h-full bg-rulebook-crimson w-3/4"></div>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>INT (Intelligence)</span>
+                <div className="w-32 h-2 bg-rulebook-charcoal/10 rounded-full overflow-hidden border border-rulebook-charcoal/20">
+                  <div className="h-full bg-rulebook-royal w-1/2"></div>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>HLT (Health)</span>
+                <div className="w-32 h-2 bg-rulebook-charcoal/10 rounded-full overflow-hidden border border-rulebook-charcoal/20">
+                  <div className="h-full bg-rulebook-forest w-4/5"></div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t-2 border-rulebook-charcoal text-center">
+              <p className="font-serif italic text-rulebook-ink/60 text-sm">"Consistency is the key to power."</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t-4 border-gray-700 text-center mb-16">
-        <h2 className="text-4xl font-bold text-yellow-400 mb-6 uppercase">
-          Ready to Start Your Adventure?
-        </h2>
-        <p className="text-xl text-gray-300 mb-8">
-          Join thousands of players building better habits through gamification.
-        </p>
-        <button
-          onClick={() => navigate('/login')}
-          className="px-10 py-4 bg-yellow-600 text-yellow-100 hover:bg-yellow-500 font-bold uppercase text-lg rounded-sm transition-all border-2 border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/50"
-        >
-          Create Your Account
-        </button>
+      <section className="py-24 bg-rulebook-ink text-rulebook-paper text-center px-4 border-t-4 border-double border-rulebook-paper/20">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-6 text-rulebook-paper">
+            Write Your Legend
+          </h2>
+          <p className="text-rulebook-paper/80 text-lg mb-10 leading-relaxed font-mono">
+            Join the guild of self-improvers. Your adventure begins with a single step.
+          </p>
+          <button
+            onClick={() => navigate('/register')}
+            className="px-8 py-4 bg-rulebook-paper text-rulebook-ink font-serif font-bold text-lg rounded-sm hover:bg-rulebook-crimson hover:text-rulebook-paper transition-colors shadow-lg uppercase tracking-widest border-2 border-transparent"
+          >
+            Create Character
+          </button>
+        </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t-4 border-gray-700 bg-gray-900 py-8">
+      <footer className="bg-rulebook-paper py-12 border-t-4 border-double border-rulebook-charcoal">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-center text-gray-400">Quest Tracker © 2025 | Gamifying Habits, One Quest at a Time</p>
-            <div className="flex justify-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Scroll className="w-5 h-5 text-rulebook-ink" />
+              <span className="font-serif font-bold text-rulebook-ink">Quest Tracker</span>
+            </div>
+            <p className="text-xs font-mono text-rulebook-ink/60">
+              EST. 2025 | THE GUILD OF HABITS
+            </p>
+            <div className="flex items-center gap-4">
               <ConnectionStatus />
             </div>
           </div>

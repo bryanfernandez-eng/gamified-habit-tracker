@@ -166,16 +166,37 @@ class Equipment(models.Model):
         ('theme', 'Theme'),
     ]
     
+    EQUIPMENT_SLOT_CHOICES = [
+        ('weapon', 'Weapon'),
+        ('helmet', 'Helmet'),
+        ('chest', 'Chest'),
+        ('legs', 'Legs'),
+        ('feet', 'Feet'),
+        ('accessory', 'Accessory'),  # Non-visual items
+    ]
+    
     name = models.CharField(max_length=200)
     equipment_type = models.CharField(max_length=20, choices=EQUIPMENT_TYPE_CHOICES)
+    equipment_slot = models.CharField(
+        max_length=20, 
+        choices=EQUIPMENT_SLOT_CHOICES,
+        default='accessory',
+        help_text="Visual equipment slot for character rendering"
+    )
+    sprite_path = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Relative path to sprite image (e.g., equipment/helmets/iron-helmet.png)"
+    )
     description = models.TextField(blank=True)
     stat_bonus = models.JSONField(default=dict)  # {"strength": 2, "intelligence": 1}
+    gold_cost = models.IntegerField(default=100, validators=[MinValueValidator(0)])
     unlock_requirement = models.TextField(blank=True)
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.name} ({self.equipment_type})"
+        return f"{self.name} ({self.equipment_slot})"
 
 
 class UserEquipment(models.Model):

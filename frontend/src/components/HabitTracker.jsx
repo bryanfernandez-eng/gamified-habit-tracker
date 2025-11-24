@@ -65,30 +65,30 @@ export function HabitTracker({ onHabitCompleted }) {
   const getCategoryIcon = useCallback((category) => {
     switch (category) {
       case 'strength':
-        return <Dumbbell size={18} className="text-red-400" />
+        return <Dumbbell size={18} className="text-rulebook-crimson" />
       case 'intelligence':
-        return <BookOpen size={18} className="text-blue-400" />
+        return <BookOpen size={18} className="text-rulebook-royal" />
       case 'creativity':
-        return <Brush size={18} className="text-purple-400" />
+        return <Brush size={18} className="text-purple-700" />
       case 'social':
-        return <Users size={18} className="text-green-400" />
+        return <Users size={18} className="text-rulebook-forest" />
       default:
-        return <Sword size={18} className="text-yellow-400" />
+        return <Sword size={18} className="text-rulebook-ink" />
     }
   }, [])
 
-  const getCategoryColor = useCallback((category) => {
+  const getCategoryBorderColor = useCallback((category) => {
     switch (category) {
       case 'strength':
-        return 'bg-red-900 border-red-700'
+        return 'border-rulebook-crimson'
       case 'intelligence':
-        return 'bg-blue-900 border-blue-700'
+        return 'border-rulebook-royal'
       case 'creativity':
-        return 'bg-purple-900 border-purple-700'
+        return 'border-purple-700'
       case 'social':
-        return 'bg-green-900 border-green-700'
+        return 'border-rulebook-forest'
       default:
-        return 'bg-yellow-900 border-yellow-700'
+        return 'border-rulebook-ink'
     }
   }, [])
 
@@ -296,19 +296,19 @@ export function HabitTracker({ onHabitCompleted }) {
   }, [habits, onHabitCompleted, loadHabits, getCanCompleteAndCooldown])
 
   if (loading) {
-    return <div className="text-center py-8">Loading habits...</div>
+    return <div className="text-center py-8 font-serif text-rulebook-ink">Loading quests...</div>
   }
-  
+
   return (
     <>
-      <div className="bg-gray-800 border-4 border-double border-gray-700 p-4">
-        <div className="flex justify-between items-center mb-4 border-b-2 border-gray-700 pb-2">
+      <div className="rulebook-card p-6">
+        <div className="flex justify-between items-center mb-6 border-b-2 border-rulebook-ink/20 pb-4">
           <div>
-            <h2 className="text-2xl font-bold text-yellow-400 uppercase">
+            <h2 className="text-2xl font-serif font-bold text-rulebook-ink uppercase tracking-wider">
               Daily Quests
             </h2>
             {questLimit && (
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-rulebook-ink/60 mt-1 font-mono">
                 {questLimit.current_quests}/{questLimit.max_quests} Quests
                 {questLimit.max_quests < 999 && (
                   <span className="ml-2">
@@ -322,113 +322,116 @@ export function HabitTracker({ onHabitCompleted }) {
             <button
               onClick={() => setShowImport(true)}
               disabled={questLimit && !questLimit.can_create}
-              className={`flex items-center px-4 py-2 border-2 font-medium transition-all ${
-                questLimit && !questLimit.can_create
-                  ? 'bg-gray-600 border-gray-500 text-gray-400 cursor-not-allowed opacity-60'
-                  : 'bg-purple-700 border-purple-600 text-purple-200 hover:bg-purple-600'
-              }`}
+              className={`flex items-center px-4 py-2 border-2 font-bold uppercase text-xs tracking-wider transition-all font-serif ${questLimit && !questLimit.can_create
+                ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
+                : 'bg-transparent border-rulebook-ink text-rulebook-ink hover:bg-rulebook-ink hover:text-rulebook-paper'
+                }`}
               title={
                 questLimit && !questLimit.can_create
                   ? `Quest limit reached (${questLimit.current_quests}/${questLimit.max_quests})`
                   : 'Import predefined quests'
               }
             >
-              <Download size={16} className="mr-1" />
+              <Download size={16} className="mr-2" />
               Import Quests
             </button>
             <button
               onClick={() => setShowCreation(true)}
               disabled={questLimit && !questLimit.can_create}
-              className={`flex items-center px-4 py-2 border-2 font-medium transition-all ${
-                questLimit && !questLimit.can_create
-                  ? 'bg-gray-600 border-gray-500 text-gray-400 cursor-not-allowed opacity-60'
-                  : 'bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600'
-              }`}
+              className={`flex items-center px-4 py-2 border-2 font-bold uppercase text-xs tracking-wider transition-all font-serif ${questLimit && !questLimit.can_create
+                ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
+                : 'bg-rulebook-crimson border-rulebook-crimson text-rulebook-paper hover:bg-rulebook-ink hover:border-rulebook-ink'
+                }`}
               title={
                 questLimit && !questLimit.can_create
                   ? `Quest limit reached (${questLimit.current_quests}/${questLimit.max_quests}). Reach level ${questLimit.next_level_milestone} for more.`
                   : 'Create a new quest'
               }
             >
-              <Plus size={16} className="mr-1" />
+              <Plus size={16} className="mr-2" />
               New Quest
             </button>
           </div>
         </div>
         <div className="space-y-4">
-        {habits.map((habit) => {
-          const { canComplete, status } = getCanCompleteAndCooldown(habit)
-          return (
-            <div
-              key={habit.id}
-              className={`border-4 transition-all ${!canComplete ? 'bg-gray-700 border-gray-600 opacity-75' : `${getCategoryColor(habit.category)} hover:shadow-lg`}`}
-            >
-              <div className="flex items-center p-4">
-                <div className={`mr-4 p-2 border-2 ${!canComplete ? 'bg-gray-800 border-gray-600' : 'bg-gray-900 border-gray-700'}`}>
-                  {getCategoryIcon(habit.category)}
-                </div>
-                <div className="flex-1">
-                  <h3
-                    className={`font-medium ${!canComplete ? 'text-gray-500' : 'text-gray-200'}`}
-                  >
-                    {habit.name}
-                  </h3>
-                  <div className="flex items-center text-xs mt-1">
-                    <span className={`flex items-center ${!canComplete ? 'text-gray-500' : 'text-gray-400'}`}>
-                      <Sword size={12} className="mr-1" />
-                      Streak: {habit.streak} days
-                    </span>
+          {habits.map((habit) => {
+            const { canComplete, status } = getCanCompleteAndCooldown(habit)
+            return (
+              <div
+                key={habit.id}
+                className={`border-2 transition-all p-1 ${!canComplete
+                  ? 'bg-rulebook-ink/5 border-rulebook-ink/20 opacity-75'
+                  : `bg-rulebook-paper ${getCategoryBorderColor(habit.category)} hover:shadow-md`
+                  }`}
+              >
+                <div className="flex items-center p-3 border border-rulebook-ink/10 h-full">
+                  <div className={`mr-4 p-2 border-2 rounded-sm ${!canComplete
+                    ? 'border-rulebook-ink/20 text-rulebook-ink/40'
+                    : `${getCategoryBorderColor(habit.category)} bg-rulebook-paper`
+                    }`}>
+                    {getCategoryIcon(habit.category)}
                   </div>
-                  {!canComplete && (
-                    <p className="text-xs text-red-400 mt-2">{status}</p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setEditingHabit(habit)}
-                    className="px-3 py-2 bg-purple-700 border-2 border-purple-600 text-purple-200 hover:bg-purple-600 transition-all font-bold"
-                    title="Edit quest"
-                  >
-                    <Edit2 size={16} />
-                  </button>
-                  <button
-                    onClick={(e) => toggleHabit(habit.id, e)}
-                    disabled={!canComplete || completingHabitId === habit.id}
-                    className={`px-4 py-2 flex items-center transition-all font-bold ${
-                      !canComplete
-                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed border-2 border-gray-500 relative'
-                        : completingHabitId === habit.id
-                        ? 'bg-yellow-600 text-yellow-200 border-2 border-yellow-600'
-                        : 'bg-yellow-700 text-yellow-200 hover:bg-yellow-600 hover:shadow-lg hover:shadow-yellow-600/50 border-2 border-yellow-600 active:scale-95'
-                    }`}
-                    title={!canComplete ? status : 'Complete this quest'}
-                  >
-                    {completingHabitId === habit.id ? (
-                      <>
-                        <div className="animate-spin mr-1">
-                          <Check size={16} />
-                        </div>
-                        COMPLETING...
-                      </>
-                    ) : !canComplete ? (
-                      <>
-                        <span className="animate-pulse mr-1">⏱️</span>
-                        ON COOLDOWN
-                      </>
-                    ) : (
-                      <>
-                        COMPLETE
-                        <span className="ml-2 bg-yellow-800 px-2 py-0.5 text-xs font-bold">
-                          +{habit.xp_reward} XP
-                        </span>
-                      </>
+                  <div className="flex-1">
+                    <h3
+                      className={`font-serif font-bold text-lg ${!canComplete ? 'text-rulebook-ink/50 line-through decoration-2' : 'text-rulebook-ink'}`}
+                    >
+                      {habit.name}
+                    </h3>
+                    <div className="flex items-center text-xs mt-1 font-mono">
+                      <span className={`flex items-center ${!canComplete ? 'text-rulebook-ink/40' : 'text-rulebook-ink/70'}`}>
+                        <Sword size={12} className="mr-1" />
+                        Streak: {habit.streak} days
+                      </span>
+                    </div>
+                    {!canComplete && (
+                      <p className="text-xs text-rulebook-crimson mt-1 font-bold italic">{status}</p>
                     )}
-                  </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingHabit(habit)}
+                      className="px-3 py-2 text-rulebook-ink/60 hover:text-rulebook-ink transition-all"
+                      title="Edit quest"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={(e) => toggleHabit(habit.id, e)}
+                      disabled={!canComplete || completingHabitId === habit.id}
+                      className={`px-4 py-2 flex items-center transition-all font-bold uppercase text-xs tracking-wider border-2 font-serif ${!canComplete
+                        ? 'bg-transparent border-rulebook-ink/20 text-rulebook-ink/40 cursor-not-allowed'
+                        : completingHabitId === habit.id
+                          ? 'bg-rulebook-ink text-rulebook-paper border-rulebook-ink'
+                          : 'bg-transparent border-rulebook-ink text-rulebook-ink hover:bg-rulebook-ink hover:text-rulebook-paper'
+                        }`}
+                      title={!canComplete ? status : 'Complete this quest'}
+                    >
+                      {completingHabitId === habit.id ? (
+                        <>
+                          <div className="animate-spin mr-2">
+                            <Check size={14} />
+                          </div>
+                          Signing...
+                        </>
+                      ) : !canComplete ? (
+                        <>
+                          <span className="mr-2">✓</span>
+                          Done
+                        </>
+                      ) : (
+                        <>
+                          Complete
+                          <span className="ml-2 bg-rulebook-ink/10 px-1.5 py-0.5 text-[10px] rounded-sm">
+                            +{habit.xp_reward} XP
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
         </div>
         {showXpPopup.show && (
           <div
@@ -438,7 +441,7 @@ export function HabitTracker({ onHabitCompleted }) {
               top: `${showXpPopup.position.y - 20}px`,
             }}
           >
-            <div className="bg-yellow-600 text-yellow-200 font-bold px-2 py-1 text-sm border-2 border-yellow-700">
+            <div className="bg-rulebook-paper text-rulebook-ink font-bold px-3 py-1 text-sm border-2 border-rulebook-ink shadow-lg font-serif">
               +{showXpPopup.xp} XP
             </div>
           </div>
@@ -446,48 +449,41 @@ export function HabitTracker({ onHabitCompleted }) {
 
         {celebrationModal.show && (
           <div
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-rulebook-ink/80 backdrop-blur-sm transition-opacity duration-300"
           >
-            <div className="bg-gray-800 border-4 border-double border-yellow-600 p-8 max-w-md w-full text-center relative overflow-hidden">
-              {/* Animated sparkles background */}
-              <div className="absolute inset-0 pointer-events-none">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute animate-ping"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                      animationDelay: `${i * 0.1}s`
-                    }}
-                  >
-                    <Sparkles size={20} className="text-yellow-400" />
-                  </div>
-                ))}
+            <div className="rulebook-card p-8 max-w-md w-full text-center relative overflow-hidden bg-rulebook-paper transform transition-all duration-300 scale-100">
+              {/* Subtle corner decorations instead of flickering sparkles */}
+              <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-rulebook-crimson/20 pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-rulebook-crimson/20 pointer-events-none"></div>
+              <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-rulebook-crimson/20 pointer-events-none"></div>
+              <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-rulebook-crimson/20 pointer-events-none"></div>
+
+              {/* Subtle glow animation - no flicker */}
+              <div className="absolute inset-0 pointer-events-none opacity-20">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-rulebook-crimson rounded-full blur-3xl animate-pulse"></div>
               </div>
 
               {/* Close button */}
               <button
                 onClick={() => setCelebrationModal(prev => ({ ...prev, show: false }))}
-                className="absolute top-3 right-3 text-gray-400 hover:text-gray-200 transition-colors"
+                className="absolute top-3 right-3 text-rulebook-ink/40 hover:text-rulebook-crimson transition-colors z-20"
               >
                 <X size={24} />
               </button>
 
               {/* Content */}
               <div className="relative z-10">
-                <h2 className="text-3xl font-bold text-yellow-400 uppercase mb-3 tracking-wider">
+                <h2 className="text-3xl font-serif font-bold text-rulebook-ink uppercase mb-3 tracking-wider">
                   Quest Complete!
                 </h2>
-                <p className="text-gray-200 text-lg font-semibold mb-2">
+                <p className="text-rulebook-ink/80 text-lg font-serif italic mb-2">
                   {celebrationModal.habitName}
                 </p>
-                <div className="text-4xl font-bold text-yellow-300 my-6">
+                <div className="text-5xl font-serif font-bold text-rulebook-crimson my-8 border-y-2 border-rulebook-ink/10 py-4">
                   +{celebrationModal.xp} XP
                 </div>
-                <p className="text-gray-400 text-sm uppercase tracking-widest">
-                  Amazing work, hero!
+                <p className="text-rulebook-ink/60 text-sm uppercase tracking-widest font-serif">
+                  Well done, adventurer!
                 </p>
               </div>
             </div>

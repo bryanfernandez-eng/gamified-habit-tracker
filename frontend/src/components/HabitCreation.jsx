@@ -14,11 +14,11 @@ export function HabitCreation({ onHabitCreated, onClose }) {
   const [error, setError] = useState('')
 
   const categories = [
-    { id: 'strength', label: 'Strength', icon: Dumbbell, color: 'text-red-400' },
-    { id: 'intelligence', label: 'Intelligence', icon: BookOpen, color: 'text-blue-400' },
-    { id: 'creativity', label: 'Creativity', icon: Brush, color: 'text-purple-400' },
-    { id: 'social', label: 'Social', icon: Users, color: 'text-green-400' },
-    { id: 'health', label: 'Health', icon: Heart, color: 'text-pink-400' },
+    { id: 'strength', label: 'Strength', icon: Dumbbell, color: 'text-rulebook-crimson' },
+    { id: 'intelligence', label: 'Intelligence', icon: BookOpen, color: 'text-rulebook-royal' },
+    { id: 'creativity', label: 'Creativity', icon: Brush, color: 'text-rulebook-ink' },
+    { id: 'social', label: 'Social', icon: Users, color: 'text-rulebook-forest' },
+    { id: 'health', label: 'Health', icon: Heart, color: 'text-rulebook-crimson' },
   ]
 
   const frequencies = [
@@ -40,7 +40,7 @@ export function HabitCreation({ onHabitCreated, onClose }) {
     setError('')
 
     if (!formData.name.trim()) {
-      setError('Habit name is required')
+      setError('Quest name is required')
       return
     }
 
@@ -54,7 +54,7 @@ export function HabitCreation({ onHabitCreated, onClose }) {
       await gameApi.createHabit(formData)
       onHabitCreated()
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to create habit')
+      setError(err.response?.data?.detail || 'Failed to create quest')
     } finally {
       setLoading(false)
     }
@@ -65,30 +65,29 @@ export function HabitCreation({ onHabitCreated, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      className="fixed inset-0 flex items-center justify-center z-50 bg-rulebook-ink/40 backdrop-blur-sm"
     >
-      <div className="bg-gray-900 border-4 border-yellow-600 max-w-md w-full mx-4 p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-yellow-400 uppercase">Create Quest</h2>
+      <div className="rulebook-card max-w-md w-full mx-4 p-6">
+        <div className="flex justify-between items-center mb-6 border-b-2 border-rulebook-ink/20 pb-4">
+          <h2 className="text-2xl font-serif font-bold text-rulebook-ink uppercase tracking-widest">Create Quest</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-200"
+            className="text-rulebook-ink/60 hover:text-rulebook-crimson transition-colors"
           >
             <X size={24} />
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-900 border-2 border-red-700 text-red-200">
+          <div className="mb-4 p-3 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson font-serif rounded-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Habit Name */}
+          {/* Quest Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-serif font-bold text-rulebook-ink/80 mb-2 uppercase tracking-wide">
               Quest Name
             </label>
             <input
@@ -97,13 +96,13 @@ export function HabitCreation({ onHabitCreated, onClose }) {
               value={formData.name}
               onChange={handleInputChange}
               placeholder="e.g., Morning Exercise"
-              className="w-full bg-gray-800 border-2 border-gray-700 px-3 py-2 text-gray-200 placeholder-gray-500 focus:border-yellow-600 focus:outline-none"
+              className="w-full bg-rulebook-paper border-2 border-rulebook-ink/20 px-3 py-2 text-rulebook-ink font-mono placeholder-rulebook-ink/40 focus:border-rulebook-crimson focus:outline-none rounded-sm"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-serif font-bold text-rulebook-ink/80 mb-2 uppercase tracking-wide">
               Description
             </label>
             <textarea
@@ -112,13 +111,13 @@ export function HabitCreation({ onHabitCreated, onClose }) {
               onChange={handleInputChange}
               placeholder="Optional: Describe this quest..."
               rows="3"
-              className="w-full bg-gray-800 border-2 border-gray-700 px-3 py-2 text-gray-200 placeholder-gray-500 focus:border-yellow-600 focus:outline-none"
+              className="w-full bg-rulebook-paper border-2 border-rulebook-ink/20 px-3 py-2 text-rulebook-ink font-mono placeholder-rulebook-ink/40 focus:border-rulebook-crimson focus:outline-none rounded-sm resize-none"
             />
           </div>
 
           {/* Category Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-serif font-bold text-rulebook-ink/80 mb-2 uppercase tracking-wide">
               Category
             </label>
             <div className="grid grid-cols-5 gap-2">
@@ -129,15 +128,14 @@ export function HabitCreation({ onHabitCreated, onClose }) {
                     key={cat.id}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, category: cat.id }))}
-                    className={`p-3 border-2 flex flex-col items-center justify-center transition-all ${
-                      formData.category === cat.id
-                        ? 'border-yellow-500 bg-yellow-900'
-                        : 'border-gray-700 bg-gray-800 hover:border-gray-600'
-                    }`}
+                    className={`p-3 border-2 flex flex-col items-center justify-center transition-all rounded-sm ${formData.category === cat.id
+                        ? 'border-rulebook-crimson bg-rulebook-crimson/10'
+                        : 'border-rulebook-ink/20 bg-rulebook-ink/5 hover:border-rulebook-ink/40'
+                      }`}
                     title={cat.label}
                   >
                     <Icon size={16} className={cat.color} />
-                    <span className="text-xs text-gray-300 mt-1 text-center">{cat.label}</span>
+                    <span className="text-[10px] text-rulebook-ink font-mono font-bold mt-1 text-center">{cat.label}</span>
                   </button>
                 )
               })}
@@ -146,8 +144,8 @@ export function HabitCreation({ onHabitCreated, onClose }) {
 
           {/* XP Reward */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              XP Reward: {formData.xp_reward}
+            <label className="block text-sm font-serif font-bold text-rulebook-ink/80 mb-2 uppercase tracking-wide">
+              XP Reward: <span className="text-rulebook-royal font-mono">{formData.xp_reward}</span>
             </label>
             <input
               type="range"
@@ -157,9 +155,9 @@ export function HabitCreation({ onHabitCreated, onClose }) {
               min="10"
               max="200"
               step="5"
-              className="w-full"
+              className="w-full accent-rulebook-crimson"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div className="flex justify-between text-xs text-rulebook-ink/50 font-mono mt-1">
               <span>10</span>
               <span>200</span>
             </div>
@@ -167,7 +165,7 @@ export function HabitCreation({ onHabitCreated, onClose }) {
 
           {/* Frequency */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-serif font-bold text-rulebook-ink/80 mb-2 uppercase tracking-wide">
               Frequency
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -176,11 +174,10 @@ export function HabitCreation({ onHabitCreated, onClose }) {
                   key={freq.id}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, frequency: freq.id }))}
-                  className={`py-2 px-3 border-2 font-medium transition-all ${
-                    formData.frequency === freq.id
-                      ? 'border-yellow-500 bg-yellow-900 text-yellow-300'
-                      : 'border-gray-700 bg-gray-800 text-gray-300 hover:border-gray-600'
-                  }`}
+                  className={`py-2 px-3 border-2 font-serif font-bold text-sm uppercase tracking-wider transition-all rounded-sm ${formData.frequency === freq.id
+                      ? 'border-rulebook-crimson bg-rulebook-crimson text-rulebook-paper'
+                      : 'border-rulebook-ink/20 bg-rulebook-ink/5 text-rulebook-ink hover:border-rulebook-ink/40'
+                    }`}
                 >
                   {freq.label}
                 </button>
@@ -192,11 +189,10 @@ export function HabitCreation({ onHabitCreated, onClose }) {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 font-bold uppercase border-2 flex items-center justify-center transition-all ${
-              loading
-                ? 'bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed'
-                : 'bg-yellow-700 border-yellow-600 text-yellow-200 hover:bg-yellow-600'
-            }`}
+            className={`w-full py-3 font-serif font-bold uppercase tracking-widest border-2 flex items-center justify-center transition-all shadow-sm rounded-sm ${loading
+                ? 'bg-rulebook-ink/20 border-rulebook-ink/20 text-rulebook-ink/40 cursor-not-allowed'
+                : 'bg-rulebook-crimson border-rulebook-ink text-rulebook-paper hover:bg-rulebook-ink hover:border-rulebook-crimson'
+              }`}
           >
             <Plus size={20} className="mr-2" />
             {loading ? 'Creating...' : 'Create Quest'}

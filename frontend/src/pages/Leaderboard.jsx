@@ -21,15 +21,15 @@ function classNames(...arr) {
 
 const Medal = ({ place }) => {
   const styles = {
-    1: "bg-yellow-400/90 text-gray-900 ring-yellow-300",
-    2: "bg-gray-300 text-gray-900 ring-gray-200",
-    3: "bg-amber-700 text-amber-50 ring-amber-600",
+    1: "bg-yellow-400 text-yellow-900 ring-yellow-600",
+    2: "bg-gray-300 text-gray-800 ring-gray-400",
+    3: "bg-amber-700 text-amber-100 ring-amber-900",
   }[place];
   return (
     <span
       aria-label={`${place} place`}
       className={classNames(
-        "inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-black ring-2",
+        "inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-serif font-bold ring-2 shadow-sm",
         styles
       )}
     >
@@ -41,10 +41,10 @@ const Medal = ({ place }) => {
 const Badge = ({ children, color = "gold" }) => (
   <span
     className={classNames(
-      "px-2 py-0.5 rounded-md text-xs font-semibold border",
+      "px-2 py-0.5 rounded-sm text-[10px] uppercase tracking-wider font-bold border",
       color === "gold"
-        ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/40"
-        : "bg-slate-500/20 text-slate-300 border-slate-500/40"
+        ? "bg-rulebook-ink/5 text-rulebook-ink border-rulebook-ink/20"
+        : "bg-rulebook-crimson/5 text-rulebook-crimson border-rulebook-crimson/20"
     )}
   >
     {children}
@@ -54,12 +54,11 @@ const Badge = ({ children, color = "gold" }) => (
 const PodiumCard = ({ player, place, isCurrentUser }) => (
   <div
     className={classNames(
-      "relative rounded-none p-5 shadow-2xl border-4",
+      "relative p-5 transition-all rulebook-card",
       place === 1
-        ? "bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-300 text-gray-900"
-        : "bg-gray-800 border-gray-700 text-slate-100",
-      isCurrentUser && place !== 1 && "ring-2 ring-yellow-400",
-      "hover:shadow-2xl transition-all"
+        ? "transform scale-105 z-10 border-rulebook-crimson"
+        : "border-rulebook-charcoal",
+      isCurrentUser && "ring-2 ring-rulebook-crimson ring-offset-2 ring-offset-rulebook-paper"
     )}
   >
     <div className="flex items-center gap-4">
@@ -67,60 +66,43 @@ const PodiumCard = ({ player, place, isCurrentUser }) => (
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className={classNames(
-            "truncate font-extrabold text-lg",
-            place === 1 ? "text-gray-900" : "text-gray-100"
+            "truncate font-serif font-bold text-lg",
+            place === 1 ? "text-rulebook-crimson" : "text-rulebook-ink"
           )}>
             {player.name}
           </h3>
           <span className={classNames(
-            "px-3 py-1 text-xs font-bold border-2 rounded-sm",
+            "px-2 py-0.5 text-[10px] font-bold border rounded-sm uppercase tracking-wide",
             place === 1
-              ? "bg-yellow-600 border-yellow-700 text-yellow-900"
-              : "bg-yellow-700 border-yellow-600 text-yellow-200"
+              ? "bg-rulebook-crimson text-rulebook-paper border-rulebook-crimson"
+              : "bg-rulebook-ink/10 border-rulebook-ink/20 text-rulebook-ink"
           )}>
             Lvl {player.level}
           </span>
         </div>
-        <p className={classNames(
-          "text-sm mt-1",
-          place === 1 ? "text-gray-800" : "text-gray-400"
-        )}>
+        <p className="text-xs mt-1 text-rulebook-ink/60 font-mono uppercase tracking-wide">
           Current Floor
         </p>
-        <div className="mt-2 flex items-center gap-2">
-          <span className={classNames(
-            "text-3xl font-black",
-            place === 1 ? "text-gray-900" : "text-gray-100"
-          )}>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="text-3xl font-serif font-bold text-rulebook-ink">
             {player.currentFloor}
           </span>
-          <span className={classNames(
-            "text-sm font-bold uppercase",
-            place === 1 ? "text-gray-800" : "text-gray-400"
-          )}>
+          <span className="text-xs font-bold uppercase text-rulebook-ink/40">
             FLR
           </span>
         </div>
       </div>
       <div className="flex flex-col items-end gap-2">
-        <div className={classNames(
-          "w-32 h-6 rounded-sm border-2 overflow-hidden",
-          place === 1
-            ? "bg-yellow-600 border-yellow-700"
-            : "bg-gray-700 border-gray-600"
-        )}>
+        <div className="w-24 h-4 rounded-full border border-rulebook-ink/20 overflow-hidden bg-rulebook-ink/5">
           <div
             className={classNames(
               "h-full",
-              place === 1 ? "bg-yellow-900" : "bg-yellow-500"
+              place === 1 ? "bg-rulebook-crimson" : "bg-rulebook-ink"
             )}
             style={{ width: `${Math.min(100, player.xp)}%` }}
           />
         </div>
-        <span className={classNames(
-          "text-xs font-bold",
-          place === 1 ? "text-gray-800" : "text-gray-400"
-        )}>
+        <span className="text-[10px] font-mono font-bold text-rulebook-ink/60">
           XP {Math.round(player.xp)}/100
         </span>
       </div>
@@ -131,28 +113,27 @@ const PodiumCard = ({ player, place, isCurrentUser }) => (
 const Row = ({ index, player, isCurrentUser }) => (
   <div
     className={classNames(
-      "grid grid-cols-12 items-center px-3 sm:px-4 py-3 border-l-4 transition-all",
+      "grid grid-cols-12 items-center px-3 sm:px-4 py-3 border-b border-rulebook-ink/10 transition-all",
       isCurrentUser
-        ? "bg-yellow-500/15 border-l-yellow-400"
-        : index % 2 ? "bg-slate-800/40" : "bg-slate-800/20",
-      "hover:bg-orange-500/30"
+        ? "bg-rulebook-crimson/5"
+        : "hover:bg-rulebook-ink/5"
     )}
   >
     <div className="col-span-2 sm:col-span-1 flex items-center gap-2">
       <span className={classNames(
-        "font-mono text-sm w-6 tabular-nums font-bold",
-        isCurrentUser ? "text-yellow-400" : "text-slate-300"
+        "font-serif text-lg w-6 tabular-nums font-bold",
+        isCurrentUser ? "text-rulebook-crimson" : "text-rulebook-ink/60"
       )}>
         {index + 1}
       </span>
-      {isCurrentUser && <span className="text-xs text-yellow-400">★</span>}
+      {isCurrentUser && <span className="text-xs text-rulebook-crimson">★</span>}
     </div>
     <div className="col-span-6 sm:col-span-6 flex items-center gap-3">
       <div className={classNames(
-        "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border",
+        "w-8 h-8 rounded-sm flex items-center justify-center text-xs font-bold border-2 font-serif",
         isCurrentUser
-          ? "bg-yellow-500/30 border-yellow-400 text-yellow-300"
-          : "bg-slate-600/40 border-slate-500/50 text-slate-200"
+          ? "bg-rulebook-crimson text-rulebook-paper border-rulebook-crimson"
+          : "bg-rulebook-paper border-rulebook-ink/20 text-rulebook-ink"
       )}>
         {player.name
           .split(" ")
@@ -162,42 +143,31 @@ const Row = ({ index, player, isCurrentUser }) => (
       </div>
       <div className="min-w-0">
         <p className={classNames(
-          "truncate font-medium",
-          isCurrentUser ? "text-yellow-300 font-bold" : "text-slate-100"
+          "truncate font-serif font-bold",
+          isCurrentUser ? "text-rulebook-crimson" : "text-rulebook-ink"
         )}>
           {player.name}
         </p>
-        <p className={classNames(
-          "text-[11px]",
-          isCurrentUser ? "text-yellow-400" : "text-slate-400"
-        )}>
+        <p className="text-[10px] text-rulebook-ink/40 font-mono uppercase tracking-wide">
           Lvl {player.level}
         </p>
       </div>
     </div>
     <div className={classNames(
-      "col-span-2 sm:col-span-2 font-semibold text-right",
-      isCurrentUser ? "text-yellow-400" : "text-yellow-300"
+      "col-span-2 sm:col-span-2 font-serif font-bold text-right text-lg",
+      isCurrentUser ? "text-rulebook-crimson" : "text-rulebook-ink"
     )}>
       {player.currentFloor}
     </div>
     <div className="col-span-2 sm:col-span-3 flex items-center justify-end gap-2">
-      <div className={classNames(
-        "w-28 h-3.5 rounded-md overflow-hidden border",
-        isCurrentUser
-          ? "bg-yellow-600/40 border-yellow-500"
-          : "bg-slate-700 border-slate-600"
-      )}>
+      <div className="w-24 h-2 rounded-full overflow-hidden border border-rulebook-ink/10 bg-rulebook-ink/5">
         <div
-          className={isCurrentUser ? "h-full bg-yellow-500" : "h-full bg-yellow-500"}
+          className={isCurrentUser ? "h-full bg-rulebook-crimson" : "h-full bg-rulebook-ink/60"}
           style={{ width: `${Math.min(100, player.xp)}%` }}
         />
       </div>
-      <span className={classNames(
-        "text-[10px] w-14 text-right",
-        isCurrentUser ? "text-yellow-400" : "text-slate-400"
-      )}>
-        XP {Math.round(player.xp)}/100
+      <span className="text-[10px] w-14 text-right font-mono text-rulebook-ink/40 hidden sm:inline-block">
+        {Math.round(player.xp)} XP
       </span>
     </div>
   </div>
@@ -250,26 +220,24 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-[#0F1924] text-slate-100 flex items-center justify-center">
+      <div className="min-h-screen w-full bg-rulebook-paper flex items-center justify-center">
         <div className="text-center">
-          <div className="text-2xl font-bold text-yellow-400 mb-4">Loading Leaderboard...</div>
-          <div className="text-slate-400">Fetching rankings from server</div>
+          <div className="text-2xl font-serif font-bold text-rulebook-ink mb-4 uppercase tracking-widest">Loading Leaderboard...</div>
+          <div className="text-rulebook-ink/60 font-mono text-sm">Fetching rankings from the Guild...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#0F1924] text-slate-100">
-      {/* Top bar */}
-
+    <div className="min-h-screen w-full bg-rulebook-paper pt-20 pb-12">
       {/* Content */}
-      <main className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="flex items-center justify-between pt-6 pb-4">
-          <h1 className="text-xl tracking-wider font-extrabold text-yellow-400">
-            {title} — CURRENT FLOOR
+      <main className="mx-auto max-w-6xl px-4">
+        <div className="flex items-center justify-between mb-8 border-b-4 border-double border-rulebook-charcoal pb-4">
+          <h1 className="text-3xl font-serif font-bold text-rulebook-ink uppercase tracking-widest">
+            {title} — <span className="text-rulebook-crimson">Current Floor</span>
           </h1>
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2 text-xs hidden sm:flex">
             <Badge>Sorted: Floor ↓</Badge>
             <Badge color="slate">Tie‑break: XP</Badge>
             {error && <Badge color="slate">⚠️ {error}</Badge>}
@@ -277,7 +245,7 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
         </div>
 
         {/* Podium */}
-        <section className="grid sm:grid-cols-3 gap-4">
+        <section className="grid sm:grid-cols-3 gap-6 mb-12">
           {top3.map((p, idx) => (
             <PodiumCard
               key={p.id}
@@ -290,14 +258,14 @@ const Leaderboard = ({ players = demoPlayers, title = "LEADERBOARD" }) => {
 
         {/* Table */}
         {rest.length > 0 && (
-          <section className="mt-6 overflow-hidden rounded-2xl border border-yellow-500/20 bg-slate-900/40">
-            <div className="grid grid-cols-12 px-3 sm:px-4 py-2 text-[11px] uppercase tracking-wide text-slate-400 bg-slate-900/60 border-b border-slate-700">
+          <section className="rulebook-card overflow-hidden p-0">
+            <div className="grid grid-cols-12 px-3 sm:px-4 py-3 text-[10px] uppercase tracking-widest font-bold text-rulebook-ink/60 bg-rulebook-ink/5 border-b-2 border-rulebook-ink/10 font-serif">
               <div className="col-span-2 sm:col-span-1">#</div>
               <div className="col-span-6 sm:col-span-6">Player</div>
-              <div className="col-span-2 sm:col-span-2 text-right text-yellow-400">Floor</div>
+              <div className="col-span-2 sm:col-span-2 text-right text-rulebook-crimson">Floor</div>
               <div className="col-span-2 sm:col-span-3 text-right">XP</div>
             </div>
-            <div>
+            <div className="divide-y divide-rulebook-ink/5">
               {rest.map((p, i) => (
                 <Row
                   key={p.id}

@@ -85,8 +85,9 @@ class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
         fields = [
-            'id', 'name', 'equipment_type', 'description', 'stat_bonus',
-            'unlock_requirement', 'is_unlocked', 'is_equipped'
+            'id', 'name', 'equipment_type', 'equipment_slot', 'sprite_path',
+            'description', 'stat_bonus', 'gold_cost', 'unlock_requirement',
+            'is_unlocked', 'is_equipped'
         ]
     
     def get_is_unlocked(self, obj):
