@@ -43,20 +43,18 @@ def get_max_quests_for_level(level):
 
 def get_available_characters(level):
     """
-    Get available characters based on user level.
+    Get all characters with unlock status based on user level.
 
     Characters:
     - default: Available from level 1
     - zoro: Available from level 2
     """
-    characters = [
-        {'id': 'default', 'name': 'Default', 'unlock_level': 1}
+    all_characters = [
+        {'id': 'default', 'name': 'Default', 'unlock_level': 1, 'is_unlocked': level >= 1},
+        {'id': 'zoro', 'name': 'Zoro', 'unlock_level': 2, 'is_unlocked': level >= 2}
     ]
 
-    if level >= 2:
-        characters.append({'id': 'zoro', 'name': 'Zoro', 'unlock_level': 2})
-
-    return characters
+    return all_characters
 
 
 class UserStatsViewSet(viewsets.ViewSet):
