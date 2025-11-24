@@ -220,7 +220,7 @@ export function CharacterCustomizer({ onCharacterChanged }) {
           filteredItems.map((item) => {
             const isCharacter = activeCategory === 'character'
             const isTheme = activeCategory === 'theme'
-            const isUnlocked = isCharacter ? true : item.is_unlocked
+            const isUnlocked = item.is_unlocked
             const isSelected = isCharacter && item.id === currentCharacter
             const isThemeSelected = isTheme && item.name === currentTheme
 
@@ -311,10 +311,12 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                     {isCharacter ? (
                       <button
                         onClick={() => handleSelectCharacter(item.id)}
-                        disabled={selectingCharacterId === item.id || isSelected}
-                        className={`px-4 py-2 text-xs font-serif font-bold uppercase tracking-widest border-2 transition-all shadow-sm ${isSelected
-                            ? 'bg-rulebook-forest text-rulebook-paper border-rulebook-ink cursor-default'
-                            : 'bg-rulebook-crimson text-rulebook-paper border-rulebook-ink hover:bg-rulebook-ink hover:border-rulebook-crimson'
+                        disabled={selectingCharacterId === item.id || isSelected || !isUnlocked}
+                        className={`px-4 py-2 text-xs font-serif font-bold uppercase tracking-widest border-2 transition-all shadow-sm ${isUnlocked
+                            ? isSelected
+                              ? 'bg-rulebook-forest text-rulebook-paper border-rulebook-ink cursor-default'
+                              : 'bg-rulebook-crimson text-rulebook-paper border-rulebook-ink hover:bg-rulebook-ink hover:border-rulebook-crimson'
+                            : 'bg-rulebook-ink/20 text-rulebook-ink/40 border-rulebook-ink/20 cursor-not-allowed'
                           } ${selectingCharacterId === item.id ? 'opacity-80 cursor-wait' : ''}`}
                       >
                         {selectingCharacterId === item.id ? (
@@ -325,8 +327,12 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                           <span className="flex items-center gap-2">
                             <Check size={12} /> ACTIVE HERO
                           </span>
-                        ) : (
+                        ) : isUnlocked ? (
                           'SUMMON'
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            <Lock size={12} /> UNLOCK AT LEVEL {item.unlock_level}
+                          </span>
                         )}
                       </button>
                     ) : (
