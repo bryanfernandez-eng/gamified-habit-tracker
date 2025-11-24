@@ -68,8 +68,8 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-rulebook-paper flex flex-col items-center px-4 py-8 overflow-y-auto font-mono text-rulebook-ink">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-rulebook-paper flex flex-col items-center py-8 overflow-y-auto font-mono text-rulebook-ink">
+      <div className="w-full max-w-8xl">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -112,7 +112,7 @@ export default function Register() {
                     value={formData.username}
                     onChange={handleAccountChange}
                     required
-                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('username')
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono text-sm ${getFieldError('username')
                         ? 'border-rulebook-crimson focus:border-rulebook-crimson'
                         : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
                       }`}
@@ -137,7 +137,7 @@ export default function Register() {
                     value={formData.display_name}
                     onChange={handleAccountChange}
                     required
-                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('display_name')
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono text-sm ${getFieldError('display_name')
                         ? 'border-rulebook-crimson focus:border-rulebook-crimson'
                         : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
                       }`}
@@ -163,7 +163,7 @@ export default function Register() {
                   value={formData.email}
                   onChange={handleAccountChange}
                   required
-                  className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('email')
+                  className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono text-sm ${getFieldError('email')
                       ? 'border-rulebook-crimson focus:border-rulebook-crimson'
                       : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
                     }`}
@@ -190,7 +190,7 @@ export default function Register() {
                     value={formData.password1}
                     onChange={handleAccountChange}
                     required
-                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('password1')
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono text-sm ${getFieldError('password1')
                         ? 'border-rulebook-crimson focus:border-rulebook-crimson'
                         : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
                       }`}
@@ -215,7 +215,7 @@ export default function Register() {
                     value={formData.password2}
                     onChange={handleAccountChange}
                     required
-                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('password2')
+                    className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono text-sm ${getFieldError('password2')
                         ? 'border-rulebook-crimson focus:border-rulebook-crimson'
                         : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
                       }`}
