@@ -30,6 +30,13 @@ export const gameApi = {
     return response.data
   },
 
+  selectTheme: async (themeName) => {
+    const response = await api.post('/api/game/stats/select_theme/', {
+      theme_name: themeName
+    })
+    return response.data
+  },
+
   // Habits
   getHabits: async () => {
     const response = await api.get('/api/game/habits/')

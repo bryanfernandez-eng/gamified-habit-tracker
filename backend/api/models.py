@@ -38,6 +38,13 @@ class CustomUser(AbstractUser):
         help_text="Selected character skin (default, zoro, etc.)"
     )
 
+    # Theme Selection
+    selected_theme = models.CharField(
+        max_length=200,
+        default='Default Theme',
+        help_text="Selected theme/background (e.g., Default Theme, Forest Green, etc.)"
+    )
+
     def __str__(self):
         return f"{self.username} (Level {self.level})"
     
@@ -178,7 +185,7 @@ class Equipment(models.Model):
     name = models.CharField(max_length=200)
     equipment_type = models.CharField(max_length=20, choices=EQUIPMENT_TYPE_CHOICES)
     equipment_slot = models.CharField(
-        max_length=20, 
+        max_length=20,
         choices=EQUIPMENT_SLOT_CHOICES,
         default='accessory',
         help_text="Visual equipment slot for character rendering"
@@ -187,6 +194,11 @@ class Equipment(models.Model):
         max_length=255,
         blank=True,
         help_text="Relative path to sprite image (e.g., equipment/helmets/iron-helmet.png)"
+    )
+    character_specific = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="If set, this armor/relic is only for this character (e.g., 'zoro', 'default')"
     )
     description = models.TextField(blank=True)
     stat_bonus = models.JSONField(default=dict)  # {"strength": 2, "intelligence": 1}

@@ -121,71 +121,85 @@ class Command(BaseCommand):
                 'unlock_requirement': 'Unlock 5 achievements',
                 'is_default': False,
             },
+            # Character-Specific Armor
+            {
+                'name': 'Zoro Sword',
+                'equipment_type': 'accessory',
+                'equipment_slot': 'weapon',
+                'sprite_path': 'sword.png',
+                'character_specific': 'zoro',
+                'description': 'A legendary sword wielded by the great swordsman Zoro.',
+                'stat_bonus': {'strength': 5},
+                'unlock_requirement': 'Unlock Zoro character',
+                'is_default': False,
+            },
             # Themes
             {
                 'name': 'Default Theme',
                 'equipment_type': 'theme',
-                'description': 'The standard dark theme.',
+                'description': 'Clean white background theme.',
                 'stat_bonus': {},
                 'unlock_requirement': 'Default theme. Always unlocked.',
                 'is_default': True,
             },
             {
-                'name': 'Blue Serenity',
+                'name': 'Forest Green',
                 'equipment_type': 'theme',
-                'description': 'Calm blue color scheme for focus.',
-                'stat_bonus': {'intelligence': 1},
-                'unlock_requirement': 'Reach Level 5',
+                'description': 'Lush green forest theme for natural harmony.',
+                'stat_bonus': {'health': 2},
+                'unlock_requirement': 'Reach Level 1',
                 'is_default': False,
             },
             {
-                'name': 'Red Energy',
+                'name': 'Forest Pixel',
                 'equipment_type': 'theme',
-                'description': 'Energetic red theme for motivation.',
-                'stat_bonus': {'strength': 1},
-                'unlock_requirement': 'Reach Level 5',
+                'description': 'Pixel art forest theme with retro vibes.',
+                'stat_bonus': {'health': 2},
+                'unlock_requirement': 'Reach Level 1',
                 'is_default': False,
             },
             {
-                'name': 'Purple Magic',
+                'name': 'Forest Standard',
                 'equipment_type': 'theme',
-                'description': 'Mystical purple for creative inspiration.',
-                'stat_bonus': {'creativity': 1},
-                'unlock_requirement': 'Reach Level 5',
-                'is_default': False,
-            },
-            {
-                'name': 'Gold Premium',
-                'equipment_type': 'theme',
-                'description': 'Premium gold theme for champions.',
-                'stat_bonus': {'strength': 1, 'intelligence': 1, 'creativity': 1, 'social': 1, 'health': 1},
-                'unlock_requirement': 'Reach Level 15',
+                'description': 'Classic forest theme with natural beauty.',
+                'stat_bonus': {'health': 2},
+                'unlock_requirement': 'Reach Level 1',
                 'is_default': False,
             },
         ]
 
         created_count = 0
         for item_data in equipment_data:
+            defaults = {
+                'description': item_data['description'],
+                'stat_bonus': item_data['stat_bonus'],
+                'unlock_requirement': item_data['unlock_requirement'],
+                'is_default': item_data['is_default'],
+            }
+
+            # Add optional fields if present
+            if 'equipment_slot' in item_data:
+                defaults['equipment_slot'] = item_data['equipment_slot']
+            if 'sprite_path' in item_data:
+                defaults['sprite_path'] = item_data['sprite_path']
+            if 'character_specific' in item_data:
+                defaults['character_specific'] = item_data['character_specific']
+
             equipment, created = Equipment.objects.get_or_create(
                 name=item_data['name'],
                 equipment_type=item_data['equipment_type'],
-                defaults={
-                    'description': item_data['description'],
-                    'stat_bonus': item_data['stat_bonus'],
-                    'unlock_requirement': item_data['unlock_requirement'],
-                    'is_default': item_data['is_default'],
-                }
+                defaults=defaults
             )
             if created:
                 created_count += 1
                 self.stdout.write(
-                    self.style.SUCCESS(f'✓ Created equipment: {equipment.name}')
+                    self.style.SUCCESS(f'[+] Created equipment: {equipment.name}')
                 )
             else:
                 self.stdout.write(
-                    self.style.WARNING(f'⊘ Equipment already exists: {equipment.name}')
+                    self.style.WARNING(f'[*] Equipment already exists: {equipment.name}')
                 )
 
         self.stdout.write(
-            self.style.SUCCESS(f'\n✓ Total equipment created: {created_count}')
+            self.style.SUCCESS(f'\n[+] Total equipment created: {created_count}')
         )

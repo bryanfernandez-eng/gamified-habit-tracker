@@ -16,10 +16,10 @@ class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
-            'level', 'current_hp', 'max_hp', 'current_xp', 'next_level_xp',
+            'id', 'level', 'current_hp', 'max_hp', 'current_xp', 'next_level_xp',
             'strength', 'intelligence', 'creativity', 'social', 'health',
             'strength_xp', 'intelligence_xp', 'creativity_xp', 'social_xp', 'health_xp',
-            'selected_character'
+            'selected_character', 'selected_theme'
         ]
 
 
@@ -92,7 +92,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
         model = Equipment
         fields = [
             'id', 'name', 'equipment_type', 'equipment_slot', 'sprite_path',
-            'description', 'stat_bonus', 'gold_cost', 'unlock_requirement',
+            'character_specific', 'description', 'stat_bonus', 'gold_cost', 'unlock_requirement',
             'is_unlocked', 'is_equipped'
         ]
     
