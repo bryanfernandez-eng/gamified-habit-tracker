@@ -167,9 +167,12 @@ export function CharacterCustomizer({ onCharacterChanged }) {
         // Filter by category
         if (item.equipment_type !== activeCategory) return false
 
-        // For armor/relics (which are accessory type but have character_specific), filter by current character
-        if (item.character_specific && item.character_specific !== currentCharacter) {
-          return false
+        // For relics/weapons (which are accessory type with equipment_slot), filter by current character
+        if (item.equipment_slot === 'weapon') {
+          // If character_specific is set, only show for that character
+          if (item.character_specific && item.character_specific !== currentCharacter) {
+            return false
+          }
         }
 
         return true
@@ -257,7 +260,9 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                       ) : activeCategory === 'outfit' ? (
                         <Shirt size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
                       ) : activeCategory === 'accessory' ? (
-                        item.sprite_path ? (
+                        item.name === 'None' ? (
+                          <Palette size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
+                        ) : item.sprite_path ? (
                           <img
                             src={`/src/assets/${item.sprite_path}`}
                             alt={item.name}

@@ -64,62 +64,15 @@ class Command(BaseCommand):
                 'unlock_requirement': 'Reach Level 20',
                 'is_default': False,
             },
-            # Accessories
+            # Accessories (weapons/relics)
             {
-                'name': 'Basic Band',
+                'name': 'None',
                 'equipment_type': 'accessory',
-                'description': 'A simple wristband. Your first accessory.',
+                'equipment_slot': 'weapon',
+                'description': 'No weapon equipped. Shows original character.',
                 'stat_bonus': {},
-                'unlock_requirement': 'Starter accessory. Always unlocked.',
+                'unlock_requirement': 'Always available.',
                 'is_default': True,
-            },
-            {
-                'name': 'Reading Glasses',
-                'equipment_type': 'accessory',
-                'description': 'Enhance your intelligence with scholarly glasses.',
-                'stat_bonus': {'intelligence': 2},
-                'unlock_requirement': 'Complete 10 intelligence habits',
-                'is_default': False,
-            },
-            {
-                'name': 'Headband',
-                'equipment_type': 'accessory',
-                'description': 'A focused headband for strength training.',
-                'stat_bonus': {'strength': 2},
-                'unlock_requirement': 'Complete 10 strength habits',
-                'is_default': False,
-            },
-            {
-                'name': "Artist's Beret",
-                'equipment_type': 'accessory',
-                'description': 'Hat of creative inspiration.',
-                'stat_bonus': {'creativity': 2},
-                'unlock_requirement': 'Complete 10 creativity habits',
-                'is_default': False,
-            },
-            {
-                'name': 'Party Hat',
-                'equipment_type': 'accessory',
-                'description': 'Festive accessory for social butterflies.',
-                'stat_bonus': {'social': 2},
-                'unlock_requirement': 'Complete 10 social habits',
-                'is_default': False,
-            },
-            {
-                'name': 'Wellness Pendant',
-                'equipment_type': 'accessory',
-                'description': 'A protective pendant promoting health.',
-                'stat_bonus': {'health': 2},
-                'unlock_requirement': 'Complete 10 health habits',
-                'is_default': False,
-            },
-            {
-                'name': 'Champion Medal',
-                'equipment_type': 'accessory',
-                'description': 'Prestigious medal of excellence.',
-                'stat_bonus': {'strength': 1, 'intelligence': 1, 'creativity': 1, 'social': 1, 'health': 1},
-                'unlock_requirement': 'Unlock 5 achievements',
-                'is_default': False,
             },
             # Character-Specific Armor
             {
@@ -131,7 +84,7 @@ class Command(BaseCommand):
                 'description': 'A legendary sword wielded by the great swordsman Zoro.',
                 'stat_bonus': {'strength': 5},
                 'unlock_requirement': 'Unlock Zoro character',
-                'is_default': False,
+                'is_default': True,
             },
             # Themes
             {
