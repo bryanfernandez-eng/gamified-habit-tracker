@@ -1,5 +1,5 @@
 // frontend/src/components/Register.jsx
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { Zap, Lock, User, Mail, UserPlus, Home } from 'lucide-react'
@@ -15,7 +15,14 @@ export default function Register() {
     password2: ''
   })
   const [fieldErrors, setFieldErrors] = useState({})
-  const { register, loading, error } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { register, error } = useAuth()
+
+  // Debug: Log when fieldErrors changes
+  useEffect(() => {
+    console.log('fieldErrors updated:', fieldErrors, 'Has errors:', Object.keys(fieldErrors).length > 0)
+  }, [fieldErrors])
+
 
   const handleAccountChange = (e) => {
     const { name, value } = e.target
@@ -29,6 +36,11 @@ export default function Register() {
         ...prev,
         [name]: null
       }))
+    }
+
+    // Re-enable the submit button if it was disabled from errors
+    if (isSubmitting) {
+      setIsSubmitting(false)
     }
   }
 
@@ -44,27 +56,51 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setFieldErrors({})
+    setIsSubmitting(true)
 
     const errors = validateForm()
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
+      setIsSubmitting(false)
       return
     }
 
     const result = await register(formData)
-    if (!result.success && result.fieldErrors) {
-      setFieldErrors(result.fieldErrors)
+
+    if (!result.success) {
+      if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
+        // Create a NEW object to ensure React sees it as a different reference
+        const errorsToSet = { ...result.fieldErrors }
+
+        // Show alert for debugging
+        const errorMessages = Object.entries(errorsToSet)
+          .map(([field, error]) => `${field}: ${Array.isArray(error) ? error[0] : error}`)
+          .join('\n')
+        console.log('About to show alert with errors:', errorsToSet)
+        alert(`Registration failed:\n\n${errorMessages}`)
+        console.log('Alert dismissed, setting field errors:', errorsToSet)
+
+        setFieldErrors(errorsToSet)
+        setIsSubmitting(false)
+        console.log('After setFieldErrors and setIsSubmitting(false) call')
+      } else {
+        setIsSubmitting(false)
+      }
       return
     }
 
     if (result.success) {
+      setIsSubmitting(false)
       navigate('/dashboard', { replace: true })
     }
   }
 
   const getFieldError = (fieldName) => {
-    return fieldErrors[fieldName]
+    const error = fieldErrors[fieldName]
+    if (Array.isArray(error)) {
+      return error[0] // Return first error if it's an array
+    }
+    return error
   }
 
   return (
@@ -86,12 +122,14 @@ export default function Register() {
         {/* Main Card */}
         <div className="rulebook-card p-8 mb-6">
 
-          {/* Error Message */}
+          {/* General Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson text-sm font-bold">
               {error}
             </div>
           )}
+
+
 
           {/* Account Creation Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -120,7 +158,9 @@ export default function Register() {
                   />
                 </div>
                 {getFieldError('username') && (
-                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('username')}</p>
+                  <p className="mt-2 text-xs text-rulebook-crimson font-bold bg-rulebook-crimson/5 p-2 border-l-2 border-rulebook-crimson rounded-sm">
+                    ✗ {getFieldError('username')}
+                  </p>
                 )}
               </div>
 
@@ -145,7 +185,9 @@ export default function Register() {
                   />
                 </div>
                 {getFieldError('display_name') && (
-                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('display_name')}</p>
+                  <p className="mt-2 text-xs text-rulebook-crimson font-bold bg-rulebook-crimson/5 p-2 border-l-2 border-rulebook-crimson rounded-sm">
+                    ✗ {getFieldError('display_name')}
+                  </p>
                 )}
               </div>
             </div>
@@ -171,7 +213,9 @@ export default function Register() {
                 />
               </div>
               {getFieldError('email') && (
-                <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('email')}</p>
+                <p className="mt-2 text-xs text-rulebook-crimson font-bold bg-rulebook-crimson/5 p-2 border-l-2 border-rulebook-crimson rounded-sm">
+                  ✗ {getFieldError('email')}
+                </p>
               )}
             </div>
 
@@ -198,7 +242,9 @@ export default function Register() {
                   />
                 </div>
                 {getFieldError('password1') && (
-                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('password1')}</p>
+                  <p className="mt-2 text-xs text-rulebook-crimson font-bold bg-rulebook-crimson/5 p-2 border-l-2 border-rulebook-crimson rounded-sm">
+                    ✗ {getFieldError('password1')}
+                  </p>
                 )}
               </div>
 
@@ -223,7 +269,9 @@ export default function Register() {
                   />
                 </div>
                 {getFieldError('password2') && (
-                  <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('password2')}</p>
+                  <p className="mt-2 text-xs text-rulebook-crimson font-bold bg-rulebook-crimson/5 p-2 border-l-2 border-rulebook-crimson rounded-sm">
+                    ✗ {getFieldError('password2')}
+                  </p>
                 )}
               </div>
             </div>
@@ -231,12 +279,12 @@ export default function Register() {
             {/* Create Account Button */}
             <button
               type="submit"
-              disabled={loading}
-              className={`w-full btn-primary flex items-center justify-center gap-2 mt-8 ${loading ? 'opacity-70 cursor-not-allowed' : ''
+              disabled={isSubmitting}
+              className={`w-full btn-primary flex items-center justify-center gap-2 mt-8 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
             >
               <UserPlus size={18} />
-              {loading ? 'Creating...' : 'Create Account'}
+              {isSubmitting ? 'Creating...' : 'Create Account'}
             </button>
           </form>
         </div>
