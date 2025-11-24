@@ -1,12 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)",
-      "Bash(python manage.py makemigrations:*)",
-      "Bash(python manage.py migrate:*)",
-      "Bash(python manage.py seed_equipment:*)",
-      "Bash(python:*)",
-      "Bash(git add:*)"
+      "Bash(git commit -m \"$(cat <<''EOF''\nImplement weapon overlay system and refactor accessory equipment\n\n- Update seed_equipment.py to keep only ''None'' default accessory and character-specific weapons\n- Remove 7 unused accessories (Reading Glasses, Headband, Beret, etc.) from database\n- Mark Zoro Sword as default equipment for Zoro character initialization\n- Add equippedWeapon state and loading to CharacterAvatar component\n- Implement weapon overlay rendering - sword displays on top of character when equipped\n- Update filtration logic to show weapons only for their associated characters\n- Display ''None'' icon (Palette) for unequipped state in equipment list\n- Update CharacterCustomizer to properly filter weapons by character_specific field\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
