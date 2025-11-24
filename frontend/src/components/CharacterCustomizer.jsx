@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Shield, Shirt, Palette, Loader, Lock, Check } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
+import { getThemePreviewImage } from '../utils/themeBackgrounds'
 import DefaultImg from '/src/assets/default.png'
 import ZoroImg from '/src/assets/zoro.png'
 
@@ -9,6 +10,7 @@ export function CharacterCustomizer({ onCharacterChanged }) {
   const [equipment, setEquipment] = useState([])
   const [characters, setCharacters] = useState([])
   const [currentCharacter, setCurrentCharacter] = useState('default')
+  const [currentTheme, setCurrentTheme] = useState('Default Theme')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [equippingId, setEquippingId] = useState(null)
@@ -60,6 +62,12 @@ export function CharacterCustomizer({ onCharacterChanged }) {
       const data = await gameApi.getAvailableCharacters()
       setCharacters(data.available_characters)
       setCurrentCharacter(data.current_character)
+
+      // Also load current theme from user stats
+      const stats = await gameApi.getUserStats()
+      if (stats.selected_theme) {
+        setCurrentTheme(stats.selected_theme)
+      }
     } catch (err) {
       console.error('Failed to load characters:', err)
       setError('Failed to load characters')
@@ -71,9 +79,28 @@ export function CharacterCustomizer({ onCharacterChanged }) {
   const handleEquip = async (itemId) => {
     try {
       setEquippingId(itemId)
-      await gameApi.equipItem(itemId)
+
+      // Find the item to check if it's a theme
+      const item = equipment.find(eq => eq.id === itemId)
+
+      if (item && item.equipment_type === 'theme') {
+        // For themes, use the selectTheme endpoint
+        await gameApi.selectTheme(item.name)
+        // Immediately update the current theme state
+        setCurrentTheme(item.name)
+      } else {
+        // For other equipment, use the regular equipItem endpoint
+        await gameApi.equipItem(itemId)
+      }
+
       // Refresh equipment data
       await loadEquipment()
+
+      // If it's a theme, trigger stats refresh to update avatar background
+      if (item && item.equipment_type === 'theme' && onCharacterChanged) {
+        const updatedStats = await gameApi.getUserStats()
+        onCharacterChanged(updatedStats)
+      }
     } catch (err) {
       console.error('Failed to equip item:', err)
       setError('Failed to equip item')
@@ -136,7 +163,17 @@ export function CharacterCustomizer({ onCharacterChanged }) {
 
   const filteredItems = activeCategory === 'character'
     ? characters
-    : equipment.filter(item => item.equipment_type === activeCategory)
+    : equipment.filter(item => {
+        // Filter by category
+        if (item.equipment_type !== activeCategory) return false
+
+        // For armor/relics (which are accessory type but have character_specific), filter by current character
+        if (item.character_specific && item.character_specific !== currentCharacter) {
+          return false
+        }
+
+        return true
+      })
 
   const title = activeCategory === 'character' ? 'Hero Roster' : 'Equipment & Items'
 
@@ -183,8 +220,10 @@ export function CharacterCustomizer({ onCharacterChanged }) {
         ) : (
           filteredItems.map((item) => {
             const isCharacter = activeCategory === 'character'
+            const isTheme = activeCategory === 'theme'
             const isUnlocked = isCharacter ? true : item.is_unlocked
             const isSelected = isCharacter && item.id === currentCharacter
+            const isThemeSelected = isTheme && item.name === currentTheme
 
             return (
               <div
@@ -218,9 +257,25 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                       ) : activeCategory === 'outfit' ? (
                         <Shirt size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
                       ) : activeCategory === 'accessory' ? (
-                        <Shield size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
+                        item.sprite_path ? (
+                          <img
+                            src={`/src/assets/${item.sprite_path}`}
+                            alt={item.name}
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <Shield size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
+                        )
                       ) : activeCategory === 'theme' ? (
-                        <Palette size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
+                        getThemePreviewImage(item.name) ? (
+                          <img
+                            src={getThemePreviewImage(item.name)}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Palette size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
+                        )
                       ) : null}
                     </div>
 
@@ -280,9 +335,13 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                     ) : (
                       <button
                         onClick={() => handleEquip(item.id)}
-                        disabled={!item.is_unlocked || equippingId === item.id}
+                        disabled={!item.is_unlocked || equippingId === item.id || (isTheme && isThemeSelected)}
                         className={`px-4 py-2 text-xs font-serif font-bold uppercase tracking-widest border-2 transition-all shadow-sm ${item.is_unlocked
-                            ? item.is_equipped
+                            ? isTheme
+                              ? isThemeSelected
+                                ? 'bg-rulebook-forest text-rulebook-paper border-rulebook-ink cursor-default'
+                                : 'bg-rulebook-crimson text-rulebook-paper border-rulebook-ink hover:bg-rulebook-ink hover:border-rulebook-crimson'
+                              : item.is_equipped
                               ? 'bg-rulebook-forest text-rulebook-paper border-rulebook-ink'
                               : 'bg-rulebook-crimson text-rulebook-paper border-rulebook-ink hover:bg-rulebook-ink hover:border-rulebook-crimson'
                             : 'bg-rulebook-ink/20 text-rulebook-ink/40 border-rulebook-ink/20 cursor-not-allowed'
@@ -290,14 +349,18 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                       >
                         {equippingId === item.id ? (
                           <span className="flex items-center gap-2">
-                            <Loader size={12} className="animate-spin" /> EQUIPPING...
+                            <Loader size={12} className="animate-spin" /> {isTheme ? 'SELECTING...' : 'EQUIPPING...'}
                           </span>
-                        ) : item.is_equipped ? (
+                        ) : isTheme && isThemeSelected ? (
+                          <span className="flex items-center gap-2">
+                            <Check size={12} /> ACTIVE
+                          </span>
+                        ) : item.is_equipped && !isTheme ? (
                           <span className="flex items-center gap-2">
                             <Check size={12} /> EQUIPPED
                           </span>
                         ) : item.is_unlocked ? (
-                          'EQUIP'
+                          isTheme ? 'SELECT' : 'EQUIP'
                         ) : (
                           'LOCKED'
                         )}

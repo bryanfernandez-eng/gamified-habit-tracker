@@ -1,8 +1,9 @@
 # backend/api/signals.py
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+from .models import Equipment, UserEquipment
 
 User = get_user_model()
 
@@ -59,3 +60,26 @@ def create_demo_users(sender, **kwargs):
     print("[*] Demo users ready! Use login quick-fill buttons to test")
     print("   Admin: johndoe / demo123")
     print("   User:  reese / demo123")
+
+
+@receiver(post_save, sender=User)
+def initialize_user_equipment(sender, instance, created, **kwargs):
+    """
+    Auto-initialize default equipment for new users
+    """
+    if not created:
+        return
+
+    try:
+        # Get all default equipment items
+        default_equipment = Equipment.objects.filter(is_default=True)
+
+        # Create UserEquipment records for each default item
+        for equipment in default_equipment:
+            UserEquipment.objects.get_or_create(
+                user=instance,
+                equipment=equipment,
+                defaults={'is_equipped': True}
+            )
+    except Exception as e:
+        print(f"[!] Error initializing equipment for user {instance.username}: {e}")

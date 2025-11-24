@@ -10,6 +10,7 @@ import {
 
 import { gameApi } from '../../services/gameApi'
 import { DailyCheckInTracker } from './DailyCheckInTracker'
+import { getThemeBackground } from '../../utils/themeBackgrounds'
 import DefaultImg from '/src/assets/default.png'
 import ZoroImg from '/src/assets/zoro.png'
 import PixelForestBg from '/src/assets/pixel-forest-bg.png'
@@ -26,6 +27,8 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
     creativity: 1,
     social: 1,
     health: 1,
+    id: null,
+    selected_theme: 'Default Theme',
   })
   const [showLevelUpPopup, setShowLevelUpPopup] = useState(false)
   const [levelUpData, setLevelUpData] = useState(null)
@@ -103,6 +106,11 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
       'zoro': ZoroImg
     }
     return characterMap[stats.selected_character] || DefaultImg
+  }
+
+  const getBackgroundImage = () => {
+    const themeBackground = getThemeBackground(stats.selected_theme)
+    return themeBackground || PixelForestBg
   }
 
   // Play level up sound effect
@@ -193,10 +201,10 @@ export function CharacterAvatar({ refreshTrigger, userStats: externalStats, onSt
         </div>
 
         <div className="relative mb-6">
-          {/* Character Avatar - Parchment Frame with Pixel Forest Background */}
+          {/* Character Avatar - Parchment Frame with Theme Background */}
           <div
             className="h-64 w-full flex justify-center items-center border-2 border-rulebook-charcoal p-2 relative bg-cover bg-center overflow-hidden"
-            style={{ backgroundImage: `url(${PixelForestBg})` }}
+            style={{ backgroundImage: `url(${getBackgroundImage()})` }}
           >
             {/* Overlay to blend background with parchment theme */}
             <div className="absolute inset-0 bg-rulebook-paper/20 backdrop-sepia-[.2]"></div>

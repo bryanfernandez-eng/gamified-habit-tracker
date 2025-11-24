@@ -157,6 +157,46 @@ class UserStatsViewSet(viewsets.ViewSet):
             'current_character': request.user.selected_character
         })
 
+    @action(detail=False, methods=['post'])
+    def select_theme(self, request):
+        """Select a theme for the user"""
+        theme_name = request.data.get('theme_name')
+
+        if not theme_name:
+            return Response(
+                {'error': 'theme_name is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Get the theme equipment item
+        try:
+            theme = Equipment.objects.get(name=theme_name, equipment_type='theme')
+        except Equipment.DoesNotExist:
+            return Response(
+                {'error': f'Theme "{theme_name}" does not exist'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Check if user has unlocked this theme
+        user_equipment = UserEquipment.objects.filter(
+            user=request.user,
+            equipment=theme
+        ).exists()
+
+        if not user_equipment:
+            return Response(
+                {'error': f'Theme "{theme_name}" is not unlocked'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        request.user.selected_theme = theme_name
+        request.user.save()
+
+        return Response({
+            'message': f'Theme changed to {theme_name}',
+            'current_theme': request.user.selected_theme
+        })
+
 
 class HabitViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
