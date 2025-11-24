@@ -24,11 +24,16 @@ export function CharacterCustomizer({ onCharacterChanged }) {
     },
     {
       id: 'outfit',
-      label: 'Armor',
+      label: 'Outfits',
       icon: <Shirt size={18} />,
     },
     {
-      id: 'accessory',
+      id: 'armor',
+      label: 'Armor',
+      icon: <Shield size={18} />,
+    },
+    {
+      id: 'weapon',
       label: 'Relics',
       icon: <Shield size={18} />,
     },
@@ -165,11 +170,17 @@ export function CharacterCustomizer({ onCharacterChanged }) {
     ? characters
     : equipment.filter(item => {
         // Filter by category
-        if (item.equipment_type !== activeCategory) return false
+        if (activeCategory === 'armor' || activeCategory === 'weapon') {
+          // Filter by equipment_slot for armor/weapon
+          if (item.equipment_type !== 'accessory') return false
+          if (item.equipment_slot !== activeCategory) return false
+        } else {
+          // Filter by equipment_type for other categories
+          if (item.equipment_type !== activeCategory) return false
+        }
 
-        // For relics/weapons (which are accessory type with equipment_slot), filter by current character
+        // For weapons, filter by current character if character_specific is set
         if (item.equipment_slot === 'weapon') {
-          // If character_specific is set, only show for that character
           if (item.character_specific && item.character_specific !== currentCharacter) {
             return false
           }
@@ -259,7 +270,7 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                         />
                       ) : activeCategory === 'outfit' ? (
                         <Shirt size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
-                      ) : activeCategory === 'accessory' ? (
+                      ) : activeCategory === 'armor' || activeCategory === 'weapon' ? (
                         item.name === 'None' ? (
                           <Palette size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
                         ) : item.sprite_path ? (
