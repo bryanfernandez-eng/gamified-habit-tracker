@@ -154,51 +154,24 @@ class UserStatsViewSet(viewsets.ViewSet):
         request.user.selected_character = character_id
         request.user.save()
 
-        # Handle character-specific weapons
-        # 1. Unequip any character-specific weapons that don't match the new character
+        # Handle character-specific appearances
+        # 1. Unequip any appearance that doesn't match the new character
         UserEquipment.objects.filter(
             user=request.user,
-            equipment__equipment_slot='weapon',
-            equipment__character_specific__isnull=False
-        ).exclude(
-            equipment__character_specific=character_id
+            equipment__equipment_slot='armor'
         ).update(is_equipped=False)
 
-        # 2. If no weapon is currently equipped, equip "None"
-        has_equipped_weapon = UserEquipment.objects.filter(
-            user=request.user,
-            equipment__equipment_slot='weapon',
-            is_equipped=True
-        ).exists()
-
-        if not has_equipped_weapon:
-            # Equip "None" weapon as fallback
-            none_weapon = UserEquipment.objects.filter(
-                user=request.user,
-                equipment__name='None',
-                equipment__equipment_slot='weapon'
-            ).first()
-            if none_weapon:
-                none_weapon.is_equipped = True
-                none_weapon.save()
-
-        # 3. If no armor is currently equipped, equip "None" armor
-        has_equipped_armor = UserEquipment.objects.filter(
+        # 2. Equip the default appearance for this character
+        default_appearance = UserEquipment.objects.filter(
             user=request.user,
             equipment__equipment_slot='armor',
-            is_equipped=True
-        ).exists()
+            equipment__character_specific=character_id,
+            equipment__is_default=True
+        ).first()
 
-        if not has_equipped_armor:
-            # Equip "None" armor as fallback
-            none_armor = UserEquipment.objects.filter(
-                user=request.user,
-                equipment__name='None',
-                equipment__equipment_slot='armor'
-            ).first()
-            if none_armor:
-                none_armor.is_equipped = True
-                none_armor.save()
+        if default_appearance:
+            default_appearance.is_equipped = True
+            default_appearance.save()
 
         return Response({
             'message': f'Character changed to {character_id}',

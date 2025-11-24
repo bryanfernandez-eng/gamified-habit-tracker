@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Shield, Shirt, Palette, Loader, Lock, Check } from 'lucide-react'
 import { gameApi } from '../services/gameApi'
 import { getThemePreviewImage } from '../utils/themeBackgrounds'
-import DefaultImg from '/src/assets/default.png'
-import ZoroImg from '/src/assets/zoro.png'
+import DefaultImg from '/src/assets/characters/default/default.png'
+import ZoroImg from '/src/assets/characters/zoro/zoro.png'
 
 export function CharacterCustomizer({ onCharacterChanged }) {
   const [activeCategory, setActiveCategory] = useState('character')
@@ -23,18 +23,8 @@ export function CharacterCustomizer({ onCharacterChanged }) {
       icon: <Palette size={18} />,
     },
     {
-      id: 'outfit',
-      label: 'Outfits',
-      icon: <Shirt size={18} />,
-    },
-    {
       id: 'armor',
-      label: 'Armor',
-      icon: <Shield size={18} />,
-    },
-    {
-      id: 'weapon',
-      label: 'Relics',
+      label: 'Appearance',
       icon: <Shield size={18} />,
     },
     {
@@ -170,20 +160,15 @@ export function CharacterCustomizer({ onCharacterChanged }) {
     ? characters
     : equipment.filter(item => {
         // Filter by category
-        if (activeCategory === 'armor' || activeCategory === 'weapon') {
-          // Filter by equipment_slot for armor/weapon
-          if (item.equipment_type !== 'accessory') return false
-          if (item.equipment_slot !== activeCategory) return false
-        } else {
-          // Filter by equipment_type for other categories
-          if (item.equipment_type !== activeCategory) return false
-        }
+        if (activeCategory === 'armor') {
+          // Filter armor items (equipment_slot: armor) - appearance for current character
+          if (item.equipment_type !== 'accessory' || item.equipment_slot !== 'armor') return false
 
-        // For weapons, filter by current character if character_specific is set
-        if (item.equipment_slot === 'weapon') {
-          if (item.character_specific && item.character_specific !== currentCharacter) {
-            return false
-          }
+          // Only show appearance items for the current character
+          if (item.character_specific !== currentCharacter) return false
+        } else if (activeCategory === 'theme') {
+          // Filter by equipment_type for themes
+          if (item.equipment_type !== 'theme') return false
         }
 
         return true
@@ -268,12 +253,8 @@ export function CharacterCustomizer({ onCharacterChanged }) {
                           alt={item.name}
                           className="w-full h-full object-contain filter sepia-[.2]"
                         />
-                      ) : activeCategory === 'outfit' ? (
-                        <Shirt size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
-                      ) : activeCategory === 'armor' || activeCategory === 'weapon' ? (
-                        item.name === 'None' ? (
-                          <Palette size={32} className={isUnlocked ? "text-rulebook-ink" : "text-rulebook-ink/30"} />
-                        ) : item.sprite_path ? (
+                      ) : activeCategory === 'armor' ? (
+                        item.sprite_path ? (
                           <img
                             src={`/src/assets/${item.sprite_path}`}
                             alt={item.name}
