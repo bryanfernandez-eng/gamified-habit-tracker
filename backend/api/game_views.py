@@ -4,15 +4,17 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
+import random
 from django.db.models import Count, Sum, F, Q
 from .models import (
     Habit, HabitCompletion, Achievement,
-    UserAchievement, Equipment, UserEquipment, DailyCheckIn
+    UserAchievement, Equipment, UserEquipment, DailyCheckIn,
+    Enemy, TowerProgress
 )
 from .game_serializers import (
     UserStatsSerializer, HabitSerializer, HabitCompletionSerializer,
     AchievementSerializer, EquipmentSerializer, CompleteHabitSerializer,
-    DailyCheckInSerializer
+    DailyCheckInSerializer, EnemySerializer
 )
 
 
@@ -588,3 +590,138 @@ class DailyCheckInViewSet(viewsets.ViewSet):
             'checked_in_today': checked_in_today,
             'total_checkins': len(checkin_dates)
         })
+
+
+class TowerViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'])
+    def start_floor(self, request):
+        """Start a floor and return enemies for waves"""
+        user = request.user
+        progress, _ = TowerProgress.objects.get_or_create(user=user)
+        
+        # Logic to generate enemies based on floor
+        floor = progress.current_floor
+        enemies = []
+        
+        # Scaling logic
+        base_hp = 50 + (floor * 10)
+        base_dmg = 5 + (floor * 2)
+        
+        for i in range(5):  # 5 Waves
+            # Determine enemy type based on floor
+            if floor <= 3:
+                enemy_type = random.choice([
+                    {'name': 'Blue Slime', 'sprite': '/enemies/blue_slime.png'},
+                    {'name': 'Red Slime', 'sprite': '/enemies/red_slime.png'}
+                ])
+            else:
+                enemy_type = random.choice([
+                    {'name': 'Skeleton Warrior', 'sprite': '/enemies/skeleton_warrior.png'},
+                    {'name': 'Skeleton Captain', 'sprite': '/enemies/skeleton_captain.png'}
+                ])
+
+            enemy_data = {
+                'id': i + 1,  # Pseudo ID for the session
+                'name': f"{enemy_type['name']} {i+1}",
+                'level': floor,
+                'base_hp': base_hp + (i * 5),
+                'base_damage': base_dmg + i,
+                'sprite_path': enemy_type['sprite'],
+                'xp_reward': 20 * floor,
+                'gold_reward': 10 * floor
+            }
+            enemies.append(enemy_data)
+            
+        return Response({
+            'floor': floor,
+            'waves': enemies
+        })
+
+    @action(detail=False, methods=['post'])
+    def complete_floor(self, request):
+        """Complete the current floor and award rewards"""
+        user = request.user
+        progress, _ = TowerProgress.objects.get_or_create(user=user)
+        
+        # In a real secure app, we'd verify the combat log or token.
+        # Here we trust the client for the "auto-battler" simulation.
+        
+        floor = progress.current_floor
+        xp_reward = 100 * floor
+        
+        # Award XP
+        user.add_xp(xp_reward)
+        
+        # Generate Item Reward
+        reward_item = self._generate_random_equipment(floor)
+        user_equipment = UserEquipment.objects.create(
+            user=user,
+            equipment=reward_item,
+            is_equipped=False
+        )
+        
+        # Update Progress
+        progress.current_floor += 1
+        if progress.current_floor > progress.highest_floor:
+            progress.highest_floor = progress.current_floor
+        progress.save()
+        
+        return Response({
+            'message': f"Floor {floor} completed!",
+            'xp_earned': xp_reward,
+            'item_reward': EquipmentSerializer(reward_item).data,
+            'next_floor': progress.current_floor,
+            'user_stats': UserStatsSerializer(user).data
+        })
+
+    def _generate_random_equipment(self, floor):
+        """Generate a random piece of equipment based on floor level"""
+        import random
+        
+        slots = ['weapon', 'helmet', 'chest', 'legs', 'feet']
+        slot = random.choice(slots)
+        
+        # Adjectives based on floor/power
+        prefixes = ['Rusty', 'Common', 'Sturdy', 'Polished', 'Fine', 'Superior', 'Epic', 'Legendary', 'Mythic', 'Godly']
+        prefix_index = min(len(prefixes) - 1, floor // 2)
+        prefix = prefixes[prefix_index]
+        
+        names = {
+            'weapon': ['Sword', 'Axe', 'Dagger', 'Staff', 'Mace'],
+            'helmet': ['Helm', 'Cap', 'Visor', 'Hood', 'Crown'],
+            'chest': ['Armor', 'Vest', 'Tunic', 'Plate', 'Robes'],
+            'legs': ['Greaves', 'Pants', 'Leggings', 'Kilt', 'Guards'],
+            'feet': ['Boots', 'Shoes', 'Sandals', 'Sabatons', 'Greaves']
+        }
+        base_name = random.choice(names[slot])
+        
+        # Generate Stats
+        stats = {}
+        attributes = ['strength', 'intelligence', 'creativity', 'social', 'health']
+        
+        # Number of stats increases with floor
+        num_stats = 1 + (floor // 5)
+        selected_attrs = random.sample(attributes, min(len(attributes), num_stats))
+        
+        for attr in selected_attrs:
+            # Stat value scales with floor
+            base_val = 1 + (floor // 2)
+            variance = random.randint(0, floor)
+            stats[attr] = base_val + variance
+
+        # Create Equipment
+        # Note: In a real game, we might reuse Equipment definitions to save DB space,
+        # but for this "looter" feel where every drop is unique, creating new entries is fine for this scale.
+        equipment = Equipment.objects.create(
+            name=f"{prefix} {base_name}",
+            equipment_type='outfit', # Simplified for now
+            equipment_slot=slot,
+            description=f"A {prefix.lower()} {base_name} found on floor {floor}.",
+            stat_bonus=stats,
+            gold_cost=floor * 50,
+            sprite_path=f"/equipment/{slot}/{base_name.lower()}.png" # Placeholder path
+        )
+        
+        return equipment

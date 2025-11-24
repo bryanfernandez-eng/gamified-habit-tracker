@@ -241,3 +241,26 @@ class DailyCheckIn(models.Model):
         if not self.pk:  # Only on creation, not on update
             self.user.add_xp(self.xp_earned)
         super().save(*args, **kwargs)
+
+
+class Enemy(models.Model):
+    name = models.CharField(max_length=100)
+    level = models.IntegerField(default=1)
+    base_hp = models.IntegerField(default=50)
+    base_damage = models.IntegerField(default=5)
+    sprite_path = models.CharField(max_length=255, blank=True, help_text="Path to enemy sprite")
+    xp_reward = models.IntegerField(default=20)
+    gold_reward = models.IntegerField(default=10)
+    
+    def __str__(self):
+        return f"{self.name} (Lvl {self.level})"
+
+
+class TowerProgress(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='tower_progress')
+    current_floor = models.IntegerField(default=1)
+    highest_floor = models.IntegerField(default=1)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.user.username} - Floor {self.current_floor}"

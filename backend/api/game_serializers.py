@@ -2,8 +2,14 @@
 from rest_framework import serializers
 from .models import (
     CustomUser, Habit, HabitCompletion, Achievement,
-    UserAchievement, Equipment, UserEquipment, DailyCheckIn
+    UserAchievement, Equipment, UserEquipment, DailyCheckIn,
+    Enemy
 )
+
+class EnemySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enemy
+        fields = ['id', 'name', 'level', 'base_hp', 'base_damage', 'sprite_path', 'xp_reward', 'gold_reward']
 
 class UserStatsSerializer(serializers.ModelSerializer):
     """Serializer for user game stats"""

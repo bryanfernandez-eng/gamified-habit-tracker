@@ -118,5 +118,16 @@ export const gameApi = {
   getCheckInHistory: async () => {
     const response = await api.get('/api/game/daily-checkin/history/')
     return response.data
+  },
+
+  // The Tower
+  startTowerFloor: async () => {
+    const response = await api.post('/api/game/tower/start_floor/')
+    return response.data
+  },
+
+  completeTowerFloor: async () => {
+    const response = await api.post('/api/game/tower/complete_floor/')
+    return response.data
   }
 }

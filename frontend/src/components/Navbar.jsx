@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "../contexts/AuthContext"
-import { Sword, Shield, LogOut, Home, BarChart3, Settings, Menu, X } from "lucide-react"
+import { Sword, Shield, LogOut, Home, BarChart3, Settings, Menu, X, Castle } from "lucide-react"
 
 export default function Navbar({ userStats = null }) {
   const { user, logout } = useAuth()
@@ -59,6 +59,14 @@ export default function Navbar({ userStats = null }) {
             >
               <Home className="w-4 h-4 mr-2 group-hover:text-rulebook-crimson transition-colors" />
               <span>Dashboard</span>
+            </a>
+
+            <a
+              href="/tower"
+              className="group flex items-center text-rulebook-ink font-serif font-bold text-sm tracking-widest uppercase hover:text-rulebook-crimson transition-colors"
+            >
+              <Castle className="w-4 h-4 mr-2 group-hover:text-rulebook-crimson transition-colors" />
+              <span>The Tower</span>
             </a>
 
             <a
@@ -135,8 +143,8 @@ export default function Navbar({ userStats = null }) {
 
         {/* Mobile Navigation Menu - Collapsible */}
         <div className={`lg:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen
-            ? 'max-h-96 opacity-100 border-t-2 border-rulebook-charcoal/20 py-4'
-            : 'max-h-0 opacity-0 overflow-hidden'
+          ? 'max-h-96 opacity-100 border-t-2 border-rulebook-charcoal/20 py-4'
+          : 'max-h-0 opacity-0 overflow-hidden'
           }`}>
           <div className="flex flex-col space-y-2 bg-rulebook-paper">
             <a
@@ -146,6 +154,15 @@ export default function Navbar({ userStats = null }) {
             >
               <Home className="w-5 h-5 mr-3 text-rulebook-crimson" />
               <span>Dashboard</span>
+            </a>
+
+            <a
+              href="/tower"
+              onClick={closeMobileMenu}
+              className="flex items-center px-4 py-3 text-rulebook-ink font-serif font-bold uppercase tracking-widest hover:bg-rulebook-ink/5 transition-colors"
+            >
+              <Castle className="w-5 h-5 mr-3 text-rulebook-crimson" />
+              <span>The Tower</span>
             </a>
 
             <a
