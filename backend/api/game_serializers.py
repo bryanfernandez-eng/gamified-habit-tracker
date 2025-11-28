@@ -19,6 +19,7 @@ class UserStatsSerializer(serializers.ModelSerializer):
     social = serializers.SerializerMethodField()
     health = serializers.SerializerMethodField()
     selected_appearance_id = serializers.SerializerMethodField()
+    selected_appearance = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -26,11 +27,20 @@ class UserStatsSerializer(serializers.ModelSerializer):
             'id', 'level', 'current_hp', 'max_hp', 'current_xp', 'next_level_xp',
             'strength', 'intelligence', 'creativity', 'social', 'health',
             'strength_xp', 'intelligence_xp', 'creativity_xp', 'social_xp', 'health_xp',
-            'selected_character', 'selected_theme', 'selected_appearance_id'
+            'selected_character', 'selected_theme', 'selected_appearance_id', 'selected_appearance'
         ]
 
     def get_selected_appearance_id(self, obj):
         return obj.selected_appearance.id if obj.selected_appearance else None
+
+    def get_selected_appearance(self, obj):
+        if obj.selected_appearance:
+            return {
+                'id': obj.selected_appearance.id,
+                'name': obj.selected_appearance.name,
+                'sprite_path': obj.selected_appearance.sprite_path
+            }
+        return None
 
     def _get_total_stat(self, user, stat_name):
         """Calculate total stat including equipment bonuses"""
@@ -168,12 +178,14 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
     def _check_level_requirement(self, unlock_requirement, user_level):
         """Check if user meets level requirement from unlock_requirement string"""
-        if 'Level 3' in unlock_requirement:
-            return user_level >= 3
-        elif 'Level 2' in unlock_requirement:
-            return user_level >= 2
-        elif 'Level 1' in unlock_requirement:
-            return user_level >= 1
+        import re
+
+        # Extract level number from unlock requirement string (e.g., "Unlocked at Level 4" -> 4)
+        match = re.search(r'Level\s+(\d+)', unlock_requirement, re.IGNORECASE)
+        if match:
+            required_level = int(match.group(1))
+            return user_level >= required_level
+
         return False
     
     def get_is_equipped(self, obj):

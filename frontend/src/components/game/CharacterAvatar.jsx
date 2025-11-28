@@ -11,8 +11,7 @@ import {
 import { gameApi } from '../../services/gameApi'
 import { DailyCheckInTracker } from './DailyCheckInTracker'
 import { getThemeBackground } from '../../utils/themeBackgrounds'
-import DefaultImg from '/src/assets/characters/default/level1-default.png'
-import ZoroImg from '/src/assets/characters/zoro/zoro-default.png'
+import { getCharacterDefaultSprite } from '../../utils/characterSprites'
 import PixelForestBg from '/src/assets/themes/forest-pixel.jpg'
 
 export function CharacterAvatar({ userStats: externalStats, onStatsUpdate }) {
@@ -120,11 +119,7 @@ export function CharacterAvatar({ userStats: externalStats, onStatsUpdate }) {
   const hpPercentage = (stats.current_hp / stats.max_hp) * 100
 
   const getCharacterImage = () => {
-    const characterMap = {
-      'default': DefaultImg,
-      'zoro': ZoroImg
-    }
-    return characterMap[stats.selected_character] || DefaultImg
+    return getCharacterDefaultSprite(stats.selected_character)
   }
 
   const getBackgroundImage = () => {
