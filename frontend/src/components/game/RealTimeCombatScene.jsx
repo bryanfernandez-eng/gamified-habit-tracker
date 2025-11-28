@@ -2,8 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
-import DefaultImg from '/src/assets/default.png';
-import ZoroImg from '/src/assets/zoro.png';
+import DefaultImg from '/src/assets/characters/default/level1-default.png';
+import ZoroImg from '/src/assets/characters/zoro/zoro-default.png';
 import GrassImg from '/src/assets/grass.png';
 import RockImg from '/src/assets/rock.png';
 import TreeImg from '/src/assets/tree.png';
@@ -237,7 +237,7 @@ export function RealTimeCombatScene({ playerStats, enemy, onVictory, onDefeat, f
     }, []);
 
     // --- Map Generation ---
-    const generateForestMap = () => {
+    const generateForestMap = (enemyCount) => {
         const obstacles = [];
         const cols = Math.ceil(800 / TILE_SIZE);
         const rows = Math.ceil(600 / TILE_SIZE);
@@ -255,12 +255,40 @@ export function RealTimeCombatScene({ playerStats, enemy, onVictory, onDefeat, f
             // Check Player Distance
             if (Math.abs(x - gameState.current.player.x) < 150 && Math.abs(y - gameState.current.player.y) < 150) continue;
 
-            // Check Enemy Distance (Fix: Prevent spawning on enemy)
-            if (Math.abs(x - gameState.current.enemy.x) < 100 && Math.abs(y - gameState.current.enemy.y) < 100) continue;
-
             obstacles.push({ x, y, w: TILE_SIZE, h: TILE_SIZE, type: 'rock' });
         }
         gameState.current.obstacles = obstacles;
+
+        // Generate Enemies
+        const enemies = [];
+        for (let i = 0; i < enemyCount; i++) {
+            let ex, ey;
+            let valid = false;
+            let attempts = 0;
+            while (!valid && attempts < 100) {
+                ex = Math.random() * (800 - ENEMY_SIZE);
+                ey = Math.random() * (600 - ENEMY_SIZE);
+                valid = true;
+
+                // Check distance from player
+                if (Math.abs(ex - gameState.current.player.x) < 200 && Math.abs(ey - gameState.current.player.y) < 200) valid = false;
+
+                // Check collision with obstacles
+                for (const obs of obstacles) {
+                    if (checkRectOverlap({ x: ex, y: ey, w: ENEMY_SIZE, h: ENEMY_SIZE }, obs)) valid = false;
+                }
+
+                // Check overlap with other enemies
+                for (const other of enemies) {
+                    if (Math.abs(ex - other.x) < 50 && Math.abs(ey - other.y) < 50) valid = false;
+                }
+                attempts++;
+            }
+            if (valid) {
+                enemies.push({ x: ex, y: ey });
+            }
+        }
+        gameState.current.enemies = enemies;
     };
 
     const generateDungeonMap = () => {
