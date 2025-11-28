@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Shield, Zap, Sword, Skull } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import DefaultImg from '/src/assets/characters/default/level1-default.png';
-import ZoroImg from '/src/assets/characters/zoro/zoro-default.png';
+import { getCharacterSprite } from '../../utils/characterSprites';
 import { soundManager } from '../../services/soundManager';
 import { ParticleSystem, FlashEffect } from './ParticleSystem';
 
@@ -46,11 +45,10 @@ export function CombatScene({ playerStats, enemy, onVictory, onDefeat }) {
     }, [turn, animating, playerHP, enemyHP]);
 
     const getCharacterImage = () => {
-        const characterMap = {
-            'default': DefaultImg,
-            'zoro': ZoroImg
-        }
-        return characterMap[playerStats.selected_character] || DefaultImg
+        return getCharacterSprite(
+            playerStats.selected_appearance,
+            playerStats.selected_character
+        );
     }
 
     const spawnParticles = (x, y, color, count = 10) => {

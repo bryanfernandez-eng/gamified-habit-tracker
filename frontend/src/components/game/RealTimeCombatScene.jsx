@@ -2,8 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
-import DefaultImg from '/src/assets/characters/default/level1-default.png';
-import ZoroImg from '/src/assets/characters/zoro/zoro-default.png';
+import { getCharacterSprite } from '../../utils/characterSprites';
 import GrassImg from '/src/assets/grass.png';
 import RockImg from '/src/assets/rock.png';
 import TreeImg from '/src/assets/tree.png';
@@ -103,7 +102,12 @@ export function RealTimeCombatScene({ playerStats, enemy, onVictory, onDefeat, f
             return img;
         };
 
-        gameState.current.player.sprite = loadImg(playerStats.selected_character === 'zoro' ? ZoroImg : DefaultImg);
+        // Load player sprite using centralized utility
+        const playerSprite = getCharacterSprite(
+            playerStats.selected_appearance,
+            playerStats.selected_character
+        );
+        gameState.current.player.sprite = loadImg(playerSprite);
 
 
         // Forest Assets

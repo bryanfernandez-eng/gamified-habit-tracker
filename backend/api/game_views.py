@@ -48,10 +48,12 @@ def get_available_characters(level):
     Characters:
     - default: Available from level 1
     - zoro: Available from level 2
+    - cyberpunk: Available from level 3
     """
     all_characters = [
         {'id': 'default', 'name': 'Default', 'unlock_level': 1, 'is_unlocked': level >= 1},
-        {'id': 'zoro', 'name': 'Zoro', 'unlock_level': 2, 'is_unlocked': level >= 2}
+        {'id': 'zoro', 'name': 'Zoro', 'unlock_level': 2, 'is_unlocked': level >= 2},
+        {'id': 'cyberpunk', 'name': 'Cyberpunk', 'unlock_level': 3, 'is_unlocked': level >= 3}
     ]
 
     return all_characters
@@ -226,12 +228,14 @@ class UserStatsViewSet(viewsets.ViewSet):
 
     def _check_level_requirement(self, unlock_requirement, user_level):
         """Check if user meets level requirement from unlock_requirement string"""
-        if 'Level 3' in unlock_requirement:
-            return user_level >= 3
-        elif 'Level 2' in unlock_requirement:
-            return user_level >= 2
-        elif 'Level 1' in unlock_requirement:
-            return user_level >= 1
+        import re
+
+        # Extract level number from unlock requirement string (e.g., "Unlocked at Level 4" -> 4)
+        match = re.search(r'Level\s+(\d+)', unlock_requirement, re.IGNORECASE)
+        if match:
+            required_level = int(match.group(1))
+            return user_level >= required_level
+
         return False
 
 
@@ -470,12 +474,14 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
 
     def _check_level_requirement(self, unlock_requirement, user_level):
         """Check if user meets level requirement from unlock_requirement string"""
-        if 'Level 3' in unlock_requirement:
-            return user_level >= 3
-        elif 'Level 2' in unlock_requirement:
-            return user_level >= 2
-        elif 'Level 1' in unlock_requirement:
-            return user_level >= 1
+        import re
+
+        # Extract level number from unlock requirement string (e.g., "Unlocked at Level 4" -> 4)
+        match = re.search(r'Level\s+(\d+)', unlock_requirement, re.IGNORECASE)
+        if match:
+            required_level = int(match.group(1))
+            return user_level >= required_level
+
         return False
 
     def _is_equipment_unlocked(self, equipment, user):
@@ -520,11 +526,38 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
             defaults={'is_equipped': True}
         )
 
-        # If newly created, return with equipped status
+        # If newly created, handle equipping logic
         if created:
+            # Unequip other items before equipping this one
+            if equipment.equipment_slot and equipment.equipment_slot != 'accessory':
+                # For armor, unequip other armor for the SAME character
+                if equipment.equipment_slot == 'armor' and equipment.character_specific:
+                    UserEquipment.objects.filter(
+                        user=request.user,
+                        equipment__equipment_slot='armor',
+                        equipment__character_specific=equipment.character_specific
+                    ).exclude(id=user_equipment.id).update(is_equipped=False)
+
+                    # Update selected_appearance
+                    request.user.selected_appearance = equipment
+                    request.user.save()
+                else:
+                    # For non-character-specific armor, unequip all armor
+                    UserEquipment.objects.filter(
+                        user=request.user,
+                        equipment__equipment_slot=equipment.equipment_slot
+                    ).exclude(id=user_equipment.id).update(is_equipped=False)
+            else:
+                # Unequip other accessories/themes
+                UserEquipment.objects.filter(
+                    user=request.user,
+                    equipment__equipment_type=equipment.equipment_type
+                ).exclude(id=user_equipment.id).update(is_equipped=False)
+
             return Response({
                 'message': f'Equipped {equipment.name}',
-                'is_equipped': user_equipment.is_equipped
+                'is_equipped': user_equipment.is_equipped,
+                'user_stats': UserStatsSerializer(request.user).data
             })
 
         # Toggle equipped status for existing records
@@ -533,22 +566,51 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
         # If equipping, unequip other items in the same slot/type
         if user_equipment.is_equipped:
             if equipment.equipment_slot and equipment.equipment_slot != 'accessory':
-                # Unequip other items in the same slot
-                UserEquipment.objects.filter(
-                    user=request.user,
-                    equipment__equipment_slot=equipment.equipment_slot
-                ).exclude(id=user_equipment.id).update(is_equipped=False)
+                # For armor, unequip other armor for the SAME character
+                if equipment.equipment_slot == 'armor' and equipment.character_specific:
+                    UserEquipment.objects.filter(
+                        user=request.user,
+                        equipment__equipment_slot='armor',
+                        equipment__character_specific=equipment.character_specific
+                    ).exclude(id=user_equipment.id).update(is_equipped=False)
 
-                # If equipping armor (character appearance), update selected_appearance
-                if equipment.equipment_slot == 'armor':
+                    # Update selected_appearance
                     request.user.selected_appearance = equipment
                     request.user.save()
+                else:
+                    # For non-character-specific armor, unequip all armor
+                    UserEquipment.objects.filter(
+                        user=request.user,
+                        equipment__equipment_slot=equipment.equipment_slot
+                    ).exclude(id=user_equipment.id).update(is_equipped=False)
             else:
                 # Unequip other accessories/themes
                 UserEquipment.objects.filter(
                     user=request.user,
                     equipment__equipment_type=equipment.equipment_type
                 ).exclude(id=user_equipment.id).update(is_equipped=False)
+        else:
+            # If unequipping armor, set selected_appearance to the default for current character
+            if equipment.equipment_slot == 'armor' and equipment.character_specific:
+                default_appearance = Equipment.objects.filter(
+                    equipment_slot='armor',
+                    character_specific=request.user.selected_character,
+                    is_default=True
+                ).first()
+
+                if default_appearance:
+                    # Equip the default appearance
+                    default_ue, _ = UserEquipment.objects.get_or_create(
+                        user=request.user,
+                        equipment=default_appearance,
+                        defaults={'is_equipped': True}
+                    )
+                    if not default_ue.is_equipped:
+                        default_ue.is_equipped = True
+                        default_ue.save()
+
+                    request.user.selected_appearance = default_appearance
+                    request.user.save()
 
         user_equipment.save()
 
