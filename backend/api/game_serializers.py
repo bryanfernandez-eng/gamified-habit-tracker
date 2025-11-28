@@ -158,14 +158,20 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
         # For character-specific appearance items (armor)
         if obj.equipment_slot == 'armor' and obj.character_specific:
+            # First check if the character itself is unlocked
+            from api.game_views import get_available_characters
+            available_chars = get_available_characters(user.level)
+            char_ids = [c['id'] for c in available_chars if c['is_unlocked']]
+
+            # Character must be unlocked first
+            if obj.character_specific not in char_ids:
+                return False
+
             if obj.is_default:
                 # Default appearances unlock when character is unlocked
-                from api.game_views import get_available_characters
-                available_chars = get_available_characters(user.level)
-                char_ids = [c['id'] for c in available_chars if c['is_unlocked']]
-                return obj.character_specific in char_ids
+                return True
             else:
-                # Non-default appearances unlock by level requirement
+                # Non-default appearances also need to meet level requirement
                 return self._check_level_requirement(obj.unlock_requirement, user.level)
 
         # For themes, unlock based on level requirement

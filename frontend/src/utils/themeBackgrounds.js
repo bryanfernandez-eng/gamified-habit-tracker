@@ -3,6 +3,9 @@ import ForestPixelBg from '/src/assets/themes/forest-pixel.jpg'
 import ForestStandardBg from '/src/assets/themes/forest-standard.png'
 import PixelForestBg from '/src/assets/themes/pixel-forest.png'
 import ShatteredSkyBg from '/src/assets/themes/shattered-sky.png'
+import DarkNightTunnelBg from '/src/assets/themes/dark-night-tunnel.png'
+import TorchlitRefugeBg from '/src/assets/themes/torchlit-refuge.png'
+import HallOfTheRisingFlameBg from '/src/assets/themes/hall-of-the-rising-flame.png'
 
 // White background as a data URL for Default Theme
 const WHITE_BG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4='
@@ -17,6 +20,9 @@ export const THEME_BACKGROUNDS = {
   'Forest Standard': ForestStandardBg, // Standard forest background
   'Pixel Forest': PixelForestBg, // Retro pixel forest background
   'Shattered Sky': ShatteredSkyBg, // Mystical shattered sky background
+  'Dark Night Tunnel': DarkNightTunnelBg, // Mysterious dark tunnel background
+  'Torchlit Refuge': TorchlitRefugeBg, // Safe torchlit refuge background
+  'Hall of the Rising Flame': HallOfTheRisingFlameBg, // Grand hall with flames background
 }
 
 /**
@@ -30,6 +36,9 @@ export const THEME_PREVIEW_IMAGES = {
   'Forest Standard': ForestStandardBg,
   'Pixel Forest': PixelForestBg,
   'Shattered Sky': ShatteredSkyBg,
+  'Dark Night Tunnel': DarkNightTunnelBg,
+  'Torchlit Refuge': TorchlitRefugeBg,
+  'Hall of the Rising Flame': HallOfTheRisingFlameBg,
 }
 
 /**
