@@ -1,8 +1,12 @@
 // frontend/src/components/Login.jsx
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { Zap, Lock, User, LogIn, Home } from 'lucide-react'
+import ConnectionStatus from './ConnectionStatus'
 
-export default function Login({ onToggleMode }) {
+export default function Login() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     login: '',
     password: ''
@@ -13,9 +17,11 @@ export default function Login({ onToggleMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setFieldErrors({})
-    
+
     const result = await login(formData)
-    if (!result.success && result.fieldErrors) {
+    if (result.success) {
+      navigate('/dashboard', { replace: true })
+    } else if (result.fieldErrors) {
       setFieldErrors(result.fieldErrors)
     }
   }
@@ -26,7 +32,7 @@ export default function Login({ onToggleMode }) {
       ...prev,
       [name]: value
     }))
-    
+
     // Clear field error when user starts typing
     if (fieldErrors[name]) {
       setFieldErrors(prev => ({
@@ -44,11 +50,11 @@ export default function Login({ onToggleMode }) {
       })
     } else if (userType === 'user') {
       setFormData({
-        login: 'reese', 
+        login: 'reese',
         password: 'demo123'
       })
     }
-    setFieldErrors({}) // Clear any existing errors
+    setFieldErrors({})
   }
 
   const getFieldError = (fieldName) => {
@@ -56,101 +62,147 @@ export default function Login({ onToggleMode }) {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
-      
-      {/* Demo User Quick Login */}
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => fillDemoCredentials('admin')}
-            className="flex-1 px-3 py-2 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Super Admin 
-          </button>
-          <button
-            type="button"
-            onClick={() => fillDemoCredentials('user')}
-            className="flex-1 px-3 py-2 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Normal User 
-          </button>
-        </div>
-        <p className="text-xs text-blue-600 mt-2">
-          Click to auto-fill credentials for testing
-        </p>
-      </div>
-      
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Username or Email
-          </label>
-          <input
-            type="text"
-            name="login"
-            value={formData.login}
-            onChange={handleChange}
-            required
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              getFieldError('login') || getFieldError('non_field_errors') ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Enter your username or email"
-          />
-          {getFieldError('login') && (
-            <p className="mt-1 text-sm text-red-600">{getFieldError('login')}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              getFieldError('password') || getFieldError('non_field_errors') ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Enter your password"
-          />
-          {getFieldError('password') && (
-            <p className="mt-1 text-sm text-red-600">{getFieldError('password')}</p>
-          )}
-        </div>
-
-        {getFieldError('non_field_errors') && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {getFieldError('non_field_errors')}
+    <div className="min-h-screen bg-rulebook-paper flex flex-col items-center justify-center px-4 font-mono text-rulebook-ink">
+      <div className="w-full max-w-md flex-1 flex flex-col justify-center">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <div className="border-2 border-rulebook-ink p-1 rounded-sm mr-3">
+              <Zap className="w-6 h-6 text-rulebook-crimson" />
+            </div>
+            <h1 className="text-3xl font-serif font-bold text-rulebook-ink uppercase tracking-wider">Quest Tracker</h1>
           </div>
-        )}
+          <p className="text-rulebook-ink/60 text-sm uppercase tracking-widest font-serif">Enter your credentials to begin</p>
+        </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? 'Signing In...' : 'Sign In'}
-        </button>
-      </form>
+        {/* Main Card */}
+        <div className="rulebook-card p-8 mb-6">
+          {/* Demo User Quick Login */}
+          <div className="mb-8 p-4 bg-rulebook-ink/5 border-2 border-rulebook-ink/20 rounded-sm">
+            <p className="text-xs text-rulebook-ink/70 uppercase tracking-wide mb-3 font-bold font-serif">Quick Demo Login</p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => fillDemoCredentials('admin')}
+                className="flex-1 px-4 py-2 text-xs font-bold bg-rulebook-crimson text-rulebook-paper border-2 border-rulebook-ink hover:bg-rulebook-ink hover:text-rulebook-paper uppercase transition-all font-serif"
+              >
+                Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => fillDemoCredentials('user')}
+                className="flex-1 px-4 py-2 text-xs font-bold bg-transparent text-rulebook-ink border-2 border-rulebook-ink hover:bg-rulebook-royal hover:text-rulebook-paper hover:border-rulebook-royal uppercase transition-all font-serif"
+              >
+                User
+              </button>
+            </div>
+          </div>
 
-      <div className="mt-4 text-center">
-        <button
-          onClick={onToggleMode}
-          className="text-blue-600 hover:text-blue-800 text-sm"
-        >
-          Don't have an account? Create one
-        </button>
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson text-sm font-bold">
+              {error}
+            </div>
+          )}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Username/Email Field */}
+            <div>
+              <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
+                Username or Email
+              </label>
+              <div className="relative group">
+                <User size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
+                <input
+                  type="text"
+                  name="login"
+                  value={formData.login}
+                  onChange={handleChange}
+                  required
+                  className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('login') || getFieldError('non_field_errors')
+                      ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                      : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
+                    }`}
+                  placeholder="Enter your username"
+                />
+              </div>
+              {getFieldError('login') && (
+                <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('login')}</p>
+              )}
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-sm font-bold text-rulebook-ink uppercase tracking-wider mb-2 font-serif">
+                Password
+              </label>
+              <div className="relative group">
+                <Lock size={18} className="absolute left-0 top-3 text-rulebook-ink/50 group-focus-within:text-rulebook-crimson transition-colors" />
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className={`w-full pl-8 pr-4 py-2 bg-transparent border-b-2 text-rulebook-ink placeholder-rulebook-ink/30 focus:outline-none transition-all font-mono ${getFieldError('password') || getFieldError('non_field_errors')
+                      ? 'border-rulebook-crimson focus:border-rulebook-crimson'
+                      : 'border-rulebook-ink/30 focus:border-rulebook-crimson'
+                    }`}
+                  placeholder="Enter your password"
+                />
+              </div>
+              {getFieldError('password') && (
+                <p className="mt-1 text-xs text-rulebook-crimson font-bold">{getFieldError('password')}</p>
+              )}
+            </div>
+
+            {/* Non-field Errors */}
+            {getFieldError('non_field_errors') && (
+              <div className="p-3 bg-rulebook-crimson/10 border-2 border-rulebook-crimson text-rulebook-crimson text-sm font-bold">
+                {getFieldError('non_field_errors')}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full btn-primary flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
+            >
+              <LogIn size={18} />
+              {loading ? 'Signing In...' : 'Sign In'}
+            </button>
+          </form>
+        </div>
+
+        {/* Register Link */}
+        <div className="text-center">
+          <p className="text-rulebook-ink/60 text-sm mb-3 font-serif italic">Don't have an account?</p>
+          <button
+            onClick={() => navigate('/register')}
+            className="text-rulebook-crimson hover:text-rulebook-ink font-bold uppercase text-sm tracking-widest font-serif border-b-2 border-transparent hover:border-rulebook-ink transition-all"
+          >
+            Create Account Here
+          </button>
+        </div>
+
+        {/* Back to Home */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center justify-center gap-2 px-4 py-2 text-rulebook-ink/60 hover:text-rulebook-crimson transition-all font-bold uppercase text-sm w-full font-serif tracking-widest"
+          >
+            <Home size={16} />
+            Back to Home
+          </button>
+        </div>
+      </div>
+
+      {/* Connection Status - Bottom Right */}
+      <div className="absolute bottom-6 right-6">
+        <ConnectionStatus />
       </div>
     </div>
   )

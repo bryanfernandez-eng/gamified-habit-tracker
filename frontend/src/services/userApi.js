@@ -36,5 +36,27 @@ export const userApi = {
   deleteUser: async (userId) => {
     const response = await api.delete(`/api/admin/users/${userId}/`)
     return response.data
+  },
+
+  // User account settings
+  changePassword: async (oldPassword, newPassword, newPasswordConfirm) => {
+    const response = await api.post('/api/change-password/', {
+      old_password: oldPassword,
+      new_password: newPassword,
+      new_password_confirm: newPasswordConfirm
+    })
+    return response.data
+  },
+
+  updateDisplayName: async (displayName) => {
+    const response = await api.post('/api/update-display-name/', {
+      display_name: displayName
+    })
+    return response.data
+  },
+
+  deleteAccount: async () => {
+    const response = await api.delete('/auth/user/')
+    return response.data
   }
 }

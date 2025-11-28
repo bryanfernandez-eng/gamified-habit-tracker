@@ -7,21 +7,21 @@ import { StatsDisplay } from '../StatsDisplay'
 import { AchievementPanel } from '../AchievementPanel'
 import { CharacterCustomizer } from '../CharacterCustomizer'
 
-export function GameDashboard() {
+export function GameDashboard({ userStats, onStatsUpdate, updateTrigger }) {
   const [activeTab, setActiveTab] = useState('habits')
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'habits':
-        return <HabitTracker />
+        return <HabitTracker onHabitCompleted={onStatsUpdate} />
       case 'stats':
         return <StatsDisplay />
       case 'achievements':
         return <AchievementPanel />
       case 'customize':
-        return <CharacterCustomizer />
+        return <CharacterCustomizer onCharacterChanged={onStatsUpdate} userStats={userStats} />
       default:
-        return <HabitTracker />
+        return <HabitTracker onHabitCompleted={onStatsUpdate} />
     }
   }
 
@@ -30,9 +30,9 @@ export function GameDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Sidebar - Character */}
         <div className="lg:col-span-1">
-          <CharacterAvatar />
+          <CharacterAvatar userStats={userStats} onStatsUpdate={onStatsUpdate} />
         </div>
-        
+
         {/* Main Content Area */}
         <div className="lg:col-span-3">
           <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />

@@ -5,11 +5,12 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 from .serializers import (
-    CustomUserDetailsSerializer, 
-    AdminUserListSerializer, 
-    AdminUserCreateSerializer, 
+    CustomUserDetailsSerializer,
+    AdminUserListSerializer,
+    AdminUserCreateSerializer,
     AdminUserUpdateSerializer
 )
+from .models import Habit
 
 User = get_user_model()
 
@@ -37,6 +38,191 @@ def user_profile(request):
         "user": serializer.data,
         "auth_method": "Token authentication working"
     })
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    """
+    Change user password
+    """
+    old_password = request.data.get('old_password', '')
+    new_password = request.data.get('new_password', '')
+    new_password_confirm = request.data.get('new_password_confirm', '')
+
+    if not old_password or not new_password or not new_password_confirm:
+        return Response(
+            {'error': 'All fields are required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if new_password != new_password_confirm:
+        return Response(
+            {'error': 'New passwords do not match'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if not request.user.check_password(old_password):
+        return Response(
+            {'error': 'Old password is incorrect'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if len(new_password) < 8:
+        return Response(
+            {'error': 'New password must be at least 8 characters long'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    request.user.set_password(new_password)
+    request.user.save()
+
+    return Response({'message': 'Password changed successfully'})
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def update_display_name(request):
+    """
+    Update user display name
+    """
+    display_name = request.data.get('display_name', '').strip()
+
+    if not display_name:
+        return Response(
+            {'error': 'Display name cannot be empty'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if len(display_name) > 150:
+        return Response(
+            {'error': 'Display name must be 150 characters or less'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    request.user.display_name = display_name
+    request.user.save()
+
+    serializer = CustomUserDetailsSerializer(request.user)
+    return Response({
+        'message': 'Display name updated successfully',
+        'user': serializer.data
+    })
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_initial_habits(request):
+    """
+    Create initial habits based on user survey responses
+    Survey format: {
+        'strength': 'very_likely|somewhat_likely|neutral|somewhat_unlikely|very_unlikely',
+        'intelligence': '...',
+        'creativity': '...',
+        'social': '...',
+        'health': '...'
+    }
+    """
+    survey_data = request.data
+
+    # Map likelihood to frequency
+    likelihood_to_habits = {
+        'very_likely': {
+            'frequency': 'daily',
+            'xp_reward': 20,
+            'count': 2
+        },
+        'somewhat_likely': {
+            'frequency': 'daily',
+            'xp_reward': 15,
+            'count': 1
+        },
+        'neutral': {
+            'frequency': 'weekly',
+            'xp_reward': 25,
+            'count': 1
+        },
+        'somewhat_unlikely': {
+            'frequency': 'weekly',
+            'xp_reward': 20,
+            'count': 1
+        },
+        'very_unlikely': {
+            'frequency': 'monthly',
+            'xp_reward': 30,
+            'count': 0
+        }
+    }
+
+    # Habit templates for each category
+    habit_templates = {
+        'strength': [
+            'Do 20 Push-ups',
+            'Go for a Run',
+            'Hit the Gym',
+            'Morning Workout',
+            'Strength Training'
+        ],
+        'intelligence': [
+            'Read a Book Chapter',
+            'Learn Something New',
+            'Solve Coding Problem',
+            'Study for 30 minutes',
+            'Watch Educational Video'
+        ],
+        'creativity': [
+            'Create Art',
+            'Write Something',
+            'Play an Instrument',
+            'Draw a Sketch',
+            'Compose Music'
+        ],
+        'social': [
+            'Call a Friend',
+            'Have Coffee with Someone',
+            'Join a Group Activity',
+            'Help a Friend',
+            'Attend Social Event'
+        ],
+        'health': [
+            'Eat Healthy',
+            'Drink 8 Glasses of Water',
+            'Get 8 Hours Sleep',
+            'Take Vitamins',
+            'Meditate for 10 minutes'
+        ]
+    }
+
+    created_habits = []
+
+    for category, likelihood in survey_data.items():
+        if category not in likelihood_to_habits:
+            continue
+
+        config = likelihood_to_habits.get(likelihood, likelihood_to_habits['neutral'])
+
+        for i in range(config['count']):
+            habit_name = habit_templates[category][i % len(habit_templates[category])]
+
+            habit = Habit.objects.create(
+                user=request.user,
+                name=habit_name,
+                category=category,
+                frequency=config['frequency'],
+                xp_reward=config['xp_reward'],
+                description=f"Habit for {category} development"
+            )
+
+            created_habits.append({
+                'id': habit.id,
+                'name': habit.name,
+                'category': habit.category,
+                'frequency': habit.frequency,
+                'xp_reward': habit.xp_reward
+            })
+
+    return Response({
+        'message': f'Created {len(created_habits)} initial habits',
+        'habits': created_habits
+    }, status=status.HTTP_201_CREATED)
 
 class AdminUserViewSet(viewsets.ModelViewSet):
     """

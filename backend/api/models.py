@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
     Custom User model with display_name field and game stats
     """
     display_name = models.CharField(max_length=150, help_text="User's display name")
-    
+
     # Game Stats
     level = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     current_hp = models.IntegerField(default=100, validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -30,7 +30,31 @@ class CustomUser(AbstractUser):
     creativity_xp = models.IntegerField(default=0)
     social_xp = models.IntegerField(default=0)
     health_xp = models.IntegerField(default=0)
-    
+
+    # Character Selection
+    selected_character = models.CharField(
+        max_length=50,
+        default='default',
+        help_text="Selected character skin (default, zoro, etc.)"
+    )
+
+    # Theme Selection
+    selected_theme = models.CharField(
+        max_length=200,
+        default='Default Theme',
+        help_text="Selected theme/background (e.g., Default Theme, Forest Green, etc.)"
+    )
+
+    # Appearance Selection
+    selected_appearance = models.ForeignKey(
+        'Equipment',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='selected_by_users',
+        help_text="Currently equipped appearance for the selected character"
+    )
+
     def __str__(self):
         return f"{self.username} (Level {self.level})"
     
@@ -159,16 +183,42 @@ class Equipment(models.Model):
         ('theme', 'Theme'),
     ]
     
+    EQUIPMENT_SLOT_CHOICES = [
+        ('weapon', 'Weapon'),
+        ('helmet', 'Helmet'),
+        ('chest', 'Chest'),
+        ('legs', 'Legs'),
+        ('feet', 'Feet'),
+        ('accessory', 'Accessory'),  # Non-visual items
+    ]
+    
     name = models.CharField(max_length=200)
     equipment_type = models.CharField(max_length=20, choices=EQUIPMENT_TYPE_CHOICES)
+    equipment_slot = models.CharField(
+        max_length=20,
+        choices=EQUIPMENT_SLOT_CHOICES,
+        default='accessory',
+        help_text="Visual equipment slot for character rendering"
+    )
+    sprite_path = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Relative path to sprite image (e.g., equipment/helmets/iron-helmet.png)"
+    )
+    character_specific = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="If set, this armor/relic is only for this character (e.g., 'zoro', 'default')"
+    )
     description = models.TextField(blank=True)
     stat_bonus = models.JSONField(default=dict)  # {"strength": 2, "intelligence": 1}
+    gold_cost = models.IntegerField(default=100, validators=[MinValueValidator(0)])
     unlock_requirement = models.TextField(blank=True)
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.name} ({self.equipment_type})"
+        return f"{self.name} ({self.equipment_slot})"
 
 
 class UserEquipment(models.Model):
@@ -176,9 +226,51 @@ class UserEquipment(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     is_equipped = models.BooleanField(default=False)
     unlocked_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ['user', 'equipment']
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.equipment.name}"
+
+
+class DailyCheckIn(models.Model):
+    """Track daily check-ins for users (100 XP per check-in)"""
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='daily_checkins')
+    checked_in_at = models.DateTimeField(auto_now_add=True)
+    xp_earned = models.IntegerField(default=100)
+
+    class Meta:
+        ordering = ['-checked_in_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.checked_in_at.date()}"
+
+    def save(self, *args, **kwargs):
+        """Award XP when check-in is created"""
+        if not self.pk:  # Only on creation, not on update
+            self.user.add_xp(self.xp_earned)
+        super().save(*args, **kwargs)
+
+
+class Enemy(models.Model):
+    name = models.CharField(max_length=100)
+    level = models.IntegerField(default=1)
+    base_hp = models.IntegerField(default=50)
+    base_damage = models.IntegerField(default=5)
+    sprite_path = models.CharField(max_length=255, blank=True, help_text="Path to enemy sprite")
+    xp_reward = models.IntegerField(default=20)
+    gold_reward = models.IntegerField(default=10)
+    
+    def __str__(self):
+        return f"{self.name} (Lvl {self.level})"
+
+
+class TowerProgress(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='tower_progress')
+    current_floor = models.IntegerField(default=1)
+    highest_floor = models.IntegerField(default=1)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.user.username} - Floor {self.current_floor}"

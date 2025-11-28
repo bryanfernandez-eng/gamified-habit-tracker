@@ -1,15 +1,67 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
-/* Pixel art styling */
-.pixelated {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+/* Base Styles */
+body {
+  background-color: #F0E6D2;
+  color: #2B2B2B;
+  font-family: 'Roboto Mono', monospace;
 }
 
-/* Optional: Add a retro font */
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Cinzel', serif;
+}
 
-.font-pixel {
-  font-family: 'Press Start 2P', cursive;
+/* Custom Scrollbar Styling - Rulebook Theme */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F0E6D2;
+  border-left: 1px solid #4A4A4A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8B0000;
+  border: 2px solid #F0E6D2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2B2B2B;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-color: #8B0000 #F0E6D2;
+  scrollbar-width: thin;
+}
+
+/* Rulebook Card Utility */
+.rulebook-card {
+  background-color: #F0E6D2;
+  border: 4px double #4A4A4A;
+  border-radius: 2px;
+  box-shadow: 4px 4px 0px 0px rgba(43, 43, 43, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.rulebook-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px 0px rgba(43, 43, 43, 0.2);
+  border-color: #8B0000;
+}
+
+/* Button Utilities */
+.btn-primary {
+  @apply px-6 py-3 bg-rulebook-crimson text-rulebook-paper font-serif font-bold text-lg tracking-wide rounded-sm transition-all duration-200 border-2 border-rulebook-ink hover:bg-rulebook-ink hover:text-rulebook-paper hover:shadow-rulebook uppercase;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-transparent text-rulebook-ink font-serif font-bold text-lg tracking-wide rounded-sm transition-all duration-200 border-2 border-rulebook-ink hover:bg-rulebook-royal hover:text-rulebook-paper hover:border-rulebook-royal hover:shadow-rulebook uppercase;
 }

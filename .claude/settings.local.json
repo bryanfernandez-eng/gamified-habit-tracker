@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"c:\\Users\\brfer\\OneDrive\\Desktop\\capstone 2 project\\gamified-habit-tracker\\frontend\\src\\assets\\characters\\default\"\" && echo \"---\" && ls -la \"c:UsersbrferOneDriveDesktopcapstone 2 projectgamified-habit-trackerfrontendsrcassetscharacterszoro\"\")",
+      "Bash(find:*)",
+      "Bash(python manage.py makemigrations:*)",
+      "Bash(python manage.py migrate:*)",
+      "Bash(python manage.py reset_db:*)",
+      "Bash(python manage.py:*)",
+      "Bash(python manage.py seed_achievements:*)",
+      "Bash(npm run dev:*)",
+      "Bash(cd:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

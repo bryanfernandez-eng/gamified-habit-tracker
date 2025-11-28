@@ -13,6 +13,30 @@ export const gameApi = {
     return response.data
   },
 
+  getLeaderboard: async () => {
+    const response = await api.get('/api/game/stats/leaderboard/')
+    return response.data
+  },
+
+  getAvailableCharacters: async () => {
+    const response = await api.get('/api/game/stats/characters/')
+    return response.data
+  },
+
+  selectCharacter: async (characterId) => {
+    const response = await api.post('/api/game/stats/select_character/', {
+      character_id: characterId
+    })
+    return response.data
+  },
+
+  selectTheme: async (themeName) => {
+    const response = await api.post('/api/game/stats/select_theme/', {
+      theme_name: themeName
+    })
+    return response.data
+  },
+
   // Habits
   getHabits: async () => {
     const response = await api.get('/api/game/habits/')
@@ -24,8 +48,23 @@ export const gameApi = {
     return response.data
   },
 
+  checkQuestLimit: async () => {
+    const response = await api.get('/api/game/habits/check_limit/')
+    return response.data
+  },
+
   createHabit: async (habitData) => {
     const response = await api.post('/api/game/habits/', habitData)
+    return response.data
+  },
+
+  updateHabit: async (habitId, habitData) => {
+    const response = await api.put(`/api/game/habits/${habitId}/`, habitData)
+    return response.data
+  },
+
+  deleteHabit: async (habitId) => {
+    const response = await api.delete(`/api/game/habits/${habitId}/`)
     return response.data
   },
 
@@ -61,6 +100,34 @@ export const gameApi = {
 
   equipItem: async (equipmentId) => {
     const response = await api.post(`/api/game/equipment/${equipmentId}/equip/`)
+    return response.data
+  },
+
+  // Onboarding
+  createInitialHabits: async (surveyData) => {
+    const response = await api.post('/api/create-initial-habits/', surveyData)
+    return response.data
+  },
+
+  // Daily Check-In
+  checkIn: async () => {
+    const response = await api.post('/api/game/daily-checkin/check_in/')
+    return response.data
+  },
+
+  getCheckInHistory: async () => {
+    const response = await api.get('/api/game/daily-checkin/history/')
+    return response.data
+  },
+
+  // The Tower
+  startTowerFloor: async () => {
+    const response = await api.post('/api/game/tower/start_floor/')
+    return response.data
+  },
+
+  completeTowerFloor: async () => {
+    const response = await api.post('/api/game/tower/complete_floor/')
     return response.data
   }
 }
