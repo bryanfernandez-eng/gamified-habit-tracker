@@ -1,19 +1,22 @@
 import ForestGreenBg from '/src/assets/themes/forest-green.png'
 import ForestPixelBg from '/src/assets/themes/forest-pixel.jpg'
 import ForestStandardBg from '/src/assets/themes/forest-standard.png'
+import PixelForestBg from '/src/assets/themes/pixel-forest.png'
+import ShatteredSkyBg from '/src/assets/themes/shattered-sky.png'
 
 // White background as a data URL for Default Theme
 const WHITE_BG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4='
 
 /**
  * Maps theme names to their corresponding background images
- * For Level 1 players, three forest themes are available with different backgrounds
  */
 export const THEME_BACKGROUNDS = {
   'Default Theme': WHITE_BG, // White background
   'Forest Green': ForestGreenBg, // Green forest background
-  'Forest Pixel': ForestPixelBg, // Pixel art forest background
+  'Forest Pixel': ForestPixelBg, // Pixel art forest background (original)
   'Forest Standard': ForestStandardBg, // Standard forest background
+  'Pixel Forest': PixelForestBg, // Retro pixel forest background
+  'Shattered Sky': ShatteredSkyBg, // Mystical shattered sky background
 }
 
 /**
@@ -25,6 +28,8 @@ export const THEME_PREVIEW_IMAGES = {
   'Forest Green': ForestGreenBg,
   'Forest Pixel': ForestPixelBg,
   'Forest Standard': ForestStandardBg,
+  'Pixel Forest': PixelForestBg,
+  'Shattered Sky': ShatteredSkyBg,
 }
 
 /**
