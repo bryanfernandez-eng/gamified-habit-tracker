@@ -686,7 +686,11 @@ class TowerViewSet(viewsets.ViewSet):
         # Here we trust the client for the "auto-battler" simulation.
         
         floor = progress.current_floor
-        xp_reward = 100 * floor
+        
+        # Social Scaling: Increase XP Reward
+        # Base: 100 * floor. +5% per Social point.
+        social_bonus = 1 + (user.social * 0.05)
+        xp_reward = int((100 * floor) * social_bonus)
         
         # Award XP
         user.add_xp(xp_reward)
@@ -708,7 +712,7 @@ class TowerViewSet(viewsets.ViewSet):
         return Response({
             'message': f"Floor {floor} completed!",
             'xp_earned': xp_reward,
-            'item_reward': EquipmentSerializer(reward_item).data,
+            'item_reward': EquipmentSerializer(reward_item, context={'request': request}).data,
             'next_floor': progress.current_floor,
             'user_stats': UserStatsSerializer(user).data
         })

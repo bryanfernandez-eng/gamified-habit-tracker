@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Layout } from '../components/game/Layout';
-import { CombatScene } from '../components/game/CombatScene';
+import { RealTimeCombatScene } from '../components/game/RealTimeCombatScene';
 import { gameApi } from '../services/gameApi';
 import Loader from '../components/Loader';
 import { Sword, Skull, Trophy, ArrowRight, Flame, Map } from 'lucide-react';
@@ -98,7 +98,7 @@ export function Tower() {
                     <div className={`absolute inset-0 bg-rulebook-paper/40 backdrop-sepia-[.3] ${gameState !== 'combat' ? 'bg-rulebook-paper/80' : ''}`}></div>
                 </div>
 
-                <div className="relative z-10 p-8 h-full flex flex-col items-center justify-center min-h-[600px]">
+                <div className={`relative z-10 h-full flex flex-col items-center justify-center min-h-[600px] ${gameState === 'combat' ? 'p-0' : 'p-8'}`}>
 
                     {/* LOBBY STATE - "The Campfire" */}
                     {gameState === 'lobby' && (
@@ -155,26 +155,15 @@ export function Tower() {
                     {/* COMBAT STATE */}
                     {gameState === 'combat' && floorData && (
                         <div className="w-full h-full flex flex-col">
-                            <div className="flex justify-between items-center mb-6 px-4">
-                                <div className="bg-rulebook-paper px-6 py-2 rounded-sm border-2 border-rulebook-ink shadow-md">
-                                    <span className="font-serif font-bold text-xl text-rulebook-ink tracking-widest">
-                                        FLOOR {floorData.floor}
-                                    </span>
-                                </div>
-                                <div className="bg-rulebook-crimson px-6 py-2 rounded-sm border-2 border-rulebook-ink shadow-md">
-                                    <span className="font-mono font-bold text-rulebook-paper tracking-wider">
-                                        WAVE {currentWaveIndex + 1} / {floorData.waves.length}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="flex-1">
-                                <CombatScene
+                            <div className="flex-1 w-full h-full">
+                                <RealTimeCombatScene
                                     key={currentWaveIndex}
                                     playerStats={userStats}
                                     enemy={floorData.waves[currentWaveIndex]}
                                     onVictory={handleWaveVictory}
                                     onDefeat={handleDefeat}
+                                    floor={floorData.floor}
+                                    wave={currentWaveIndex + 1}
                                 />
                             </div>
                         </div>
