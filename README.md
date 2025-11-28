@@ -50,6 +50,17 @@ npm run dev
 
 **Plus 49 more:** See `backend/mock_users_auth.txt` for all 51 accounts (levels 1-30)
 
+## Database Reset
+
+To completely reset the database and re-seed all initial data (including test accounts):
+
+```bash
+cd backend
+python manage.py reset_db
+```
+
+**Note:** This will delete all existing data and recreate the database with fresh seed data.
+
 ## Key Features
 
 - **Character Progression** - Level up and earn XP through habits
