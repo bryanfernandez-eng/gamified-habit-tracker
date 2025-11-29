@@ -14,4 +14,8 @@ db.sqlite3
 
 # Env
 .env
-.env.*
+.env.local
+.env.*.local
+
+# Allow .env.example to be committed
+!.env.example
