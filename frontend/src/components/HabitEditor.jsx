@@ -32,7 +32,7 @@ export function HabitEditor({ habit, onHabitUpdated, onClose }) {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'xp_reward' ? parseInt(value, 10) || 0 : value,
+      [name]: value,
     }))
   }
 
@@ -42,11 +42,6 @@ export function HabitEditor({ habit, onHabitUpdated, onClose }) {
 
     if (!formData.name.trim()) {
       setError('Habit name is required')
-      return
-    }
-
-    if (formData.xp_reward < 10) {
-      setError('XP reward must be at least 10')
       return
     }
 
@@ -155,25 +150,18 @@ export function HabitEditor({ habit, onHabitUpdated, onClose }) {
               </div>
             </div>
 
-            {/* XP Reward */}
+            {/* XP Reward - Read Only (AI-calculated) */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                XP Reward: {formData.xp_reward}
+                XP Reward (AI-calculated)
               </label>
-              <input
-                type="range"
-                name="xp_reward"
-                value={formData.xp_reward}
-                onChange={handleInputChange}
-                min="10"
-                max="200"
-                step="5"
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
-                <span>10</span>
-                <span>200</span>
+              <div className="bg-gray-800 border border-gray-600 rounded px-4 py-3 text-center">
+                <span className="text-2xl font-bold text-blue-400">{formData.xp_reward}</span>
+                <span className="text-gray-400 ml-2">XP</span>
               </div>
+              <p className="text-xs text-gray-500 mt-1">
+                XP is automatically calculated based on quest difficulty and cannot be edited.
+              </p>
             </div>
 
             {/* Frequency */}

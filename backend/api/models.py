@@ -106,7 +106,7 @@ class Habit(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-    xp_reward = models.IntegerField(default=10, validators=[MinValueValidator(1)])
+    xp_reward = models.IntegerField(default=10, validators=[MinValueValidator(1), MaxValueValidator(200)])
     frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, default='daily')
     streak = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -118,6 +118,34 @@ class Habit(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.name}"
+
+    def calculate_xp_reward(self):
+        """
+        Calculate XP reward using AI to analyze task difficulty.
+        Returns an integer between 40-200 XP.
+        """
+        from api.ai_service import ai_service
+
+        # Use AI to determine difficulty (1-10 scale)
+        difficulty = ai_service.calculate_habit_difficulty(
+            habit_name=self.name,
+            description=self.description,
+            frequency=self.frequency
+        )
+
+        # Convert difficulty to XP using AI service
+        calculated_xp = ai_service.calculate_xp_from_difficulty(
+            difficulty=difficulty,
+            frequency=self.frequency
+        )
+
+        return calculated_xp
+
+    def save(self, *args, **kwargs):
+        """Override save to auto-calculate XP on creation"""
+        if not self.pk:  # Only on creation
+            self.xp_reward = self.calculate_xp_reward()
+        super().save(*args, **kwargs)
 
 
 class HabitCompletion(models.Model):

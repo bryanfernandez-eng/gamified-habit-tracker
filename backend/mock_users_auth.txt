@@ -9,92 +9,28 @@ All accounts use the password: demo123
 ACCOUNT DETAILS
 ================================================================================
 
-Username: jordaneagle
+Username: yaraguardian
 Password: demo123
-Display Name: Jordan Eagle
-Email: jordaneagle@example.com
-Level: 30
-Stats - STR: 8 | INT: 1 | CRE: 20 | SOC: 15 | HEA: 17
---------------------------------------------------------------------------------
-
-Username: novasage
-Password: demo123
-Display Name: Nova Sage
-Email: novasage@example.com
-Level: 30
-Stats - STR: 11 | INT: 16 | CRE: 14 | SOC: 20 | HEA: 4
---------------------------------------------------------------------------------
-
-Username: chesstitan
-Password: demo123
-Display Name: Chess Titan
-Email: chesstitan@example.com
-Level: 29
-Stats - STR: 12 | INT: 4 | CRE: 13 | SOC: 7 | HEA: 18
+Display Name: Yara Guardian
+Email: yaraguardian@example.com
+Level: 28
+Stats - STR: 4 | INT: 11 | CRE: 10 | SOC: 1 | HEA: 1
 --------------------------------------------------------------------------------
 
 Username: gideonninja
 Password: demo123
 Display Name: Gideon Ninja
 Email: gideonninja@example.com
-Level: 29
-Stats - STR: 1 | INT: 15 | CRE: 18 | SOC: 12 | HEA: 15
---------------------------------------------------------------------------------
-
-Username: finleydrake
-Password: demo123
-Display Name: Finley Drake
-Email: finleydrake@example.com
-Level: 27
-Stats - STR: 3 | INT: 16 | CRE: 10 | SOC: 2 | HEA: 4
---------------------------------------------------------------------------------
-
-Username: zephyrprotector
-Password: demo123
-Display Name: Zephyr Protector
-Email: zephyrprotector@example.com
-Level: 27
-Stats - STR: 20 | INT: 1 | CRE: 8 | SOC: 2 | HEA: 11
---------------------------------------------------------------------------------
-
-Username: echooutlaw
-Password: demo123
-Display Name: Echo Outlaw
-Email: echooutlaw@example.com
-Level: 27
-Stats - STR: 11 | INT: 11 | CRE: 2 | SOC: 13 | HEA: 12
---------------------------------------------------------------------------------
-
-Username: alexstorm
-Password: demo123
-Display Name: Alex Storm
-Email: alexstorm@example.com
 Level: 26
-Stats - STR: 15 | INT: 13 | CRE: 13 | SOC: 6 | HEA: 8
+Stats - STR: 5 | INT: 3 | CRE: 13 | SOC: 3 | HEA: 11
 --------------------------------------------------------------------------------
 
-Username: caseyphoenix
+Username: jaggerpirate
 Password: demo123
-Display Name: Casey Phoenix
-Email: caseyphoenix@example.com
+Display Name: Jagger Pirate
+Email: jaggerpirate@example.com
 Level: 26
-Stats - STR: 4 | INT: 18 | CRE: 14 | SOC: 1 | HEA: 2
---------------------------------------------------------------------------------
-
-Username: parkerrider
-Password: demo123
-Display Name: Parker Rider
-Email: parkerrider@example.com
-Level: 25
-Stats - STR: 12 | INT: 12 | CRE: 5 | SOC: 1 | HEA: 20
---------------------------------------------------------------------------------
-
-Username: yaraguardian
-Password: demo123
-Display Name: Yara Guardian
-Email: yaraguardian@example.com
-Level: 25
-Stats - STR: 9 | INT: 16 | CRE: 3 | SOC: 15 | HEA: 11
+Stats - STR: 15 | INT: 14 | CRE: 5 | SOC: 20 | HEA: 7
 --------------------------------------------------------------------------------
 
 Username: greywolf
@@ -102,87 +38,111 @@ Password: demo123
 Display Name: Grey Wolf
 Email: greywolf@example.com
 Level: 24
-Stats - STR: 3 | INT: 14 | CRE: 15 | SOC: 15 | HEA: 12
+Stats - STR: 18 | INT: 2 | CRE: 1 | SOC: 8 | HEA: 17
 --------------------------------------------------------------------------------
 
-Username: kilohunter
+Username: zephyrprotector
 Password: demo123
-Display Name: Kilo Hunter
-Email: kilohunter@example.com
+Display Name: Zephyr Protector
+Email: zephyrprotector@example.com
+Level: 24
+Stats - STR: 1 | INT: 9 | CRE: 2 | SOC: 2 | HEA: 11
+--------------------------------------------------------------------------------
+
+Username: lyricmystic
+Password: demo123
+Display Name: Lyric Mystic
+Email: lyricmystic@example.com
+Level: 24
+Stats - STR: 4 | INT: 8 | CRE: 7 | SOC: 4 | HEA: 17
+--------------------------------------------------------------------------------
+
+Username: dakotashadow
+Password: demo123
+Display Name: Dakota Shadow
+Email: dakotashadow@example.com
 Level: 23
-Stats - STR: 1 | INT: 13 | CRE: 11 | SOC: 9 | HEA: 2
---------------------------------------------------------------------------------
-
-Username: loganranger
-Password: demo123
-Display Name: Logan Ranger
-Email: loganranger@example.com
-Level: 23
-Stats - STR: 18 | INT: 17 | CRE: 13 | SOC: 9 | HEA: 19
---------------------------------------------------------------------------------
-
-Username: vespertraveler
-Password: demo123
-Display Name: Vesper Traveler
-Email: vespertraveler@example.com
-Level: 22
-Stats - STR: 11 | INT: 12 | CRE: 14 | SOC: 6 | HEA: 2
---------------------------------------------------------------------------------
-
-Username: taylorwanderer
-Password: demo123
-Display Name: Taylor Wanderer
-Email: taylorwanderer@example.com
-Level: 21
-Stats - STR: 14 | INT: 15 | CRE: 11 | SOC: 2 | HEA: 11
+Stats - STR: 6 | INT: 1 | CRE: 17 | SOC: 7 | HEA: 10
 --------------------------------------------------------------------------------
 
 Username: xandersentinel
 Password: demo123
 Display Name: Xander Sentinel
 Email: xandersentinel@example.com
-Level: 21
-Stats - STR: 1 | INT: 12 | CRE: 3 | SOC: 9 | HEA: 9
---------------------------------------------------------------------------------
-
-Username: rileymystic
-Password: demo123
-Display Name: Riley Mystic
-Email: rileymystic@example.com
-Level: 20
-Stats - STR: 1 | INT: 15 | CRE: 19 | SOC: 20 | HEA: 13
+Level: 23
+Stats - STR: 12 | INT: 5 | CRE: 13 | SOC: 19 | HEA: 19
 --------------------------------------------------------------------------------
 
 Username: drakerebel
 Password: demo123
 Display Name: Drake Rebel
 Email: drakerebel@example.com
-Level: 20
-Stats - STR: 18 | INT: 17 | CRE: 5 | SOC: 18 | HEA: 14
+Level: 23
+Stats - STR: 19 | INT: 12 | CRE: 11 | SOC: 5 | HEA: 7
 --------------------------------------------------------------------------------
 
-Username: falconrogue
+Username: merlinwizard
 Password: demo123
-Display Name: Falcon Rogue
-Email: falconrogue@example.com
+Display Name: Merlin Wizard
+Email: merlinwizard@example.com
+Level: 23
+Stats - STR: 12 | INT: 5 | CRE: 14 | SOC: 1 | HEA: 15
+--------------------------------------------------------------------------------
+
+Username: nexusseeker
+Password: demo123
+Display Name: Nexus Seeker
+Email: nexusseeker@example.com
+Level: 23
+Stats - STR: 4 | INT: 18 | CRE: 9 | SOC: 16 | HEA: 8
+--------------------------------------------------------------------------------
+
+Username: blazevictor
+Password: demo123
+Display Name: Blaze Victor
+Email: blazevictor@example.com
+Level: 22
+Stats - STR: 2 | INT: 20 | CRE: 19 | SOC: 15 | HEA: 5
+--------------------------------------------------------------------------------
+
+Username: kadedragon
+Password: demo123
+Display Name: Kade Dragon
+Email: kadedragon@example.com
+Level: 22
+Stats - STR: 15 | INT: 17 | CRE: 17 | SOC: 6 | HEA: 20
+--------------------------------------------------------------------------------
+
+Username: caseyphoenix
+Password: demo123
+Display Name: Casey Phoenix
+Email: caseyphoenix@example.com
 Level: 19
-Stats - STR: 11 | INT: 5 | CRE: 20 | SOC: 17 | HEA: 18
+Stats - STR: 10 | INT: 9 | CRE: 5 | SOC: 2 | HEA: 5
 --------------------------------------------------------------------------------
 
-Username: baileyknight
+Username: finleydrake
 Password: demo123
-Display Name: Bailey Knight
-Email: baileyknight@example.com
-Level: 18
-Stats - STR: 12 | INT: 6 | CRE: 4 | SOC: 16 | HEA: 12
+Display Name: Finley Drake
+Email: finleydrake@example.com
+Level: 19
+Stats - STR: 17 | INT: 3 | CRE: 9 | SOC: 19 | HEA: 11
 --------------------------------------------------------------------------------
 
-Username: oscarseeker
+Username: taylorwanderer
 Password: demo123
-Display Name: Oscar Seeker
-Email: oscarseeker@example.com
+Display Name: Taylor Wanderer
+Email: taylorwanderer@example.com
+Level: 19
+Stats - STR: 17 | INT: 12 | CRE: 8 | SOC: 17 | HEA: 8
+--------------------------------------------------------------------------------
+
+Username: echooutlaw
+Password: demo123
+Display Name: Echo Outlaw
+Email: echooutlaw@example.com
 Level: 18
-Stats - STR: 20 | INT: 11 | CRE: 2 | SOC: 7 | HEA: 3
+Stats - STR: 5 | INT: 14 | CRE: 19 | SOC: 7 | HEA: 15
 --------------------------------------------------------------------------------
 
 Username: havensamurai
@@ -190,31 +150,23 @@ Password: demo123
 Display Name: Haven Samurai
 Email: havensamurai@example.com
 Level: 18
-Stats - STR: 4 | INT: 1 | CRE: 6 | SOC: 16 | HEA: 12
+Stats - STR: 6 | INT: 1 | CRE: 19 | SOC: 2 | HEA: 16
 --------------------------------------------------------------------------------
 
-Username: indigoraven
+Username: morganwarrior
 Password: demo123
-Display Name: Indigo Raven
-Email: indigoraven@example.com
+Display Name: Morgan Warrior
+Email: morganwarrior@example.com
 Level: 17
-Stats - STR: 12 | INT: 1 | CRE: 13 | SOC: 4 | HEA: 4
+Stats - STR: 9 | INT: 20 | CRE: 17 | SOC: 3 | HEA: 18
 --------------------------------------------------------------------------------
 
-Username: ariachampion
+Username: falconrogue
 Password: demo123
-Display Name: Aria Champion
-Email: ariachampion@example.com
+Display Name: Falcon Rogue
+Email: falconrogue@example.com
 Level: 17
-Stats - STR: 12 | INT: 7 | CRE: 14 | SOC: 17 | HEA: 2
---------------------------------------------------------------------------------
-
-Username: nexusseeker
-Password: demo123
-Display Name: Nexus Seeker
-Email: nexusseeker@example.com
-Level: 17
-Stats - STR: 15 | INT: 2 | CRE: 16 | SOC: 9 | HEA: 9
+Stats - STR: 17 | INT: 17 | CRE: 8 | SOC: 16 | HEA: 14
 --------------------------------------------------------------------------------
 
 Username: urbannomad
@@ -222,55 +174,111 @@ Password: demo123
 Display Name: Urban Nomad
 Email: urbannomad@example.com
 Level: 15
-Stats - STR: 9 | INT: 8 | CRE: 5 | SOC: 7 | HEA: 6
+Stats - STR: 5 | INT: 6 | CRE: 8 | SOC: 12 | HEA: 17
 --------------------------------------------------------------------------------
 
-Username: jaggerpirate
+Username: indigoraven
 Password: demo123
-Display Name: Jagger Pirate
-Email: jaggerpirate@example.com
+Display Name: Indigo Raven
+Email: indigoraven@example.com
+Level: 14
+Stats - STR: 19 | INT: 10 | CRE: 4 | SOC: 13 | HEA: 3
+--------------------------------------------------------------------------------
+
+Username: ariachampion
+Password: demo123
+Display Name: Aria Champion
+Email: ariachampion@example.com
+Level: 14
+Stats - STR: 16 | INT: 11 | CRE: 11 | SOC: 13 | HEA: 20
+--------------------------------------------------------------------------------
+
+Username: parkerrider
+Password: demo123
+Display Name: Parker Rider
+Email: parkerrider@example.com
 Level: 13
-Stats - STR: 18 | INT: 20 | CRE: 2 | SOC: 5 | HEA: 10
+Stats - STR: 4 | INT: 20 | CRE: 9 | SOC: 3 | HEA: 4
 --------------------------------------------------------------------------------
 
-Username: quinnarcher
+Username: baileyknight
 Password: demo123
-Display Name: Quinn Archer
-Email: quinnarcher@example.com
-Level: 9
-Stats - STR: 12 | INT: 12 | CRE: 17 | SOC: 16 | HEA: 16
+Display Name: Bailey Knight
+Email: baileyknight@example.com
+Level: 11
+Stats - STR: 14 | INT: 8 | CRE: 14 | SOC: 7 | HEA: 14
 --------------------------------------------------------------------------------
 
-Username: kadedragon
+Username: novasage
 Password: demo123
-Display Name: Kade Dragon
-Email: kadedragon@example.com
-Level: 9
-Stats - STR: 3 | INT: 8 | CRE: 9 | SOC: 3 | HEA: 10
+Display Name: Nova Sage
+Email: novasage@example.com
+Level: 11
+Stats - STR: 6 | INT: 15 | CRE: 13 | SOC: 18 | HEA: 18
 --------------------------------------------------------------------------------
 
-Username: morganwarrior
+Username: oscarseeker
 Password: demo123
-Display Name: Morgan Warrior
-Email: morganwarrior@example.com
-Level: 8
-Stats - STR: 12 | INT: 8 | CRE: 3 | SOC: 7 | HEA: 11
+Display Name: Oscar Seeker
+Email: oscarseeker@example.com
+Level: 11
+Stats - STR: 18 | INT: 20 | CRE: 9 | SOC: 19 | HEA: 9
+--------------------------------------------------------------------------------
+
+Username: rileymystic
+Password: demo123
+Display Name: Riley Mystic
+Email: rileymystic@example.com
+Level: 11
+Stats - STR: 4 | INT: 5 | CRE: 1 | SOC: 7 | HEA: 11
 --------------------------------------------------------------------------------
 
 Username: ellisblade
 Password: demo123
 Display Name: Ellis Blade
 Email: ellisblade@example.com
-Level: 7
-Stats - STR: 13 | INT: 3 | CRE: 18 | SOC: 15 | HEA: 3
+Level: 10
+Stats - STR: 12 | INT: 13 | CRE: 16 | SOC: 9 | HEA: 18
 --------------------------------------------------------------------------------
 
-Username: lyricmystic
+Username: alexstorm
 Password: demo123
-Display Name: Lyric Mystic
-Email: lyricmystic@example.com
+Display Name: Alex Storm
+Email: alexstorm@example.com
+Level: 9
+Stats - STR: 1 | INT: 13 | CRE: 11 | SOC: 9 | HEA: 20
+--------------------------------------------------------------------------------
+
+Username: harperfox
+Password: demo123
+Display Name: Harper Fox
+Email: harperfox@example.com
+Level: 8
+Stats - STR: 19 | INT: 19 | CRE: 6 | SOC: 11 | HEA: 5
+--------------------------------------------------------------------------------
+
+Username: quinnarcher
+Password: demo123
+Display Name: Quinn Archer
+Email: quinnarcher@example.com
 Level: 7
-Stats - STR: 5 | INT: 10 | CRE: 14 | SOC: 7 | HEA: 6
+Stats - STR: 1 | INT: 18 | CRE: 18 | SOC: 16 | HEA: 9
+--------------------------------------------------------------------------------
+
+Username: walkerpilgrim
+Password: demo123
+Display Name: Walker Pilgrim
+Email: walkerpilgrim@example.com
+Level: 7
+Stats - STR: 11 | INT: 16 | CRE: 16 | SOC: 8 | HEA: 5
+--------------------------------------------------------------------------------
+
+Username: chesstitan
+Password: demo123
+Display Name: Chess Titan
+Email: chesstitan@example.com
+Level: 7
+Stats - STR: 11 | INT: 11 | CRE: 14 | SOC: 16 | HEA: 19
 --------------------------------------------------------------------------------
 
 Username: sagescholar
@@ -278,55 +286,47 @@ Password: demo123
 Display Name: Sage Scholar
 Email: sagescholar@example.com
 Level: 6
-Stats - STR: 17 | INT: 8 | CRE: 13 | SOC: 11 | HEA: 1
+Stats - STR: 15 | INT: 11 | CRE: 13 | SOC: 3 | HEA: 19
 --------------------------------------------------------------------------------
 
-Username: dakotashadow
+Username: kilohunter
 Password: demo123
-Display Name: Dakota Shadow
-Email: dakotashadow@example.com
-Level: 3
-Stats - STR: 2 | INT: 18 | CRE: 17 | SOC: 4 | HEA: 7
+Display Name: Kilo Hunter
+Email: kilohunter@example.com
+Level: 5
+Stats - STR: 3 | INT: 12 | CRE: 10 | SOC: 3 | HEA: 1
 --------------------------------------------------------------------------------
 
-Username: harperfox
+Username: loganranger
 Password: demo123
-Display Name: Harper Fox
-Email: harperfox@example.com
-Level: 3
-Stats - STR: 16 | INT: 2 | CRE: 19 | SOC: 12 | HEA: 17
+Display Name: Logan Ranger
+Email: loganranger@example.com
+Level: 5
+Stats - STR: 20 | INT: 17 | CRE: 5 | SOC: 15 | HEA: 16
 --------------------------------------------------------------------------------
 
-Username: blazevictor
+Username: jordaneagle
 Password: demo123
-Display Name: Blaze Victor
-Email: blazevictor@example.com
-Level: 3
-Stats - STR: 3 | INT: 17 | CRE: 1 | SOC: 2 | HEA: 5
+Display Name: Jordan Eagle
+Email: jordaneagle@example.com
+Level: 4
+Stats - STR: 18 | INT: 17 | CRE: 18 | SOC: 20 | HEA: 9
+--------------------------------------------------------------------------------
+
+Username: vespertraveler
+Password: demo123
+Display Name: Vesper Traveler
+Email: vespertraveler@example.com
+Level: 1
+Stats - STR: 2 | INT: 2 | CRE: 20 | SOC: 12 | HEA: 3
 --------------------------------------------------------------------------------
 
 Username: irisviking
 Password: demo123
 Display Name: Iris Viking
 Email: irisviking@example.com
-Level: 3
-Stats - STR: 5 | INT: 13 | CRE: 13 | SOC: 6 | HEA: 13
---------------------------------------------------------------------------------
-
-Username: merlinwizard
-Password: demo123
-Display Name: Merlin Wizard
-Email: merlinwizard@example.com
-Level: 2
-Stats - STR: 4 | INT: 14 | CRE: 4 | SOC: 10 | HEA: 4
---------------------------------------------------------------------------------
-
-Username: walkerpilgrim
-Password: demo123
-Display Name: Walker Pilgrim
-Email: walkerpilgrim@example.com
 Level: 1
-Stats - STR: 12 | INT: 14 | CRE: 6 | SOC: 3 | HEA: 2
+Stats - STR: 16 | INT: 14 | CRE: 12 | SOC: 2 | HEA: 17
 --------------------------------------------------------------------------------
 
 ================================================================================
@@ -335,43 +335,43 @@ QUICK REFERENCE (Sorted by Level)
 
 Username                  Level    Strength   Intelligence Creativity
 --------------------------------------------------------------------------------
-jordaneagle               30       8          1            20        
-novasage                  30       11         16           14        
-chesstitan                29       12         4            13        
-gideonninja               29       1          15           18        
-finleydrake               27       3          16           10        
-zephyrprotector           27       20         1            8         
-echooutlaw                27       11         11           2         
-alexstorm                 26       15         13           13        
-caseyphoenix              26       4          18           14        
-parkerrider               25       12         12           5         
-yaraguardian              25       9          16           3         
-greywolf                  24       3          14           15        
-kilohunter                23       1          13           11        
-loganranger               23       18         17           13        
-vespertraveler            22       11         12           14        
-taylorwanderer            21       14         15           11        
-xandersentinel            21       1          12           3         
-rileymystic               20       1          15           19        
-drakerebel                20       18         17           5         
-falconrogue               19       11         5            20        
-baileyknight              18       12         6            4         
-oscarseeker               18       20         11           2         
-havensamurai              18       4          1            6         
-indigoraven               17       12         1            13        
-ariachampion              17       12         7            14        
-nexusseeker               17       15         2            16        
-urbannomad                15       9          8            5         
-jaggerpirate              13       18         20           2         
-quinnarcher               9        12         12           17        
-kadedragon                9        3          8            9         
-morganwarrior             8        12         8            3         
-ellisblade                7        13         3            18        
-lyricmystic               7        5          10           14        
-sagescholar               6        17         8            13        
-dakotashadow              3        2          18           17        
-harperfox                 3        16         2            19        
-blazevictor               3        3          17           1         
-irisviking                3        5          13           13        
-merlinwizard              2        4          14           4         
-walkerpilgrim             1        12         14           6         
+yaraguardian              28       4          11           10        
+gideonninja               26       5          3            13        
+jaggerpirate              26       15         14           5         
+greywolf                  24       18         2            1         
+zephyrprotector           24       1          9            2         
+lyricmystic               24       4          8            7         
+dakotashadow              23       6          1            17        
+xandersentinel            23       12         5            13        
+drakerebel                23       19         12           11        
+merlinwizard              23       12         5            14        
+nexusseeker               23       4          18           9         
+blazevictor               22       2          20           19        
+kadedragon                22       15         17           17        
+caseyphoenix              19       10         9            5         
+finleydrake               19       17         3            9         
+taylorwanderer            19       17         12           8         
+echooutlaw                18       5          14           19        
+havensamurai              18       6          1            19        
+morganwarrior             17       9          20           17        
+falconrogue               17       17         17           8         
+urbannomad                15       5          6            8         
+indigoraven               14       19         10           4         
+ariachampion              14       16         11           11        
+parkerrider               13       4          20           9         
+baileyknight              11       14         8            14        
+novasage                  11       6          15           13        
+oscarseeker               11       18         20           9         
+rileymystic               11       4          5            1         
+ellisblade                10       12         13           16        
+alexstorm                 9        1          13           11        
+harperfox                 8        19         19           6         
+quinnarcher               7        1          18           18        
+walkerpilgrim             7        11         16           16        
+chesstitan                7        11         11           14        
+sagescholar               6        15         11           13        
+kilohunter                5        3          12           10        
+loganranger               5        20         17           5         
+jordaneagle               4        18         17           18        
+vespertraveler            1        2          2            20        
+irisviking                1        16         14           12        
