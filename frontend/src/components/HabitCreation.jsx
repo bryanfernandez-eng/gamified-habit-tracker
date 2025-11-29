@@ -7,7 +7,6 @@ export function HabitCreation({ onHabitCreated, onClose }) {
     name: '',
     description: '',
     category: 'strength',
-    xp_reward: 50,
     frequency: 'daily',
   })
   const [loading, setLoading] = useState(false)
@@ -31,7 +30,7 @@ export function HabitCreation({ onHabitCreated, onClose }) {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'xp_reward' ? parseInt(value, 10) || 0 : value,
+      [name]: value,
     }))
   }
 
@@ -41,11 +40,6 @@ export function HabitCreation({ onHabitCreated, onClose }) {
 
     if (!formData.name.trim()) {
       setError('Quest name is required')
-      return
-    }
-
-    if (formData.xp_reward < 10) {
-      setError('XP reward must be at least 10')
       return
     }
 
@@ -109,10 +103,13 @@ export function HabitCreation({ onHabitCreated, onClose }) {
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Optional: Describe this quest..."
+              placeholder="Describe this quest in detail for accurate XP calculation..."
               rows="3"
               className="w-full bg-rulebook-paper border-2 border-rulebook-ink/20 px-3 py-2 text-rulebook-ink font-mono placeholder-rulebook-ink/40 focus:border-rulebook-crimson focus:outline-none rounded-sm resize-none"
             />
+            <p className="text-xs text-rulebook-ink/50 font-mono mt-1">
+              AI will analyze difficulty and assign XP (40-200 range)
+            </p>
           </div>
 
           {/* Category Selection */}
@@ -139,27 +136,6 @@ export function HabitCreation({ onHabitCreated, onClose }) {
                   </button>
                 )
               })}
-            </div>
-          </div>
-
-          {/* XP Reward */}
-          <div>
-            <label className="block text-sm font-serif font-bold text-rulebook-ink/80 mb-2 uppercase tracking-wide">
-              XP Reward: <span className="text-rulebook-royal font-mono">{formData.xp_reward}</span>
-            </label>
-            <input
-              type="range"
-              name="xp_reward"
-              value={formData.xp_reward}
-              onChange={handleInputChange}
-              min="10"
-              max="200"
-              step="5"
-              className="w-full accent-rulebook-crimson"
-            />
-            <div className="flex justify-between text-xs text-rulebook-ink/50 font-mono mt-1">
-              <span>10</span>
-              <span>200</span>
             </div>
           </div>
 

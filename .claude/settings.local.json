@@ -9,7 +9,10 @@
       "Bash(python manage.py:*)",
       "Bash(python manage.py seed_achievements:*)",
       "Bash(npm run dev:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(python:*)",
+      "Bash(cat:*)",
+      "Bash(git -C \"/c/Users/brfer/OneDrive/Desktop/capstone 2 project/gamified-habit-tracker\" log --oneline -20)"
     ],
     "deny": [],
     "ask": []

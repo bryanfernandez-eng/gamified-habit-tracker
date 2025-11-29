@@ -1,7 +1,12 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # --- Paths & basics ---
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = "dev-secret-key-change-me"
 DEBUG = True
@@ -138,3 +143,6 @@ REST_AUTH = {
     'USER_DETAILS_SERIALIZER': 'api.serializers.CustomUserDetailsSerializer',
     'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
 }
+
+# --- OpenAI API Configuration ---
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
