@@ -353,10 +353,14 @@ export function CharacterCustomizer({ onCharacterChanged, userStats }) {
                     ) : (
                       <button
                         onClick={() => handleEquip(item.id)}
-                        disabled={!item.is_unlocked || equippingId === item.id || (isTheme && isThemeSelected)}
+                        disabled={!item.is_unlocked || equippingId === item.id || (isTheme && isThemeSelected) || (activeCategory === 'armor' && item.is_equipped)}
                         className={`px-4 py-2 text-xs font-serif font-bold uppercase tracking-widest border-2 transition-all shadow-sm ${item.is_unlocked
                             ? isTheme
                               ? isThemeSelected
+                                ? 'bg-rulebook-forest text-rulebook-paper border-rulebook-ink cursor-default'
+                                : 'bg-rulebook-crimson text-rulebook-paper border-rulebook-ink hover:bg-rulebook-ink hover:border-rulebook-crimson'
+                              : activeCategory === 'armor'
+                              ? item.is_equipped
                                 ? 'bg-rulebook-forest text-rulebook-paper border-rulebook-ink cursor-default'
                                 : 'bg-rulebook-crimson text-rulebook-paper border-rulebook-ink hover:bg-rulebook-ink hover:border-rulebook-crimson'
                               : item.is_equipped
@@ -367,18 +371,22 @@ export function CharacterCustomizer({ onCharacterChanged, userStats }) {
                       >
                         {equippingId === item.id ? (
                           <span className="flex items-center gap-2">
-                            <Loader size={12} className="animate-spin" /> {isTheme ? 'SELECTING...' : 'EQUIPPING...'}
+                            <Loader size={12} className="animate-spin" /> {isTheme ? 'SELECTING...' : activeCategory === 'armor' ? 'EQUIPPING...' : 'EQUIPPING...'}
                           </span>
                         ) : isTheme && isThemeSelected ? (
                           <span className="flex items-center gap-2">
                             <Check size={12} /> ACTIVE
                           </span>
-                        ) : item.is_equipped && !isTheme ? (
+                        ) : activeCategory === 'armor' && item.is_equipped ? (
+                          <span className="flex items-center gap-2">
+                            <Check size={12} /> ACTIVE
+                          </span>
+                        ) : item.is_equipped && !isTheme && activeCategory !== 'armor' ? (
                           <span className="flex items-center gap-2">
                             <Check size={12} /> EQUIPPED
                           </span>
                         ) : item.is_unlocked ? (
-                          isTheme ? 'SELECT' : 'EQUIP'
+                          isTheme ? 'SELECT' : activeCategory === 'armor' ? 'EQUIP' : 'EQUIP'
                         ) : (
                           'LOCKED'
                         )}

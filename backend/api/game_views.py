@@ -560,57 +560,46 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
                 'user_stats': UserStatsSerializer(request.user).data
             })
 
-        # Toggle equipped status for existing records
-        user_equipment.is_equipped = not user_equipment.is_equipped
+        # For armor (appearances), prevent unequipping - only allow switching
+        if equipment.equipment_slot == 'armor' and equipment.character_specific:
+            # If trying to unequip an already equipped appearance, don't allow it
+            if user_equipment.is_equipped:
+                return Response({
+                    'error': 'Cannot unequip appearance. You must always have an appearance equipped. Select a different appearance to switch.',
+                    'is_equipped': user_equipment.is_equipped
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        # If equipping, unequip other items in the same slot/type
-        if user_equipment.is_equipped:
-            if equipment.equipment_slot and equipment.equipment_slot != 'accessory':
-                # For armor, unequip other armor for the SAME character
-                if equipment.equipment_slot == 'armor' and equipment.character_specific:
-                    UserEquipment.objects.filter(
-                        user=request.user,
-                        equipment__equipment_slot='armor',
-                        equipment__character_specific=equipment.character_specific
-                    ).exclude(id=user_equipment.id).update(is_equipped=False)
+            # Otherwise, equip this appearance and unequip others
+            user_equipment.is_equipped = True
 
-                    # Update selected_appearance
-                    request.user.selected_appearance = equipment
-                    request.user.save()
-                else:
+            # Unequip other armor for the SAME character
+            UserEquipment.objects.filter(
+                user=request.user,
+                equipment__equipment_slot='armor',
+                equipment__character_specific=equipment.character_specific
+            ).exclude(id=user_equipment.id).update(is_equipped=False)
+
+            # Update selected_appearance
+            request.user.selected_appearance = equipment
+            request.user.save()
+        else:
+            # For non-armor items, allow toggle behavior
+            user_equipment.is_equipped = not user_equipment.is_equipped
+
+            # If equipping, unequip other items in the same slot/type
+            if user_equipment.is_equipped:
+                if equipment.equipment_slot and equipment.equipment_slot != 'accessory':
                     # For non-character-specific armor, unequip all armor
                     UserEquipment.objects.filter(
                         user=request.user,
                         equipment__equipment_slot=equipment.equipment_slot
                     ).exclude(id=user_equipment.id).update(is_equipped=False)
-            else:
-                # Unequip other accessories/themes
-                UserEquipment.objects.filter(
-                    user=request.user,
-                    equipment__equipment_type=equipment.equipment_type
-                ).exclude(id=user_equipment.id).update(is_equipped=False)
-        else:
-            # If unequipping armor, set selected_appearance to the default for current character
-            if equipment.equipment_slot == 'armor' and equipment.character_specific:
-                default_appearance = Equipment.objects.filter(
-                    equipment_slot='armor',
-                    character_specific=request.user.selected_character,
-                    is_default=True
-                ).first()
-
-                if default_appearance:
-                    # Equip the default appearance
-                    default_ue, _ = UserEquipment.objects.get_or_create(
+                else:
+                    # Unequip other accessories/themes
+                    UserEquipment.objects.filter(
                         user=request.user,
-                        equipment=default_appearance,
-                        defaults={'is_equipped': True}
-                    )
-                    if not default_ue.is_equipped:
-                        default_ue.is_equipped = True
-                        default_ue.save()
-
-                    request.user.selected_appearance = default_appearance
-                    request.user.save()
+                        equipment__equipment_type=equipment.equipment_type
+                    ).exclude(id=user_equipment.id).update(is_equipped=False)
 
         user_equipment.save()
 
