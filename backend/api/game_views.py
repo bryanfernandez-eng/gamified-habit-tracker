@@ -321,11 +321,22 @@ class HabitViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
                 
+                # Dynamic XP Calculation
+                # Formula: (Base XP + (Level * 5)) * (1 + (Streak / 50))
+                base_xp = habit.xp_reward
+                level_bonus = request.user.level * 5
+                
+                # Streak Bonus: +2% per streak count (e.g., 50 streak = +100% = 2x multiplier)
+                # We use the CURRENT streak (before increment) for the calculation
+                streak_multiplier = 1 + (habit.streak * 0.02)
+                
+                final_xp = int((base_xp + level_bonus) * streak_multiplier)
+
                 # Create completion record
                 completion = HabitCompletion.objects.create(
                     habit=habit,
                     user=request.user,
-                    xp_earned=habit.xp_reward,
+                    xp_earned=final_xp,
                     notes=notes
                 )
                 
@@ -705,8 +716,11 @@ class TowerViewSet(viewsets.ViewSet):
         enemies = []
         
         # Scaling logic
-        base_hp = 50 + (floor * 10)
-        base_dmg = 5 + (floor * 2)
+        # HP: Exponential Growth (70 * 1.15^(floor-1))
+        base_hp = int(70 * (1.15 ** (floor - 1)))
+        
+        # Damage: Aggressive Linear (8 + 2.5*floor)
+        base_dmg = int(8 + (2.5 * floor))
         
         for i in range(5):  # 5 Waves
             # Determine enemy type based on floor
@@ -750,9 +764,9 @@ class TowerViewSet(viewsets.ViewSet):
         floor = progress.current_floor
         
         # Social Scaling: Increase XP Reward
-        # Base: 100 * floor. +5% per Social point.
+        # Base: 20 * floor. +5% per Social point.
         social_bonus = 1 + (user.social * 0.05)
-        xp_reward = int((100 * floor) * social_bonus)
+        xp_reward = int((20 * floor) * social_bonus)
         
         # Award XP
         user.add_xp(xp_reward)
