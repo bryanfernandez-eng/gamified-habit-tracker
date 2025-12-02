@@ -347,17 +347,11 @@ class HabitViewSet(viewsets.ModelViewSet):
                         {'error': 'Habit already completed today'},
                         status=status.HTTP_400_BAD_REQUEST
                     )
-                
-                # Dynamic XP Calculation
-                # Formula: (Base XP + (Level * 5)) * (1 + (Streak / 50))
-                base_xp = habit.xp_reward
-                level_bonus = request.user.level * 5
-                
-                # Streak Bonus: +2% per streak count (e.g., 50 streak = +100% = 2x multiplier)
-                # We use the CURRENT streak (before increment) for the calculation
-                streak_multiplier = 1 + (habit.streak * 0.02)
-                
-                final_xp = int((base_xp + level_bonus) * streak_multiplier)
+
+                # Use the quest's XP reward as-is (already calculated during creation)
+                # For imported quests: uses preset values (20, 30, 40, 50, etc.)
+                # For user-created quests: AI-calculated based on difficulty
+                final_xp = habit.xp_reward
 
                 # Create completion record
                 completion = HabitCompletion.objects.create(
