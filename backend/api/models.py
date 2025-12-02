@@ -144,7 +144,10 @@ class Habit(models.Model):
     def save(self, *args, **kwargs):
         """Override save to auto-calculate XP on creation"""
         if not self.pk:  # Only on creation
-            self.xp_reward = self.calculate_xp_reward()
+            # Only calculate XP if it's still at default value (10)
+            # This allows imported quests to keep their predefined XP values
+            if self.xp_reward == 10:
+                self.xp_reward = self.calculate_xp_reward()
         super().save(*args, **kwargs)
 
 
