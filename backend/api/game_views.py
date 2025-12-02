@@ -242,11 +242,23 @@ class UserStatsViewSet(viewsets.ViewSet):
 class HabitViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = HabitSerializer
-    
+
     def get_queryset(self):
         return Habit.objects.filter(user=self.request.user, is_active=True)
-    
+
+    def create(self, request, *args, **kwargs):
+        """Override create to handle errors gracefully"""
+        try:
+            return super().create(request, *args, **kwargs)
+        except (ValueError, PermissionError) as e:
+            return Response(
+                {'detail': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
     def perform_create(self, serializer):
+        from django.db import IntegrityError
+
         # Check quest limit based on user level
         current_quests = Habit.objects.filter(
             user=self.request.user,
@@ -261,7 +273,22 @@ class HabitViewSet(viewsets.ModelViewSet):
                 f"Reach level {self._get_next_level_milestone()} for more quests."
             )
 
-        serializer.save(user=self.request.user)
+        # Check for duplicate quest name
+        quest_name = serializer.validated_data.get('name')
+        if Habit.objects.filter(user=self.request.user, name=quest_name, is_active=True).exists():
+            raise ValueError(
+                f"You already have a quest named '{quest_name}'. "
+                f"Quest names must be unique. Please choose a different name or complete/delete the existing quest."
+            )
+
+        try:
+            serializer.save(user=self.request.user)
+        except IntegrityError:
+            # Catch database-level constraint violation as a fallback
+            raise ValueError(
+                f"You already have a quest named '{quest_name}'. "
+                f"Quest names must be unique."
+            )
 
     def _get_next_level_milestone(self):
         """Get the next level where quest limit increases"""

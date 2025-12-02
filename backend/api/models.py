@@ -115,6 +115,14 @@ class Habit(models.Model):
     
     class Meta:
         ordering = ['category', 'name']
+        # Prevent duplicate quest names for the same user
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'name'],
+                condition=models.Q(is_active=True),
+                name='unique_active_habit_name_per_user'
+            )
+        ]
     
     def __str__(self):
         return f"{self.user.username} - {self.name}"

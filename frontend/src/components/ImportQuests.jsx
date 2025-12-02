@@ -132,13 +132,37 @@ export function ImportQuests({ onQuestsImported, onClose }) {
 
       const questsToImport = PREDEFINED_QUESTS.filter(q => selectedQuests.includes(q.name))
 
-      // Import each quest
-      await Promise.all(
+      // Import each quest individually and track results
+      const results = await Promise.allSettled(
         questsToImport.map(quest => gameApi.createHabit(quest))
       )
 
-      onQuestsImported()
-      setSelectedQuests([])
+      // Check for failures
+      const failures = results.filter(r => r.status === 'rejected')
+      const successes = results.filter(r => r.status === 'fulfilled')
+
+      if (failures.length > 0 && successes.length === 0) {
+        // All failed
+        const firstError = failures[0].reason?.response?.data?.detail || 'Failed to import quests'
+        setError(firstError)
+      } else if (failures.length > 0) {
+        // Some failed, some succeeded
+        const duplicates = failures.filter(f =>
+          f.reason?.response?.data?.detail?.includes('already have a quest named')
+        )
+
+        if (duplicates.length === failures.length) {
+          // All failures were duplicates
+          setError(`${duplicates.length} quest(s) were skipped because you already have them. ${successes.length} quest(s) imported successfully.`)
+        } else {
+          setError(`${successes.length} quest(s) imported successfully. ${failures.length} failed.`)
+        }
+      }
+
+      if (successes.length > 0) {
+        onQuestsImported()
+        setSelectedQuests([])
+      }
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to import quests')
     } finally {
