@@ -348,10 +348,15 @@ class HabitViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-                # Use the quest's XP reward as-is (already calculated during creation)
-                # For imported quests: uses preset values (20, 30, 40, 50, etc.)
-                # For user-created quests: AI-calculated based on difficulty
-                final_xp = habit.xp_reward
+                # Calculate XP with bonuses
+                base_xp = habit.xp_reward
+                level_bonus = request.user.level * 5
+
+                # Streak Bonus: +2% per streak count (e.g., 50 streak = +100% = 2x multiplier)
+                streak_multiplier = 1 + (habit.streak * 0.02)
+
+                # Calculate final XP
+                final_xp = int((base_xp + level_bonus) * streak_multiplier)
 
                 # Create completion record
                 completion = HabitCompletion.objects.create(
@@ -360,13 +365,16 @@ class HabitViewSet(viewsets.ModelViewSet):
                     xp_earned=final_xp,
                     notes=notes
                 )
-                
+
                 # Check for achievement progress
                 self._check_achievements(request.user, habit)
-                
+
                 return Response({
                     'message': 'Habit completed successfully',
                     'xp_earned': completion.xp_earned,
+                    'base_xp': base_xp,
+                    'level_bonus': level_bonus,
+                    'streak_bonus_percent': int(habit.streak * 2),  # Show as percentage
                     'new_streak': habit.streak,
                     'user_stats': UserStatsSerializer(request.user).data
                 })

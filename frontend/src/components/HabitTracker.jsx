@@ -32,7 +32,14 @@ export function HabitTracker({ onHabitCompleted }) {
   const [showCreation, setShowCreation] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [editingHabit, setEditingHabit] = useState(null)
-  const [celebrationModal, setCelebrationModal] = useState({ show: false, xp: 0, habitName: '' })
+  const [celebrationModal, setCelebrationModal] = useState({
+    show: false,
+    xp: 0,
+    baseXp: 0,
+    levelBonus: 0,
+    streakBonusPercent: 0,
+    habitName: ''
+  })
   const [completingHabitId, setCompletingHabitId] = useState(null)
   const [questLimit, setQuestLimit] = useState(null)
 
@@ -219,10 +226,13 @@ export function HabitTracker({ onHabitCompleted }) {
       oscillator.start(audioContext.currentTime)
       oscillator.stop(audioContext.currentTime + SOUND_DURATION)
 
-      // Show celebration modal
+      // Show celebration modal with XP breakdown
       setCelebrationModal({
         show: true,
         xp: result.xp_earned,
+        baseXp: result.base_xp,
+        levelBonus: result.level_bonus,
+        streakBonusPercent: result.streak_bonus_percent,
         habitName: habitName
       })
 
@@ -482,6 +492,35 @@ export function HabitTracker({ onHabitCompleted }) {
               <div className="text-5xl font-serif font-bold text-rulebook-crimson my-8 border-y-2 border-rulebook-ink/10 py-4">
                 +{celebrationModal.xp} XP
               </div>
+
+              {/* XP Breakdown - only show if there are bonuses */}
+              {(celebrationModal.levelBonus > 0 || celebrationModal.streakBonusPercent > 0) && (
+                <div className="mb-4 text-xs text-rulebook-ink/70 font-mono space-y-1">
+                  <div className="text-sm font-serif font-bold text-rulebook-ink/80 mb-2">XP Breakdown:</div>
+                  <div className="flex justify-between">
+                    <span>Base Quest XP:</span>
+                    <span className="font-bold">{celebrationModal.baseXp}</span>
+                  </div>
+                  {celebrationModal.levelBonus > 0 && (
+                    <div className="flex justify-between text-rulebook-royal">
+                      <span>Level Bonus:</span>
+                      <span className="font-bold">+{celebrationModal.levelBonus}</span>
+                    </div>
+                  )}
+                  {celebrationModal.streakBonusPercent > 0 && (
+                    <div className="flex justify-between text-rulebook-forest">
+                      <span>Streak Bonus ({celebrationModal.streakBonusPercent}%):</span>
+                      <span className="font-bold">×{(1 + celebrationModal.streakBonusPercent / 100).toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-rulebook-ink/20 pt-1 mt-1"></div>
+                  <div className="flex justify-between text-rulebook-crimson font-bold">
+                    <span>Total XP:</span>
+                    <span>{celebrationModal.xp}</span>
+                  </div>
+                </div>
+              )}
+
               <p className="text-rulebook-ink/60 text-sm uppercase tracking-widest font-serif">
                 Well done, adventurer!
               </p>
