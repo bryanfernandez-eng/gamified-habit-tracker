@@ -109,6 +109,46 @@ class Command(BaseCommand):
                 'unlock_requirement': 'Reach Level 1',
                 'is_default': False,
             },
+            {
+                'name': 'Pixel Forest',
+                'equipment_type': 'theme',
+                'description': 'Retro pixel art forest with nostalgic charm.',
+                'stat_bonus': {'creativity': 2, 'health': 1},
+                'unlock_requirement': 'Unlocked at Level 2',
+                'is_default': False,
+            },
+            {
+                'name': 'Shattered Sky',
+                'equipment_type': 'theme',
+                'description': 'Mystical shattered sky with ethereal atmosphere.',
+                'stat_bonus': {'intelligence': 3, 'creativity': 2},
+                'unlock_requirement': 'Unlocked at Level 3',
+                'is_default': False,
+            },
+            {
+                'name': 'Dark Night Tunnel',
+                'equipment_type': 'theme',
+                'description': 'Mysterious dark tunnel with haunting ambiance.',
+                'stat_bonus': {'intelligence': 2, 'strength': 2},
+                'unlock_requirement': 'Unlocked at Level 4',
+                'is_default': False,
+            },
+            {
+                'name': 'Torchlit Refuge',
+                'equipment_type': 'theme',
+                'description': 'Safe refuge illuminated by warm torchlight.',
+                'stat_bonus': {'health': 3, 'social': 1},
+                'unlock_requirement': 'Unlocked at Level 4',
+                'is_default': False,
+            },
+            {
+                'name': 'Hall of the Rising Flame',
+                'equipment_type': 'theme',
+                'description': 'Grand hall bathed in the light of rising flames.',
+                'stat_bonus': {'strength': 3, 'creativity': 2, 'intelligence': 1},
+                'unlock_requirement': 'Unlocked at Level 6',
+                'is_default': False,
+            },
         ]
 
         created_count = 0

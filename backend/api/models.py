@@ -218,6 +218,7 @@ class Equipment(models.Model):
         ('weapon', 'Weapon'),
         ('helmet', 'Helmet'),
         ('chest', 'Chest'),
+        ('armor', 'Armor'),  # Character appearance/full outfit
         ('legs', 'Legs'),
         ('feet', 'Feet'),
         ('accessory', 'Accessory'),  # Non-visual items

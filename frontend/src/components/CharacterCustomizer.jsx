@@ -39,10 +39,11 @@ export function CharacterCustomizer({ onCharacterChanged, userStats }) {
     loadCharacters()
   }, [])
 
-  // Reload equipment when user level changes (to update unlock status)
+  // Reload equipment and characters when user level changes (to update unlock status)
   useEffect(() => {
     if (userStats?.level && lastKnownLevel !== null && userStats.level !== lastKnownLevel) {
       loadEquipment()
+      loadCharacters()
     }
     if (userStats?.level) {
       setLastKnownLevel(userStats.level)
